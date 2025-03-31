@@ -7,42 +7,35 @@
     <link rel="stylesheet" href="style.css">
     <style>
 
-.card-gallery {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-}
-
-.card-container {
-    width: 120px;
-    height: 180px;
-    position: relative;
-}
-
-.card-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: grayscale(100%); /* Default: Greyed out */
-    transition: filter 0.3s ease-in-out, opacity 0.3s ease-in-out; /* Smooth transition */
-}
-
-.card-container.unlocked img {
-    filter: grayscale(0%);
-}
-
-.card-container.unlocked img:hover {
-    opacity: 0;
-}
-        .button {
-            padding: 10px 20px;
-            font-size: 14px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            margin: 5px;
+        .card-gallery {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr); /* 10 cards per row */
+            gap: 10px;
+            justify-content: center;
+            padding: 10px;
         }
+
+        .card-container {
+            width: 120px; /* Adjust width */
+            height: 180px; /* Adjust height */
+            position: relative;
+        }
+
+            .card-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain; /* Ensures the full image is visible */
+                filter: grayscale(100%);
+                transition: filter 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            }
+
+            .card-container.unlocked img {
+                filter: grayscale(0%);
+            }
+
+                .card-container.unlocked img:hover {
+                    opacity: 0;
+                }}
     </style>
 </head>
 <body>
@@ -58,18 +51,18 @@
     <script src="card.js"></script>
     <script>
         const cardData = [
-            { name: "Fred", image: "imgs/card1.jpg", hoverImage: "imgs/card1back.jpg", rarity: "COMMON" },
-            { name: "Aron", image: "imgs/card2.jpg", hoverImage: "imgs/card2back.jpg", rarity: "UNCOMMON" },
-            { name: "Claudia", image: "imgs/card3.jpg", hoverImage: "imgs/card3back.jpg", rarity: "RARE" },
-            { name: "Bob", image: "imgs/card4.jpg", hoverImage: "imgs/card4back.jpg", rarity: "EPIC" },
-            { name: "Felix", image: "imgs/card5.jpg", hoverImage: "imgs/card5back.jpg", rarity: "LEGENDARY" },
-            { name: "Cloud", image: "imgs/card6.jpg", hoverImage: "imgs/card1back.jpg", rarity: "COMMON" }
+            { name: "Fred", image: "imgs/card1.png", hoverImage: "imgs/card1back.jpg", rarity: "COMMON" },
+            { name: "Aron", image: "imgs/card2.png", hoverImage: "imgs/card2back.jpg", rarity: "UNCOMMON" },
+            { name: "Claudia", image: "imgs/card3.png", hoverImage: "imgs/card3back.jpg", rarity: "RARE" },
+            { name: "Bob", image: "imgs/card4.png", hoverImage: "imgs/card4back.jpg", rarity: "EPIC" },
+            { name: "Felix", image: "imgs/card5.png", hoverImage: "imgs/card5back.jpg", rarity: "LEGENDARY" },
+            { name: "Cloud", image: "imgs/card6.png", hoverImage: "imgs/card1back.jpg", rarity: "COMMON" }
         ];
 
         function displayCards() {
             const cardGallery = document.getElementById('cardGallery');
             let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
-            let inventoryImages = inventory.map(card => card.image); // Get images from inventory
+            let inventoryImages = inventory.map(card => card.image); 
 
             cardData.forEach(cardInfo => {
                 const cardContainer = document.createElement('div');
@@ -79,34 +72,32 @@
                     cardContainer.classList.add('unlocked');
                 }
 
-                // Create front image (default)
+                
                 const frontImage = document.createElement('img');
                 frontImage.src = cardInfo.image;
                 frontImage.classList.add('front');
-                frontImage.alt = cardInfo.name; // Set alt for search function
+                frontImage.alt = cardInfo.name; 
 
-                // Create back image (hidden initially)
+                
                 const backImage = document.createElement('img');
                 backImage.src = cardInfo.hoverImage;
                 backImage.classList.add('back');
                 backImage.style.position = "absolute";
                 backImage.style.top = "0";
                 backImage.style.left = "0";
-                backImage.style.opacity = "0"; // Start hidden
-                backImage.style.transition = "opacity 0.3s ease-in-out"; // Smooth fade transition
+                backImage.style.opacity = "0"; 
+                backImage.style.transition = "opacity 0.3s ease-in-out"; 
 
                 if (inventoryImages.includes(cardInfo.image)) {
-                    // Only enable hover effect if card is unlocked
                     cardContainer.addEventListener("mouseover", () => {
-                        backImage.style.opacity = "1"; // Fade in back image
+                        backImage.style.opacity = "1"; 
                     });
 
                     cardContainer.addEventListener("mouseout", () => {
-                        backImage.style.opacity = "0"; // Fade out back image
+                        backImage.style.opacity = "0"; 
                     });
                 }
 
-                // Create label for the card name
                 const cardLabel = document.createElement("p");
                 cardLabel.textContent = cardInfo.name;
                 cardLabel.style.textAlign = "center";

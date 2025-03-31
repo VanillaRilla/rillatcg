@@ -78,12 +78,15 @@
             align-items: center;
             text-align: center;
             overflow: visible; /* Ensure nothing gets cut off */
+            background: transparent; /* No background */
+            border: none; /* No borders */ 
         }
 
         .inventory img {
             width: 100%;
             height: 100%;
             object-fit: contain; /* Show full image without cropping */
+            background: transparent; /* Ensures no background color */
         }
 
         .button {
@@ -99,7 +102,7 @@
             background-color: red;
             color: white;
         }
-
+        
         #getCreditsButton {
             background-color: green;
             color: white;
@@ -143,15 +146,44 @@
         let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
         let balance = parseInt(localStorage.getItem('balance')) || 0;
 
+        const coupons = {
+            "FREE100": 100,
+            "BONUS50": 50,
+            "LUCKY200": 200
+        };
+
+        let redeemedCoupons = JSON.parse(localStorage.getItem('redeemedCoupons')) || [];
+
+        document.getElementById('redeemCoupon').addEventListener('click', () => {
+            const code = document.getElementById('couponCode').value.trim().toUpperCase();
+            const message = document.getElementById('couponMessage');
+
+            if (redeemedCoupons.includes(code)) {
+                message.textContent = "This coupon has already been used.";
+                message.style.color = "red";
+            } else if (coupons[code]) {
+                balance += coupons[code];
+                localStorage.setItem('balance', balance);
+                document.getElementById('balance').textContent = balance;
+                redeemedCoupons.push(code);
+                localStorage.setItem('redeemedCoupons', JSON.stringify(redeemedCoupons));
+                message.textContent = "Coupon redeemed successfully!";
+                message.style.color = "green";
+            } else {
+                message.textContent = "Invalid coupon code.";
+                message.style.color = "red";
+            }
+        });
+
         balanceDisplay.textContent = balance;
 
         const cardData = [
-            { image: "imgs/card1.jpg", name: "Fred", rarity: "common", probability: 0.60 },
-            { image: "imgs/card2.jpg", name: "Aron", rarity: "uncommon", probability: 0.25 },
-            { image: "imgs/card3.jpg", name: "Claudia", rarity: "rare", probability: 0.10 },
-            { image: "imgs/card4.jpg", name: "Bob", rarity: "epic", probability: 0.04 },
-            { image: "imgs/card5.jpg", name: "Felix", rarity: "legendary", probability: 0.01 },
-            { image: "imgs/card6.jpg", name: "Cloud", rarity: "common", probability: 0.60 }
+            { image: "imgs/card1.png", name: "Fred", rarity: "common", probability: 0.60 },
+            { image: "imgs/card2.png", name: "Aron", rarity: "uncommon", probability: 0.25 },
+            { image: "imgs/card3.png", name: "Claudia", rarity: "rare", probability: 0.10 },
+            { image: "imgs/card4.png", name: "Bob", rarity: "epic", probability: 0.04 },
+            { image: "imgs/card5.png", name: "Felix", rarity: "legendary", probability: 0.01 },
+            { image: "imgs/card6.png", name: "Cloud", rarity: "common", probability: 0.60 }
         ];
 
         const rarityOrder = ["legendary", "epic", "rare", "uncommon", "common"];

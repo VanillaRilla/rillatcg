@@ -2,12 +2,12 @@
 let nextID = 1; // Counter for unique IDs
 
 const cardNames = {
-    "imgs/card1.jpg": "Fred",
-    "imgs/card2.jpg": "Aron",
-    "imgs/card3.jpg": "Claudia",
-    "imgs/card4.jpg": "Bob",
-    "imgs/card5.jpg": "Felix",
-    "imgs/card6.jpg": "Cloud"
+    "imgs/card1.png": "Fred",
+    "imgs/card2.png": "Aron",
+    "imgs/card3.png": "Claudia",
+    "imgs/card4.png": "Bob",
+    "imgs/card5.png": "Felix",
+    "imgs/card6.png": "Cloud"
 };
 
 class Card {
