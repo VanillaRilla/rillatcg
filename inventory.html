@@ -1,0 +1,276 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            padding-bottom: 120px;
+        }
+
+        .inventory {
+            text-align: center; /* Centers the "Your Cards" text */
+        }
+
+        #searchBox {
+            display: block; /* Ensures it takes full width */
+            margin: 10px auto; /* Centers horizontally */
+            padding: 8px;
+            width: 50%; /* Adjust width as needed */
+            max-width: 300px; /* Prevents it from being too wide */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center; /* Centers text inside input */
+        }
+
+        #couponSection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            width: 80%; /* Ensure it has enough space */
+            max-width: 400px; /* Prevent it from being too wide */
+        }
+
+        #couponCode {
+            width: 90%; /* Ensures input doesn't overflow */
+            max-width: 300px; /* Prevents it from being too wide */
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #redeemCoupon {
+            width: 100%; /* Button spans full width */
+            max-width: 150px; /* Prevents it from being too big */
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .inventory ul {
+            display: flex;
+            flex-wrap: wrap;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            justify-content: center; /* Center the cards */
+        }
+
+        .inventory li {
+            margin: 15px;
+            width: 120px; /* Set a fixed width */
+            height: 180px; /* Set a fixed height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: visible; /* Ensure nothing gets cut off */
+        }
+
+        .inventory img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Show full image without cropping */
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        #clearInventoryButton {
+            background-color: red;
+            color: white;
+        }
+
+        #getCreditsButton {
+            background-color: green;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Inventory</h1>
+        <p>Balance: <span id="balance">0</span> points</p>
+        <a href="index.html"><button class="button">Gallery</button></a>
+        <button id="addCardButton" class="button">Buy a random card (100 points)</button>
+        <button id="getCreditsButton" class="button">Get 100 Credits</button>
+        <button id="clearInventoryButton" class="button">Clear Inventory</button>
+    </header>
+
+
+
+    <section class="inventory">
+        <h2>Your Cards</h2>
+        <input type="text" id="searchBox" placeholder="Search cards..." oninput="searchInventory()">
+        <ul id="inventoryList"></ul>
+    </section>
+
+   
+
+    <section id="couponSection">
+        <p>Redeem a Coupon:</p>
+        <input type="text" id="couponCode" placeholder="Enter coupon code">
+        <button id="redeemCoupon">Redeem</button>
+        <p id="couponMessage"></p>
+    </section>
+
+    <script>
+        const inventoryList = document.getElementById('inventoryList');
+        const addCardButton = document.getElementById('addCardButton');
+        const getCreditsButton = document.getElementById('getCreditsButton');
+        const clearInventoryButton = document.getElementById('clearInventoryButton');
+        const balanceDisplay = document.getElementById('balance');
+
+        let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+        let balance = parseInt(localStorage.getItem('balance')) || 0;
+
+        balanceDisplay.textContent = balance;
+
+        const cardData = [
+            { image: "imgs/card1.jpg", name: "Fred", rarity: "common", probability: 0.60 },
+            { image: "imgs/card2.jpg", name: "Aron", rarity: "uncommon", probability: 0.25 },
+            { image: "imgs/card3.jpg", name: "Claudia", rarity: "rare", probability: 0.10 },
+            { image: "imgs/card4.jpg", name: "Bob", rarity: "epic", probability: 0.04 },
+            { image: "imgs/card5.jpg", name: "Felix", rarity: "legendary", probability: 0.01 },
+            { image: "imgs/card6.jpg", name: "Cloud", rarity: "common", probability: 0.60 }
+        ];
+
+        const rarityOrder = ["legendary", "epic", "rare", "uncommon", "common"];
+
+        function displayInventory() {
+            inventoryList.innerHTML = '';
+
+            // Sort inventory by rarity (Legendary → Common)
+            inventory.sort((a, b) => rarityOrder.indexOf(b.rarity) - rarityOrder.indexOf(a.rarity));
+
+            inventory.forEach(card => {
+                const listItem = document.createElement('li');
+                listItem.style.display = "flex";
+                listItem.style.flexDirection = "column"; // Stack elements vertically
+                listItem.style.alignItems = "center"; // Center align
+                listItem.innerHTML = `
+                        <img src="${card.image}" alt="${card.name}" class="card-image">
+                        <p style="margin-top: 5px; font-weight: bold; text-align: center;">
+                            ${card.name} (x${card.count})
+                        </p>
+                    `;
+                inventoryList.appendChild(listItem);
+            });
+        }
+
+        function getRandomCard() {
+            const rarityProbabilities = [
+                { rarity: "legendary", probability: 0.01 },
+                { rarity: "epic", probability: 0.04 },
+                { rarity: "rare", probability: 0.10 },
+                { rarity: "uncommon", probability: 0.25 },
+                { rarity: "common", probability: 0.60 }
+            ];
+
+            const randomValue = Math.random();
+            let cumulativeProbability = 0;
+            let selectedRarity = "common";
+
+            for (let rarityObj of rarityProbabilities) {
+                cumulativeProbability += rarityObj.probability;
+                if (randomValue <= cumulativeProbability) {
+                    selectedRarity = rarityObj.rarity;
+                    break;
+                }
+            }
+
+            const filteredCards = cardData.filter(card => card.rarity === selectedRarity);
+            return filteredCards.length > 0
+                ? filteredCards[Math.floor(Math.random() * filteredCards.length)]
+                : cardData[Math.floor(Math.random() * cardData.length)];
+        }
+
+        function searchInventory() {
+            const searchInput = document.getElementById("searchBox").value.toLowerCase();
+            const inventoryItems = document.querySelectorAll("#inventoryList li");
+
+            inventoryItems.forEach(item => {
+                const img = item.querySelector("img");
+                const cardName = img ? img.alt.toLowerCase() : "";
+
+                if (searchInput === "") {
+                    item.style.border = "";
+                    item.style.display = "";
+                } else if (cardName.includes(searchInput)) {
+                    item.style.display = "";
+                } else {
+                    item.style.border = "";
+                    item.style.display = "none";
+                }
+            });
+        }
+
+        function addRandomCardToInventory() {
+            if (balance >= 100) {
+                const randomCard = getRandomCard();
+
+                let existingCard = inventory.find(card => card.image === randomCard.image);
+                if (existingCard) {
+                    existingCard.count += 1;
+                } else {
+                    inventory.push({ ...randomCard, count: 1 });
+                }
+
+                localStorage.setItem('inventory', JSON.stringify(inventory));
+                displayInventory();
+                updateBalance(balance - 100);
+            } else {
+                alert("Not enough points!");
+            }
+        }
+
+        function updateBalance(newBalance) {
+            balance = newBalance;
+            localStorage.setItem('balance', balance);
+            balanceDisplay.textContent = balance;
+            checkBalance();
+        }
+
+        function checkBalance() {
+            addCardButton.disabled = balance < 100;
+        }
+
+        getCreditsButton.addEventListener('click', () => {
+            updateBalance(balance + 100);
+        });
+
+        clearInventoryButton.addEventListener('click', () => {
+            localStorage.removeItem('inventory');
+            localStorage.removeItem('balance');
+            inventory = [];
+            updateBalance(0);
+            displayInventory();
+        });
+
+        addCardButton.addEventListener('click', addRandomCardToInventory);
+
+        displayInventory();
+        checkBalance();
+    </script>
+
+</body>
+</html>
