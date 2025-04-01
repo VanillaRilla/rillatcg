@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHOP</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #121212; /* Dark background */
+            color: #e0e0e0; /* Light text color */
+            padding-bottom: 120px;
+            .inventory
+
+        {
+            text-align: center;
+        }
+
+        #couponSection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        #couponCode {
+            width: 90%;
+            max-width: 300px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #redeemCoupon {
+            width: 100%;
+            max-width: 150px;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        #getCreditsButton {
+            background-color: green;
+            color: white;
+        }
+
+        .card-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 450px;
+            height: 675px;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            z-index: 1000;
+        }
+
+        .card-popup img {
+            width: 100%;
+            height: auto;
+        }
+
+        .show-popup {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html"><button class="button">GALLERY</button></a>
+        <a href="shop.html"><button class="button">SHOP</button></a>
+        <a href="inventory.html"><button class="button">INVENTORY</button></a>
+        <h1>SHOP</h1>
+        <p>Balance: <span id="balance">0</span> points</p>
+        <button id="addCardButton" class="button">Buy a random card (100 points)</button>
+        <button id="getCreditsButton" class="button">Get 100 Credits</button>
+    </header>
+
+    <div id="cardPopup" class="card-popup">
+        <img id="popupImage" src="" alt="New Card">
+    </div>
+
+    <section id="couponSection">
+        <p style="color: black; font-weight: bold;font-size: 36px;">Redeem a CODE:</p>
+        <input type="text" id="couponCode" placeholder="Enter code here">
+        <button id="redeemCoupon">Redeem</button>
+        <p id="couponMessage"></p>
+    </section>
+
+    <script>
+        const addCardButton = document.getElementById('addCardButton');
+        const getCreditsButton = document.getElementById('getCreditsButton');
+        const balanceDisplay = document.getElementById('balance');
+
+        let balance = parseInt(localStorage.getItem('balance')) || 0;
+
+        const coupons = {
+            "FREE100": 100,
+            "BONUS50": 50,
+            "LUCKY200": 200
+        };
+
+        let redeemedCoupons = JSON.parse(localStorage.getItem('redeemedCoupons')) || [];
+
+        document.getElementById('redeemCoupon').addEventListener('click', () => {
+            const code = document.getElementById('couponCode').value.trim().toUpperCase();
+            const message = document.getElementById('couponMessage');
+
+            if (redeemedCoupons.includes(code)) {
+                message.textContent = "This coupon has already been used.";
+                message.style.color = "red";
+            } else if (coupons[code]) {
+                balance += coupons[code];
+                localStorage.setItem('balance', balance);
+                document.getElementById('balance').textContent = balance;
+                redeemedCoupons.push(code);
+                localStorage.setItem('redeemedCoupons', JSON.stringify(redeemedCoupons));
+                message.textContent = "Coupon redeemed successfully!";
+                message.style.color = "green";
+            } else {
+                message.textContent = "Invalid coupon code.";
+                message.style.color = "red";
+            }
+        });
+
+        balanceDisplay.textContent = balance;
+
+        const cardData = [
+            { image: "imgs/card1.png", name: "Fred", rarity: "common", probability: 0.60 },
+            { image: "imgs/card2.png", name: "Aron", rarity: "uncommon", probability: 0.25 },
+            { image: "imgs/card3.png", name: "Claudia", rarity: "rare", probability: 0.10 },
+            { image: "imgs/card4.png", name: "Bob", rarity: "epic", probability: 0.04 },
+            { image: "imgs/card5.png", name: "Felix", rarity: "legendary", probability: 0.01 },
+            { image: "imgs/card6.png", name: "Cloud", rarity: "common", probability: 0.60 }
+        ];
+
+        function getRandomCard() {
+            const rarityProbabilities = [
+                { rarity: "legendary", probability: 0.01 },
+                { rarity: "epic", probability: 0.04 },
+                { rarity: "rare", probability: 0.10 },
+                { rarity: "uncommon", probability: 0.25 },
+                { rarity: "common", probability: 0.60 }
+            ];
+
+            const randomValue = Math.random();
+            let cumulativeProbability = 0;
+            let selectedRarity = "common";
+
+            for (let rarityObj of rarityProbabilities) {
+                cumulativeProbability += rarityObj.probability;
+                if (randomValue <= cumulativeProbability) {
+                    selectedRarity = rarityObj.rarity;
+                    break;
+                }
+            }
+
+            const filteredCards = cardData.filter(card => card.rarity === selectedRarity);
+            return filteredCards.length > 0
+                ? filteredCards[Math.floor(Math.random() * filteredCards.length)]
+                : cardData[Math.floor(Math.random() * cardData.length)];
+        }
+
+        function addRandomCardToInventory() {
+            if (balance >= 100) {
+                addCardButton.disabled = true; // Prevent spam clicks
+
+                let inventory = JSON.parse(localStorage.getItem('inventory')) || []; // Load inventory
+                const randomCard = getRandomCard();
+
+                let existingCard = inventory.find(card => card.image === randomCard.image);
+                if (existingCard) {
+                    existingCard.count += 1;
+                } else {
+                    inventory.push({ ...randomCard, count: 1 });
+                }
+
+                localStorage.setItem('inventory', JSON.stringify(inventory)); // Save inventory
+                updateBalance(balance - 100);
+                showCardPopup(randomCard.image);
+            } else {
+                alert("Not enough points!");
+            }
+        }
+
+        function updateBalance(newBalance) {
+            balance = newBalance;
+            localStorage.setItem('balance', balance);
+            balanceDisplay.textContent = balance;
+            checkBalance();
+        }
+
+        function checkBalance() {
+            addCardButton.disabled = balance < 100;
+        }
+
+        function showCardPopup(imageSrc) {
+            const popup = document.getElementById("cardPopup");
+            const popupImage = document.getElementById("popupImage");
+            popupImage.src = imageSrc;
+            popup.classList.add("show-popup");
+
+            setTimeout(() => {
+                popup.classList.remove("show-popup");
+                addCardButton.disabled = balance < 100 ? true : false; // Re-enable button only if the balance allows
+            }, 3000); // Match animation duration
+        }
+
+        document.getElementById('addCardButton').addEventListener('click', addRandomCardToInventory);
+        getCreditsButton.addEventListener('click', () => updateBalance(balance + 100));
+        checkBalance();
+    </script>
+</body>
+</html>

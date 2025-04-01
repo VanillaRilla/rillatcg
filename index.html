@@ -7,110 +7,168 @@
     <link rel="stylesheet" href="style.css">
     <style>
 
+        body {
+            background-color: #121212; /* Dark background */
+            color: #e0e0e0; /* Light text color */
+            padding-bottom: 120px;
+            .inventory
+
+        {
+            text-align: center;
+        }
         .card-gallery {
             display: grid;
-            grid-template-columns: repeat(10, 1fr); /* 10 cards per row */
+            grid-template-columns: repeat(10, 1fr);
             gap: 10px;
             justify-content: center;
             padding: 10px;
         }
 
         .card-container {
-            width: 120px; /* Adjust width */
-            height: 180px; /* Adjust height */
+            width: 120px;
+            height: 220px; /* Allows space for the label */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
             position: relative;
         }
 
-            .card-container img {
+        .card-container img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+        }
+
+        .card-container.locked img.front {
+            content: url('imgs/cardlocked.png');
+        }
+
+        .card-label {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+        .image-wrapper {
+            width: 100%;
+            height: 180px;
+            position: relative; /* Needed for stacking */
+        }
+            .image-wrapper img {
                 width: 100%;
                 height: 100%;
-                object-fit: contain; /* Ensures the full image is visible */
-                filter: grayscale(100%);
-                transition: filter 0.3s ease-in-out, opacity 0.3s ease-in-out;
+                object-fit: contain;
+                position: absolute;
+                top: 0;
+                left: 0;
+                transition: opacity 0.3s ease-in-out;
             }
 
-            .card-container.unlocked img {
-                filter: grayscale(0%);
-            }
+        .front {
+            z-index: 1; /* Normal image */
+        }
 
-                .card-container.unlocked img:hover {
-                    opacity: 0;
-                }}
+        .back {
+            z-index: 2; /* Hover image */
+            opacity: 0;
+        }
+
+        .card-container:hover .back {
+            opacity: 1;
+        }
+
+        .card-label {
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+            position: relative;
+            z-index: 3;
+        }
+
     </style>
 </head>
 <body>
     <header>
-        <h1>Rillas Collectible Cards</h1>
-        <a href="inventory.html"><button id="getCreditsButton" class="button">INVENTORY</button></a>
+        <a href="index.html"><button class="button">GALLERY</button></a>
+        <a href="shop.html"><button class="button">SHOP</button></a>
+        <a href="inventory.html"><button class="button">INVENTORY</button></a>
+        <h1>GALLERY</h1>
+
     </header>
 
-    <section class="card-gallery" id="cardGallery">
-        <!-- Cards will be dynamically inserted here by JavaScript -->
-    </section>
+    <section class="card-gallery" id="cardGallery"></section>
 
     <script src="card.js"></script>
     <script>
         const cardData = [
-            { name: "Fred", image: "imgs/card1.png", hoverImage: "imgs/card1back.jpg", rarity: "COMMON" },
-            { name: "Aron", image: "imgs/card2.png", hoverImage: "imgs/card2back.jpg", rarity: "UNCOMMON" },
-            { name: "Claudia", image: "imgs/card3.png", hoverImage: "imgs/card3back.jpg", rarity: "RARE" },
-            { name: "Bob", image: "imgs/card4.png", hoverImage: "imgs/card4back.jpg", rarity: "EPIC" },
-            { name: "Felix", image: "imgs/card5.png", hoverImage: "imgs/card5back.jpg", rarity: "LEGENDARY" },
-            { name: "Cloud", image: "imgs/card6.png", hoverImage: "imgs/card1back.jpg", rarity: "COMMON" }
+            { name: "Fred", image: "imgs/card1.png", hoverImage: "imgs/card1back.png", rarity: "COMMON" },
+            { name: "Aron", image: "imgs/card2.png", hoverImage: "imgs/card2back.png", rarity: "UNCOMMON" },
+            { name: "Claudia", image: "imgs/card3.png", hoverImage: "imgs/card3back.png", rarity: "RARE" },
+            { name: "Bob", image: "imgs/card4.png", hoverImage: "imgs/card4back.png", rarity: "EPIC" },
+            { name: "Felix", image: "imgs/card5.png", hoverImage: "imgs/card5back.png", rarity: "LEGENDARY" },
+            { name: "Cloud", image: "imgs/card6.png", hoverImage: "imgs/card6back.png", rarity: "COMMON" }
         ];
 
         function displayCards() {
             const cardGallery = document.getElementById('cardGallery');
             let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
-            let inventoryImages = inventory.map(card => card.image); 
+            let inventoryImages = inventory.map(card => card.image);
 
             cardData.forEach(cardInfo => {
                 const cardContainer = document.createElement('div');
                 cardContainer.classList.add('card-container');
 
-                if (inventoryImages.includes(cardInfo.image)) {
-                    cardContainer.classList.add('unlocked');
+                const isUnlocked = inventoryImages.includes(cardInfo.image);
+
+                const frontImage = document.createElement('img');
+                frontImage.src = isUnlocked ? cardInfo.image : 'imgs/cardlocked.png';
+                frontImage.classList.add('front');
+                frontImage.alt = isUnlocked ? cardInfo.name : "???";
+
+                if (!isUnlocked) {
+                    cardContainer.classList.add('locked');
                 }
 
-                
-                const frontImage = document.createElement('img');
-                frontImage.src = cardInfo.image;
-                frontImage.classList.add('front');
-                frontImage.alt = cardInfo.name; 
-
-                
                 const backImage = document.createElement('img');
                 backImage.src = cardInfo.hoverImage;
                 backImage.classList.add('back');
                 backImage.style.position = "absolute";
                 backImage.style.top = "0";
                 backImage.style.left = "0";
-                backImage.style.opacity = "0"; 
-                backImage.style.transition = "opacity 0.3s ease-in-out"; 
+                backImage.style.opacity = "0";
+                backImage.style.transition = "opacity 0.3s ease-in-out";
 
-                if (inventoryImages.includes(cardInfo.image)) {
+                if (isUnlocked) {
                     cardContainer.addEventListener("mouseover", () => {
-                        backImage.style.opacity = "1"; 
+                        backImage.style.opacity = "1";
                     });
-
                     cardContainer.addEventListener("mouseout", () => {
-                        backImage.style.opacity = "0"; 
+                        backImage.style.opacity = "0";
                     });
                 }
 
                 const cardLabel = document.createElement("p");
-                cardLabel.textContent = cardInfo.name;
-                cardLabel.style.textAlign = "center";
-                cardLabel.style.fontWeight = "bold";
-                cardLabel.style.marginTop = "5px";
+                cardLabel.textContent = isUnlocked ? cardInfo.name : "???";
+                cardLabel.classList.add('card-label');
 
                 cardContainer.appendChild(frontImage);
-                cardContainer.appendChild(backImage);
+                if (isUnlocked) {
+                    cardContainer.appendChild(backImage);
+                }
                 cardContainer.appendChild(cardLabel);
                 cardGallery.appendChild(cardContainer);
             });
         }
-
 
         document.addEventListener("DOMContentLoaded", displayCards);
     </script>
