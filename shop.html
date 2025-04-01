@@ -11,33 +11,36 @@
             color: #e0e0e0; /* Light text color */
             padding-bottom: 120px;
             .inventory
-
-        {
+        
             text-align: center;
         }
 
         #couponSection {
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
+            bottom: 80px;
+            right: 20px;
             background-color: #f0f0f0;
             border-radius: 10px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            width: 80%;
-            max-width: 400px;
+            padding: 10px;
+            width: 250px;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        #couponSection.show {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
         }
 
         #couponCode {
-            width: 90%;
-            max-width: 300px;
-            padding: 8px;
+            width: 80%;
+            padding: 5px;
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 10px;
@@ -46,9 +49,28 @@
 
         #redeemCoupon {
             width: 100%;
-            max-width: 150px;
             padding: 8px;
             font-size: 14px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #redeemButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            
         }
 
         .button {
@@ -70,14 +92,14 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            width: 450px;
-            height: 675px;
+            width: 360px;
+            height: 450px;
             background: transparent;
             display: flex;
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transition: transform 0.5s ease, opacity 0.5s ease;
+            transition: transform 0.2s ease, opacity 0.2s ease;
             z-index: 1000;
         }
 
@@ -100,17 +122,18 @@
         <h1>SHOP</h1>
         <p>Balance: <span id="balance">0</span> points</p>
         <button id="addCardButton" class="button">Buy a random card (100 points)</button>
+        <button id="buyTenCardsButton" class="button">Buy 10 Cards (1000 points)</button>
         <button id="getCreditsButton" class="button">Get 100 Credits</button>
     </header>
 
     <div id="cardPopup" class="card-popup">
         <img id="popupImage" src="" alt="New Card">
     </div>
-
+    <button id="redeemButton">HAVE A CODE?</button>
     <section id="couponSection">
-        <p style="color: black; font-weight: bold;font-size: 36px;">Redeem a CODE:</p>
+        <p style="color: black; font-weight: bold;font-size: 24px;">Redeem a CODE:</p>
         <input type="text" id="couponCode" placeholder="Enter code here">
-        <button id="redeemCoupon">Redeem</button>
+        <button id="redeemCoupon">REDEEM</button>
         <p id="couponMessage"></p>
     </section>
 
@@ -120,13 +143,27 @@
         const balanceDisplay = document.getElementById('balance');
 
         let balance = parseInt(localStorage.getItem('balance')) || 0;
+        let isBuying = false;
 
         const coupons = {
             "FREE100": 100,
             "BONUS50": 50,
-            "LUCKY200": 200
+            "LUCKY2000": 2000
         };
-
+        document.getElementById('redeemButton').addEventListener('click', function () {
+            const couponSection = document.getElementById('couponSection');
+            if (couponSection.classList.contains('show')) {
+                couponSection.classList.remove('show');
+                setTimeout(() => {
+                    couponSection.style.display = 'none';
+                }, 300);
+            } else {
+                couponSection.style.display = 'flex';
+                setTimeout(() => {
+                    couponSection.classList.add('show');
+                }, 10);
+            }
+        });
         let redeemedCoupons = JSON.parse(localStorage.getItem('redeemedCoupons')) || [];
 
         document.getElementById('redeemCoupon').addEventListener('click', () => {
@@ -149,7 +186,7 @@
                 message.style.color = "red";
             }
         });
-
+        
         balanceDisplay.textContent = balance;
 
         const cardData = [
@@ -189,27 +226,74 @@
         }
 
         function addRandomCardToInventory() {
-            if (balance >= 100) {
-                addCardButton.disabled = true; // Prevent spam clicks
+            if (balance >= 100 && !isBuying) {
+                isBuying = true;
+                addCardButton.disabled = true;
 
-                let inventory = JSON.parse(localStorage.getItem('inventory')) || []; // Load inventory
-                const randomCard = getRandomCard();
-
-                let existingCard = inventory.find(card => card.image === randomCard.image);
-                if (existingCard) {
-                    existingCard.count += 1;
-                } else {
-                    inventory.push({ ...randomCard, count: 1 });
-                }
-
-                localStorage.setItem('inventory', JSON.stringify(inventory)); // Save inventory
-                updateBalance(balance - 100);
-                showCardPopup(randomCard.image);
+                setTimeout(() => {
+                    let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+                    const randomCard = getRandomCard();
+                    let existingCard = inventory.find(card => card.image === randomCard.image);
+                    if (existingCard) {
+                        existingCard.count += 1;
+                    } else {
+                        inventory.push({ ...randomCard, count: 1 });
+                    }
+                    localStorage.setItem('inventory', JSON.stringify(inventory));
+                    updateBalance(balance - 100);
+                    showCardPopup(randomCard.image);
+                    setTimeout(() => {
+                        addCardButton.disabled = balance < 100;
+                        isBuying = false;
+                    }, 3000);
+                }, 500);
             } else {
-                alert("Not enough points!");
+                alert("You are already buying a card! Wait till the animation is done!");
             }
         }
+        document.getElementById("buyTenCardsButton").addEventListener("click", function () {
+            if (balance >= 1000 && !isBuying) {
+                isBuying = true;
+                buyTenCardsButton.disabled = true;
 
+                updateBalance(balance - 1000);
+                let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+                let drawnCards = [];
+
+                // Get 10 random cards and add them to the inventory
+                for (let i = 0; i < 10; i++) {
+                    const randomCard = getRandomCard();
+                    let existingCard = inventory.find(card => card.image === randomCard.image);
+                    if (existingCard) {
+                        existingCard.count += 1;
+                    } else {
+                        inventory.push({ ...randomCard, count: 1 });
+                    }
+                    drawnCards.push(randomCard.image);
+                }
+                localStorage.setItem("inventory", JSON.stringify(inventory));
+
+                // Function to show animations one after another
+                function revealNextCard(index) {
+                    if (index < drawnCards.length) {
+                        setTimeout(() => {
+                            showCardPopup(drawnCards[index]); // Show animation for each card
+                            revealNextCard(index + 1);
+                        }, 2500); // 2s delay for each animation
+                    } else {
+                        setTimeout(() => {
+                            buyTenCardsButton.disabled = balance < 1000;
+                            isBuying = false;
+                        }, 2000);
+                    }
+                }
+
+                // Start the animation sequence
+                revealNextCard(0);
+            } else {
+                alert("Not enough balance or a purchase is already in progress!");
+            }
+        });
         function updateBalance(newBalance) {
             balance = newBalance;
             localStorage.setItem('balance', balance);
@@ -230,7 +314,7 @@
             setTimeout(() => {
                 popup.classList.remove("show-popup");
                 addCardButton.disabled = balance < 100 ? true : false; // Re-enable button only if the balance allows
-            }, 3000); // Match animation duration
+            }, 2000); // Match animation duration
         }
 
         document.getElementById('addCardButton').addEventListener('click', addRandomCardToInventory);

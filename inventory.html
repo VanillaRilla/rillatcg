@@ -25,41 +25,6 @@
             text-align: center;
         }
 
-        #couponSection {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            width: 80%;
-            max-width: 400px;
-        }
-
-        #couponCode {
-            width: 90%;
-            max-width: 300px;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        #redeemCoupon {
-            width: 100%;
-            max-width: 150px;
-            padding: 8px;
-            font-size: 14px;
-        }
-
         .inventory ul {
             display: flex;
             flex-wrap: wrap;
@@ -102,39 +67,6 @@
             background-color: red;
             color: white;
         }
-
-        #getCreditsButton {
-            background-color: green;
-            color: white;
-        }
-
-        .card-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            width: 300px;
-            height: 450px;
-            background: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 10px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            transition: transform 0.5s ease, opacity 0.5s ease;
-            z-index: 1000;
-        }
-
-            .card-popup img {
-                width: 100%;
-                height: auto;
-            }
-
-        .show-popup {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
     </style>
 </head>
 <body>
@@ -144,10 +76,6 @@
         <a href="inventory.html"><button class="button">INVENTORY</button></a>
         <h1>Inventory</h1>
     </header>
-
-    <div id="cardPopup" class="card-popup">
-        <img id="popupImage" src="" alt="New Card">
-    </div>
 
     <section class="inventory">
         <h2>Your Cards</h2>
@@ -163,6 +91,7 @@
         const inventoryList = document.getElementById('inventoryList');
         const getCreditsButton = document.getElementById('getCreditsButton');
         const clearInventoryButton = document.getElementById('clearInventoryButton');
+        
         let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
 
@@ -190,16 +119,28 @@
         function displayInventory() {
             inventoryList.innerHTML = '';
 
+            const rarityColors = {
+                common: "gray",
+                uncommon: "green",
+                rare: "DeepSkyBlue",
+                epic: "purple",
+                legendary: "gold"
+            };
+
             inventory.sort((a, b) => rarityOrder.indexOf(b.rarity) - rarityOrder.indexOf(a.rarity));
 
             inventory.forEach(card => {
                 const listItem = document.createElement('li');
                 listItem.style.display = "flex";
+                listItem.dataset.name = card.name.toLowerCase();
                 listItem.style.flexDirection = "column";
                 listItem.style.alignItems = "center";
+                const rarityColor = rarityColors[card.rarity] || "white"; // Default to white if not found
                 listItem.innerHTML = `
-            <img src="${card.image}" alt="${card.name}" class="card-image">
+                
+                <img src="${card.image}" alt="${card.name}" class="card-image">
             <div style="text-align: center; margin-top: 5px;">
+                <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p> 
                 <p style="font-weight: bold; margin: 0;">${card.name}</p>
                 <p style="font-size: 20px; margin: 0;">x${card.count}</p>
             </div>
@@ -215,10 +156,9 @@
             inventoryItems.forEach(item => {
                 const img = item.querySelector("img");
                 const cardName = img ? img.alt.toLowerCase() : "";
+                const rarityText = item.querySelector(".rarity") ? item.querySelector(".rarity").textContent.toLowerCase() : "";
 
-                if (searchInput === "") {
-                    item.style.display = "";
-                } else if (cardName.includes(searchInput)) {
+                if (searchInput === "" || cardName.includes(searchInput) || rarityText.includes(searchInput)) {
                     item.style.display = "";
                 } else {
                     item.style.display = "none";
