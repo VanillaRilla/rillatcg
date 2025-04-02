@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch Auth Redirect</title>
+    <script>
+        function handleAuth() {
+            const hash = window.location.hash;
+            if (hash.includes("access_token")) {
+                const params = new URLSearchParams(hash.substring(1));
+                const token = params.get("access_token");
+                
+                if (token) {
+                    localStorage.setItem("twitchToken", token);
+                    window.location.href = "index.html"; // Redirect to main page
+                }
+            }
+        }
+        window.onload = handleAuth;
+    </script>
+</head>
+<body>
+    <h1>Logging in...</h1>
+</body>
+</html>

@@ -260,7 +260,7 @@
                 let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
                 let drawnCards = [];
 
-                // Get 10 random cards and add them to the inventory
+                
                 for (let i = 0; i < 10; i++) {
                     const randomCard = getRandomCard();
                     let existingCard = inventory.find(card => card.image === randomCard.image);
@@ -273,13 +273,13 @@
                 }
                 localStorage.setItem("inventory", JSON.stringify(inventory));
 
-                // Function to show animations one after another
+                
                 function revealNextCard(index) {
                     if (index < drawnCards.length) {
                         setTimeout(() => {
-                            showCardPopup(drawnCards[index]); // Show animation for each card
+                            showCardPopup(drawnCards[index]); 
                             revealNextCard(index + 1);
-                        }, 2500); // 2s delay for each animation
+                        }, 2500); 
                     } else {
                         setTimeout(() => {
                             buyTenCardsButton.disabled = balance < 1000;
@@ -288,7 +288,7 @@
                     }
                 }
 
-                // Start the animation sequence
+               
                 revealNextCard(0);
             } else {
                 alert("Not enough balance or a purchase is already in progress!");
@@ -313,8 +313,8 @@
 
             setTimeout(() => {
                 popup.classList.remove("show-popup");
-                addCardButton.disabled = balance < 100 ? true : false; // Re-enable button only if the balance allows
-            }, 2000); // Match animation duration
+                addCardButton.disabled = balance < 100 ? true : false; 
+            }, 2000); 
         }
 
         document.getElementById('addCardButton').addEventListener('click', addRandomCardToInventory);

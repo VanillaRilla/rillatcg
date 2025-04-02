@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="style.css">
     <style>
         body {
-            background-color: #121212; /* Dark background */
-            color: #e0e0e0; /* Light text color */
+            background-color: #121212; 
+            color: #e0e0e0; 
             padding-bottom: 120px;
             .inventory {
             text-align: center;
@@ -111,9 +111,9 @@
         const rarityOrder = ["legendary", "epic", "rare", "uncommon", "common"];
 
         function clearInventory() {
-            localStorage.removeItem('inventory');  // Deletes stored inventory
-            alert("Inventory cleared!");          // Confirmation message
-            location.reload();                     // Refresh page to update
+            localStorage.removeItem('inventory');  
+            alert("Inventory cleared!");          
+            location.reload();                     
         }
 
         function displayInventory() {
@@ -135,7 +135,7 @@
                 listItem.dataset.name = card.name.toLowerCase();
                 listItem.style.flexDirection = "column";
                 listItem.style.alignItems = "center";
-                const rarityColor = rarityColors[card.rarity] || "white"; // Default to white if not found
+                const rarityColor = rarityColors[card.rarity] || "white"; 
                 listItem.innerHTML = `
                 
                 <img src="${card.image}" alt="${card.name}" class="card-image">

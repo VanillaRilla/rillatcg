@@ -1,5 +1,5 @@
-﻿let uniqueImages = new Map(); // Stores unique image paths with IDs and names
-let nextID = 1; // Counter for unique IDs
+﻿let uniqueImages = new Map(); 
+let nextID = 1; 
 
 const cardNames = {
     "imgs/card1.png": "Fred",
@@ -15,9 +15,9 @@ class Card {
         this.image = image;
         this.hoverImage = hoverImage;
         this.rarity = rarity;
-        this.name = cardNames[image] || "Unknown Card"; // Assign name based on image
+        this.name = cardNames[image] || "Unknown Card"; 
 
-        // Assign unique ID if not already stored
+        
         if (!uniqueImages.has(image)) {
             uniqueImages.set(image, nextID++);
         }
