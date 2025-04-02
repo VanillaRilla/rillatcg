@@ -110,6 +110,7 @@
         <div class="login-container">
             <button class="button" id="loginButton">Login with Twitch</button>
             <span id="userInfo"></span>
+        <button class="button" id="logoutButton">Log out</button>
         </div>
         <h1>GALLERY</h1>
 
@@ -165,6 +166,20 @@
                     }
                 });
         }
+        const user = JSON.parse(localStorage.getItem("twitchUser"));
+
+        if (user) {
+            document.getElementById("welcomeMessage").textContent = `Welcome, ${user.display_name}!`;
+        } else {
+            document.getElementById("welcomeMessage").textContent = "Not logged in";
+        }
+
+        // Log out functionality (clear local storage)
+        document.getElementById("logoutButton").addEventListener("click", function () {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("twitchUser");
+            window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect to the home page
+        });
 
         function displayCards() {
             const cardGallery = document.getElementById('cardGallery');
