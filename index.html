@@ -16,6 +16,11 @@
         {
             text-align: center;
         }
+
+        #welcomeMessage {
+            font-size: 24px;
+            font-weight: bold;
+        }
         .card-gallery {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
@@ -110,13 +115,13 @@
         <div class="login-container">
             <button class="button" id="loginButton">Login with Twitch</button>
             <span id="userInfo"></span>
-        <button class="button" id="logoutButton">Log out</button>
+            <button class="button" id="logoutButton">Log out</button>
         </div>
         <h1>GALLERY</h1>
 
     </header>
     <div id="loginStatus">Not logged in</div>
-    <div id="twitchUsername" style="display:none;">Welcome, <span id="twitchName"></span></div>
+    <div id="welcomeMessage">Loading...</div>
     <section class="card-gallery" id="cardGallery"></section>
 
     <script src="Card.js"></script>
@@ -124,6 +129,13 @@
 
         const clientId = "sh11hwnsgw6eoeen8h17jpc99pn2wc";
         const redirectUri = "https://vanillarilla.github.io/rillatcg/auth.html";
+        const user = JSON.parse(localStorage.getItem("twitchUser"));
+
+        if (user) {
+            document.getElementById("welcomeMessage").textContent = `Welcome, ${user.display_name}!`;
+        } else {
+            document.getElementById("welcomeMessage").textContent = "Not logged in";
+        }
 
         document.getElementById("loginButton").addEventListener("click", () => {
             const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=user:read:email`;
@@ -166,13 +178,7 @@
                     }
                 });
         }
-        const user = JSON.parse(localStorage.getItem("twitchUser"));
 
-        if (user) {
-            document.getElementById("welcomeMessage").textContent = `Welcome, ${user.display_name}!`;
-        } else {
-            document.getElementById("welcomeMessage").textContent = "Not logged in";
-        }
 
         // Log out functionality (clear local storage)
         document.getElementById("logoutButton").addEventListener("click", function () {
