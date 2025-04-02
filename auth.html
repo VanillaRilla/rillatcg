@@ -3,24 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Auth Redirect</title>
-    <script>
-        function handleAuth() {
-            const hash = window.location.hash;
-            if (hash.includes("access_token")) {
-                const params = new URLSearchParams(hash.substring(1));
-                const token = params.get("access_token");
-                
-                if (token) {
-                    localStorage.setItem("twitchToken", token);
-                    window.location.href = "index.html"; // Redirect to main page
-                }
-            }
+    <title>Twitch Login</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
         }
-        window.onload = handleAuth;
-    </script>
+        #loadingText {
+            font-size: 24px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Logging in...</h1>
+    <div id="loadingText">Logging in...</div>
+
+    <script>
+        const clientId = "sh11hwnsgw6eoeen8h17jpc99pn2wc";
+        const redirectUri = "https://vanillarilla.github.io/rillatcg/auth.html";  
+
+       
+        function getTokenFromUrl() {
+            const hash = window.location.hash;
+            if (hash.includes("access_token")) {
+                const params = new URLSearchParams(hash.substring(1)); // Extract token from URL
+                return params.get("access_token");
+            }
+            return null;
+        }
+
+        const token = getTokenFromUrl();
+        if (token) {
+            // Fetch user data from Twitch
+            fetch("https://api.twitch.tv/helix/users", {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Client-Id": clientId
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.data.length > 0) {
+                    const user = data.data[0];
+                    localStorage.setItem("twitchUser", JSON.stringify(user)); // Store user info in localStorage
+                    // Redirect to the gallery page (or another page)
+                    window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Change this to your desired redirect URL
+                } else {
+                    alert("Failed to retrieve user data.");
+                    window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect back if something fails
+                }
+            })
+            .catch(err => {
+                console.error("Error fetching user data:", err);
+                alert("An error occurred. Please try again.");
+                window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect back if error
+            });
+        } else {
+            alert("No access token found.");
+            window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect if no token
+        }
+    </script>
 </body>
 </html>
