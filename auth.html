@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,6 +15,7 @@
             margin: 0;
             font-family: Arial, sans-serif;
         }
+
         #loadingText {
             font-size: 24px;
         }
@@ -25,9 +26,9 @@
 
     <script>
         const clientId = "sh11hwnsgw6eoeen8h17jpc99pn2wc";
-        const redirectUri = "https://vanillarilla.github.io/rillatcg/auth.html";  
+        const redirectUri = "https://vanillarilla.github.io/rillatcg/auth.html";
 
-       
+        // Get the token from the URL
         function getTokenFromUrl() {
             const hash = window.location.hash;
             if (hash.includes("access_token")) {
@@ -37,8 +38,10 @@
             return null;
         }
 
+        // Get the token and store it
         const token = getTokenFromUrl();
         if (token) {
+            localStorage.setItem("access_token", token); // Store token in localStorage
             // Fetch user data from Twitch
             fetch("https://api.twitch.tv/helix/users", {
                 headers: {
@@ -46,23 +49,23 @@
                     "Client-Id": clientId
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.data.length > 0) {
-                    const user = data.data[0];
-                    localStorage.setItem("twitchUser", JSON.stringify(user)); // Store user info in localStorage
-                    // Redirect to the gallery page (or another page)
-                    window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Change this to your desired redirect URL
-                } else {
-                    alert("Failed to retrieve user data.");
-                    window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect back if something fails
-                }
-            })
-            .catch(err => {
-                console.error("Error fetching user data:", err);
-                alert("An error occurred. Please try again.");
-                window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect back if error
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.data.length > 0) {
+                        const user = data.data[0];
+                        localStorage.setItem("twitchUser", JSON.stringify(user)); // Store user info in localStorage
+                        // Redirect to the gallery page (or another page)
+                        window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Change this to your desired redirect URL
+                    } else {
+                        alert("Failed to retrieve user data.");
+                        window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect back if something fails
+                    }
+                })
+                .catch(err => {
+                    console.error("Error fetching user data:", err);
+                    alert("An error occurred. Please try again.");
+                    window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect back if error
+                });
         } else {
             alert("No access token found.");
             window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect if no token
