@@ -125,7 +125,7 @@
 
         document.getElementById("loginButton").addEventListener("click", () => {
             const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=user:read:email`;
-            window.location.href = authUrl;
+            window.location.href = authUrl;  // This redirects to Twitch for login
         });
 
         const cardData = [

@@ -41,31 +41,25 @@
         // Get the token and store it
         const token = getTokenFromUrl();
         if (token) {
-            localStorage.setItem("access_token", token); // Store token in localStorage
-            // Fetch user data from Twitch
-            fetch("https://api.twitch.tv/helix/users", {
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Client-Id": clientId
+            localStorage.setItem("access_token", token);  // Store the token
+            window.location.href = "index.html";  // Redirect to the main page after login
+        } else {
+            console.log("No access token found");
+        }
+        .then(response => response.json())
+            .then(data => {
+                if (data.data.length > 0) {
+                    const user = data.data[0];
+                    localStorage.setItem("twitchUser", JSON.stringify(user));  // Store user info
+                    window.location.href = "index.html";  // Redirect to gallery or main page
+                } else {
+                    alert("Failed to retrieve user data.");
                 }
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.data.length > 0) {
-                        const user = data.data[0];
-                        localStorage.setItem("twitchUser", JSON.stringify(user)); // Store user info in localStorage
-                        // Redirect to the gallery page (or another page)
-                        window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Change this to your desired redirect URL
-                    } else {
-                        alert("Failed to retrieve user data.");
-                        window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect back if something fails
-                    }
-                })
-                .catch(err => {
-                    console.error("Error fetching user data:", err);
-                    alert("An error occurred. Please try again.");
-                    window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect back if error
-                });
+            .catch(err => {
+                console.error("Error fetching user data:", err);
+                alert("An error occurred. Please try again.");
+            });
         } else {
             alert("No access token found.");
             window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect if no token
