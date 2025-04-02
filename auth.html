@@ -42,7 +42,7 @@
         const token = getTokenFromUrl();
         if (token) {
             localStorage.setItem("access_token", token);  // Store the token
-            window.location.href = "index.html";  // Redirect to the main page after login
+            window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect to the main page after login
         } else {
             console.log("No access token found");
         }
@@ -51,7 +51,7 @@
                 if (data.data.length > 0) {
                     const user = data.data[0];
                     localStorage.setItem("twitchUser", JSON.stringify(user));  // Store user info
-                    window.location.href = "index.html";  // Redirect to gallery or main page
+                    window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect to gallery or main page
                 } else {
                     alert("Failed to retrieve user data.");
                 }
