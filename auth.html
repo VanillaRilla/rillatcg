@@ -28,7 +28,7 @@
         const clientId = "sh11hwnsgw6eoeen8h17jpc99pn2wc";
         const redirectUri = "https://vanillarilla.github.io/rillatcg/auth.html";
 
-        // Get the token from the URL
+        // Check if the token is already in the URL hash
         function getTokenFromUrl() {
             const hash = window.location.hash;
             if (hash.includes("access_token")) {
@@ -38,31 +38,40 @@
             return null;
         }
 
-        // Get the token and store it
+        // Trigger the OAuth flow if not already logged in
+        function initiateLogin() {
+            const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=user:read:email`;
+            window.location.href = authUrl; // Redirect user to Twitch OAuth page
+        }
+
+        // Check if the token is present in the URL
         const token = getTokenFromUrl();
         if (token) {
-            localStorage.setItem("access_token", token);  // Store the token
-            window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect to the main page after login
-        } else {
-            console.log("No access token found");
-        }
-        .then(response => response.json())
-            .then(data => {
-                if (data.data.length > 0) {
-                    const user = data.data[0];
-                    localStorage.setItem("twitchUser", JSON.stringify(user));  // Store user info
-                    window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect to gallery or main page
-                } else {
-                    alert("Failed to retrieve user data.");
+            localStorage.setItem("access_token", token);  // Store the token in localStorage
+            // Now fetch user data from Twitch API
+            fetch("https://api.twitch.tv/helix/users", {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Client-Id": clientId
                 }
             })
-            .catch(err => {
-                console.error("Error fetching user data:", err);
-                alert("An error occurred. Please try again.");
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.data.length > 0) {
+                        const user = data.data[0];
+                        localStorage.setItem("twitchUser", JSON.stringify(user));  // Store user info
+                        window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect to gallery or main page
+                    } else {
+                        alert("Failed to retrieve user data.");
+                    }
+                })
+                .catch(err => {
+                    console.error("Error fetching user data:", err);
+                    alert("An error occurred. Please try again.");
+                });
         } else {
-            alert("No access token found.");
-            window.location.href = "https://vanillarilla.github.io/rillatcg/index.html";  // Redirect if no token
+            // No token found, initiate the login process
+            initiateLogin();
         }
     </script>
 </body>
