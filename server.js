@@ -1,7 +1,7 @@
 const express = require('express');
 const firebaseAdmin = require('firebase-admin');
 const app = express();
-const serviceAccount = require('C:\Users\mhert\OneDrive\Desktop\Key'); // Path to your downloaded JSON file
+const serviceAccount = require('C:/Users/mhert/OneDrive/Desktop/Key/serviceAccountKey.json'); // Path to your downloaded JSON file
 
 // Initialize Firebase Admin
 firebaseAdmin.initializeApp({
