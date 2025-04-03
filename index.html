@@ -193,12 +193,7 @@
         }
 
 
-        // Log out functionality (clear local storage)
-        document.getElementById("logoutButton").addEventListener("click", function () {
-            localStorage.removeItem("access_token");
-            localStorage.removeItem("twitchUser");
-            window.location.href = "http://localhost:3000/api/clear-inventory";  // Redirect to the home page
-        });
+       
 
         function displayCards() {
             const cardGallery = document.getElementById('cardGallery');
@@ -264,10 +259,103 @@
                     console.error('Error fetching inventory:', error);
                     document.getElementById('welcomeMessage').textContent = "Failed to load inventory!";
                 });
-        }*/
+        }
 
         document.addEventListener("DOMContentLoaded", displayCards);
-        
+        // Firebase configuration (replace with your Firebase config)
+        const firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "your-auth-domain",
+            projectId: "your-project-id",
+            storageBucket: "your-storage-bucket",
+            messagingSenderId: "your-sender-id",
+            appId: "your-app-id"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Elements
+        const userInfo = document.getElementById('userInfo');
+        const userCredits = document.getElementById('userCredits');
+        const cardGallery = document.getElementById('cardGallery');
+        const twitchLoginBtn = document.getElementById('twitchLoginBtn');
+
+        // Function to display user info (credits and inventory)
+        function displayUserInfo(userId) {
+            db.collection('users').doc(userId).get().then(doc => {
+                if (doc.exists) {
+                    const user = doc.data();
+                    userInfo.innerText = `Welcome, ${user.username}`;
+                    userCredits.innerText = `Credits: ${user.credits}`;
+
+                    // Display inventory cards
+                    displayInventory(user.inventory);
+                } else {
+                    userInfo.innerText = 'User not found';
+                }
+            }).catch(err => {
+                console.error('Error fetching user data:', err);
+            });
+        }
+
+        // Function to display cards in inventory
+        function displayInventory(inventory) {
+            cardGallery.innerHTML = '';
+            inventory.forEach(cardId => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
+                cardElement.innerText = `Card ID: ${cardId}`;
+                cardGallery.appendChild(cardElement);
+            });
+        }
+
+        // Function to handle Twitch login
+        function twitchLogin() {
+            const provider = new firebase.auth.OAuthProvider('twitch.tv');
+            auth.signInWithPopup(provider).then(result => {
+                const user = result.user;
+                const userId = user.uid;
+
+                // Check if the user exists in Firebase
+                db.collection('users').doc(userId).get().then(doc => {
+                    if (!doc.exists) {
+                        // User doesn't exist, create a new user entry
+                        db.collection('users').doc(userId).set({
+                            username: user.displayName,
+                            credits: 0,
+                            inventory: [],
+                        }).then(() => {
+                            console.log('User added to Firebase');
+                            displayUserInfo(userId);
+                        }).catch(err => {
+                            console.error('Error creating user:', err);
+                        });
+                    } else {
+                        // User exists, display user info
+                        displayUserInfo(userId);
+                    }
+                }).catch(err => {
+                    console.error('Error checking user:', err);
+                });
+            }).catch(error => {
+                console.error('Twitch login error:', error);
+            });
+        }
+
+        // Button event listener for logging in with Twitch
+        twitchLoginBtn.addEventListener('click', twitchLogin);
+
+        // On page load, check if the user is logged in
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                displayUserInfo(user.uid);
+            } else {
+                userInfo.innerText = 'Please log in with Twitch!';
+            }
+        });
     </script>
 </body>
 </html>
