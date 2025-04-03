@@ -187,8 +187,6 @@
                 }
             });
 
-            let redeemedCoupons = JSON.parse(localStorage.getItem('redeemedCoupons')) || [];
-
             document.getElementById('redeemCoupon').addEventListener('click', () => {
                 const code = document.getElementById('couponCode').value.trim().toUpperCase();
                 const message = document.getElementById('couponMessage');
