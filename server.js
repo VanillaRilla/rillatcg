@@ -9,8 +9,8 @@ app.use(express.json());
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',  // Replace with your MySQL username
-    password: '',  // Replace with your MySQL password
-    database: 'tcg_shop'  // Replace with your database name
+    password: 'm.Hertwig97.1.',  // Replace with your MySQL password
+    database: 'RillaTCG'  // Replace with your database name
 });
 
 // Connect to MySQL
