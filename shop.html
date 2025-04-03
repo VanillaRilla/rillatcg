@@ -156,20 +156,7 @@
                 "BONUS50": 50,
                 "LUCKY2000": 2000
             };
-            document.getElementById('redeemButton').addEventListener('click', function () {
-                const couponSection = document.getElementById('couponSection');
-                if (couponSection.classList.contains('show')) {
-                    couponSection.classList.remove('show');
-                    setTimeout(() => {
-                        couponSection.style.display = 'none';
-                    }, 300);
-                } else {
-                    couponSection.style.display = 'flex';
-                    setTimeout(() => {
-                        couponSection.classList.add('show');
-                    }, 10);
-                }
-            });
+            
             let redeemedCoupons = JSON.parse(localStorage.getItem('redeemedCoupons')) || [];
 
             document.getElementById('redeemButton').addEventListener('click', function () {
@@ -186,6 +173,8 @@
                     }, 10);
                 }
             });
+
+            document.getElementById('redeemCoupon').addEventListener('click', () => {
                 const code = document.getElementById('couponCode').value.trim().toUpperCase();
                 const message = document.getElementById('couponMessage');
 
