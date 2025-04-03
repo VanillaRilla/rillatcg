@@ -188,8 +188,18 @@
 
         function displayCards() {
             const cardGallery = document.getElementById('cardGallery');
+            const user = JSON.parse(localStorage.getItem('twitchUser'));
             let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
-            let inventoryImages = inventory.map(card => card.image);
+            
+
+            if (!user) {
+                document.getElementById('welcomeMessage').textContent = "Please log in!";
+                return;
+            }
+            fetch(`http://localhost:3000/api/inventory/${user.id}`)
+                .then(response => response.json())
+                .then(inventory => {
+                    const inventoryImages = inventory.map(card => card.image);
 
             cardData.forEach(cardInfo => {
                 const cardContainer = document.createElement('div');
@@ -235,7 +245,11 @@
                 cardContainer.appendChild(cardLabel);
                 cardGallery.appendChild(cardContainer);
             });
-        }
+                })
+                .catch(error => {
+                    console.error('Error fetching inventory:', error);
+                    document.getElementById('welcomeMessage').textContent = "Failed to load inventory!";
+                });
 
         document.addEventListener("DOMContentLoaded", displayCards);
     </script>
