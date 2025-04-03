@@ -207,6 +207,27 @@
             window.location.href = authUrl;  // Redirect to Twitch for login
         });
 
+        function getTokenFromUrl() {
+            const hash = window.location.hash;
+            if (hash.includes("access_token")) {
+                const params = new URLSearchParams(hash.substring(1));
+                return params.get("access_token");
+            }
+            return null;
+        }
+
+        // If user is logged in, display welcome message
+        if (user) {
+            document.getElementById("welcomeMessage").textContent = `Welcome, ${user.display_name}!`;
+        } else {
+            document.getElementById("welcomeMessage").textContent = "Not logged in";
+        }
+
+        // Login button functionality
+        document.getElementById("loginButton").addEventListener("click", () => {
+            const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=user:read:email`;
+            window.location.href = authUrl;  // This redirects to Twitch for login
+        });
         const token = getTokenFromUrl();
         if (token) {
             fetch("https://api.twitch.tv/helix/users", {
