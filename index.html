@@ -131,21 +131,6 @@
     <script src="Card.js"></script>
     <script>
 
-        const clientId = "sh11hwnsgw6eoeen8h17jpc99pn2wc";
-        const redirectUri = "https://vanillarilla.github.io/rillatcg/auth.html";
-        const user = JSON.parse(localStorage.getItem("twitchUser"));
-
-        if (user) {
-            document.getElementById("welcomeMessage").textContent = `Welcome, ${user.display_name}!`;
-        } else {
-            document.getElementById("welcomeMessage").textContent = "Not logged in";
-        }
-
-        document.getElementById("loginButton").addEventListener("click", () => {
-            const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=user:read:email`;
-            window.location.href = authUrl;  // This redirects to Twitch for login
-        });
-
         const cardData = [
             { name: "Fred", image: "imgs/card1.png", hoverImage: "imgs/card1back.png", rarity: "COMMON" },
             { name: "Aron", image: "imgs/card2.png", hoverImage: "imgs/card2back.png", rarity: "UNCOMMON" },
@@ -155,59 +140,12 @@
             { name: "Cloud", image: "imgs/card6.png", hoverImage: "imgs/card6back.png", rarity: "COMMON" }
         ];
 
-        function onTwitchLogin(user) {
-            if (user) {
-                localStorage.setItem('twitchUser', JSON.stringify(user));
-                console.log("User saved:", user);
-            } else {
-                console.error("Failed to retrieve Twitch user.");
-            }
-        }
-
-        function getTokenFromUrl() {
-            const hash = window.location.hash;
-            if (hash.includes("access_token")) {
-                const params = new URLSearchParams(hash.substring(1));
-                return params.get("access_token");
-            }
-            return null;
-        }
-
-        const token = getTokenFromUrl();
-        if (token) {
-            fetch("https://api.twitch.tv/helix/users", {
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Client-Id": clientId
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.data.length > 0) {
-                        const user = data.data[0];
-                        document.getElementById("userInfo").textContent = `Logged in as ${user.display_name}`;
-                        document.getElementById("loginStatus").textContent = `Logged in as ${user.display_name}`;
-                        localStorage.setItem("twitchUser", JSON.stringify(user));
-                    }
-                });
-        }
-
-
-       
-
         function displayCards() {
             const cardGallery = document.getElementById('cardGallery');
             const user = JSON.parse(localStorage.getItem('twitchUser'));
             let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
-            if (!user) {
-                document.getElementById('welcomeMessage').textContent = "Please log in!";
-                return;
-            }
-
-            fetch(`http://localhost:3000/api/inventory/${user.id}`)
-                .then(response => response.json())
-                .then(inventory => {
+           
                     const inventoryImages = inventory.map(card => card.image);
 
                     cardData.forEach(cardInfo => {
@@ -254,108 +192,10 @@
                         cardContainer.appendChild(cardLabel);
                         cardGallery.appendChild(cardContainer);
                     });
-                })
-                .catch(error => {
-                    console.error('Error fetching inventory:', error);
-                    document.getElementById('welcomeMessage').textContent = "Failed to load inventory!";
-                });
+                
         }
 
-        document.addEventListener("DOMContentLoaded", displayCards);
-        // Firebase configuration (replace with your Firebase config)
-        const firebaseConfig = {
-            apiKey: "your-api-key",
-            authDomain: "your-auth-domain",
-            projectId: "your-project-id",
-            storageBucket: "your-storage-bucket",
-            messagingSenderId: "your-sender-id",
-            appId: "your-app-id"
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
-
-        // Elements
-        const userInfo = document.getElementById('userInfo');
-        const userCredits = document.getElementById('userCredits');
-        const cardGallery = document.getElementById('cardGallery');
-        const twitchLoginBtn = document.getElementById('twitchLoginBtn');
-
-        // Function to display user info (credits and inventory)
-        function displayUserInfo(userId) {
-            db.collection('users').doc(userId).get().then(doc => {
-                if (doc.exists) {
-                    const user = doc.data();
-                    userInfo.innerText = `Welcome, ${user.username}`;
-                    userCredits.innerText = `Credits: ${user.credits}`;
-
-                    // Display inventory cards
-                    displayInventory(user.inventory);
-                } else {
-                    userInfo.innerText = 'User not found';
-                }
-            }).catch(err => {
-                console.error('Error fetching user data:', err);
-            });
-        }
-
-        // Function to display cards in inventory
-        function displayInventory(inventory) {
-            cardGallery.innerHTML = '';
-            inventory.forEach(cardId => {
-                const cardElement = document.createElement('div');
-                cardElement.classList.add('card');
-                cardElement.innerText = `Card ID: ${cardId}`;
-                cardGallery.appendChild(cardElement);
-            });
-        }
-
-        // Function to handle Twitch login
-        function twitchLogin() {
-            const provider = new firebase.auth.OAuthProvider('twitch.tv');
-            auth.signInWithPopup(provider).then(result => {
-                const user = result.user;
-                const userId = user.uid;
-
-                // Check if the user exists in Firebase
-                db.collection('users').doc(userId).get().then(doc => {
-                    if (!doc.exists) {
-                        // User doesn't exist, create a new user entry
-                        db.collection('users').doc(userId).set({
-                            username: user.displayName,
-                            credits: 0,
-                            inventory: [],
-                        }).then(() => {
-                            console.log('User added to Firebase');
-                            displayUserInfo(userId);
-                        }).catch(err => {
-                            console.error('Error creating user:', err);
-                        });
-                    } else {
-                        // User exists, display user info
-                        displayUserInfo(userId);
-                    }
-                }).catch(err => {
-                    console.error('Error checking user:', err);
-                });
-            }).catch(error => {
-                console.error('Twitch login error:', error);
-            });
-        }
-
-        // Button event listener for logging in with Twitch
-        twitchLoginBtn.addEventListener('click', twitchLogin);
-
-        // On page load, check if the user is logged in
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                displayUserInfo(user.uid);
-            } else {
-                userInfo.innerText = 'Please log in with Twitch!';
-            }
-        });
+        
     </script>
 </body>
 </html>
