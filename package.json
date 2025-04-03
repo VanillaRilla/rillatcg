@@ -1,0 +1,27 @@
+{
+  "name": "rillatcg",
+  "version": "1.0.0",
+  "main": "Card.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VanillaRilla/rillatcg.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VanillaRilla/rillatcg/issues"
+  },
+  "homepage": "https://github.com/VanillaRilla/rillatcg#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "firebase": "^11.6.0",
+    "passport": "^0.7.0",
+    "passport-twitch-new": "^0.0.3"
+  }
+}
