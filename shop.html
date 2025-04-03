@@ -128,9 +128,9 @@
             <button id="addCardButton" class="button">Buy a random card (100 points)</button>
             <button id="buyTenCardsButton" class="button">Buy 10 Cards (1000 points)</button>
             <button id="getCreditsButton" class="button">Get 100 Credits</button>
-            </div>
+        </div>
     </header>
-
+    <div id="welcomeMessage">Loading...</div>
     <div id="cardPopup" class="card-popup">
         <img id="popupImage" src="" alt="New Card">
     </div>
@@ -193,7 +193,7 @@
                 message.style.color = "red";
             }
         });
-        
+
         balanceDisplay.textContent = balance;
 
         const cardData = [
@@ -330,7 +330,7 @@
                 alert("You are already buying a card! Wait till the animation is done!");
             }
         }
-        
+
         function updateBalance(newBalance) {
             balance = newBalance;
             localStorage.setItem('balance', balance);
@@ -350,8 +350,8 @@
 
             setTimeout(() => {
                 popup.classList.remove("show-popup");
-                addCardButton.disabled = balance < 100 ? true : false; 
-            }, 2000); 
+                addCardButton.disabled = balance < 100 ? true : false;
+            }, 2000);
         }
 
         document.getElementById('addCardButton').addEventListener('click', () => {
