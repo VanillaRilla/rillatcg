@@ -8,11 +8,11 @@
     <style>
 
         body {
-            background-color: #121212; /* Dark background */
-            color: #e0e0e0; /* Light text color */
+            background-color: #121212;
+            color: #e0e0e0;
             padding-bottom: 120px;
             .inventory
-
+        }
         {
             text-align: center;
         }
@@ -27,7 +27,7 @@
 
         .card-container {
             width: 120px;
-            height: 220px; /* Allows space for the label */
+            height: 220px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -35,10 +35,35 @@
             position: relative;
         }
 
+            .card-container img {
+                width: 100%;
+                height: 180px;
+                object-fit: contain;
+            }
+
+            .card-container.locked img.front {
+                content: url('imgs/cardlocked.png');
+            }
+
+        .card-label {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
         .image-wrapper {
             width: 100%;
             height: 180px;
-            position: relative; /* Needed for stacking */
+            position: relative;
         }
 
             .image-wrapper img {
@@ -52,11 +77,11 @@
             }
 
         .front {
-            z-index: 1; /* Normal image */
+            z-index: 1;
         }
 
         .back {
-            z-index: 2; /* Hover image */
+            z-index: 2;
             opacity: 0;
         }
 
@@ -71,15 +96,6 @@
             color: white;
             position: relative;
             z-index: 3;
-        }
-
-        .button {
-            padding: 10px 20px;
-            font-size: 14px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            margin: 5px;
         }
     </style>
 </head>
