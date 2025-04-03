@@ -155,6 +155,15 @@
             { name: "Cloud", image: "imgs/card6.png", hoverImage: "imgs/card6back.png", rarity: "COMMON" }
         ];
 
+        function onTwitchLogin(user) {
+            if (user) {
+                localStorage.setItem('twitchUser', JSON.stringify(user));
+                console.log("User saved:", user);
+            } else {
+                console.error("Failed to retrieve Twitch user.");
+            }
+        }
+
         function getTokenFromUrl() {
             const hash = window.location.hash;
             if (hash.includes("access_token")) {
