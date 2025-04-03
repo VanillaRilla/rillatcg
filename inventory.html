@@ -133,6 +133,11 @@
         }
 
         function displayInventory(inventory) {
+            if (!inventory || inventory.length === 0) {
+                alert("No inventory found.");
+                return;
+            }
+
             inventoryList.innerHTML = '';
 
             const rarityColors = {
@@ -143,7 +148,7 @@
                 legendary: "gold"
             };
 
-            inventory.sort((a, b) => rarityOrder.indexOf(b.rarity) - rarityOrder.indexOf(a.rarity));
+            
 
             inventory.forEach(card => {
                 const listItem = document.createElement('li');
@@ -153,16 +158,18 @@
                 listItem.style.alignItems = "center";
                 const rarityColor = rarityColors[card.rarity] || "white";
                 listItem.innerHTML = `
-                    <img src="${card.image}" alt="${card.name}" class="card-image">
-                    <div style="text-align: center; margin-top: 5px;">
-                        <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p> 
-                        <p style="font-weight: bold; margin: 0;">${card.name}</p>
-                        <p style="font-size: 20px; margin: 0;">x${card.count}</p>
-                    </div>
-                `;
+            <img src="${card.image}" alt="${card.name}" class="card-image">
+            <div style="text-align: center; margin-top: 5px;">
+                <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p> 
+                <p style="font-weight: bold; margin: 0;">${card.name}</p>
+                <p style="font-size: 20px; margin: 0;">x${card.count}</p>
+            </div>
+        `;
                 inventoryList.appendChild(listItem);
             });
         }
+
+        inventory.sort((a, b) => rarityOrder.indexOf(b.rarity) - rarityOrder.indexOf(a.rarity));
 
         function clearInventory() {
             fetch('http://localhost:3000/api/clear-inventory', {
