@@ -148,6 +148,7 @@
         const balanceDisplay = document.getElementById('balance');
         const clientId = "sh11hwnsgw6eoeen8h17jpc99pn2wc";
         const redirectUri = "https://vanillarilla.github.io/rillatcg/auth.html";
+        const user = JSON.parse(localStorage.getItem("twitchUser"));
         let balance = parseInt(localStorage.getItem('balance')) || 0;
         let isBuying = false;
 
