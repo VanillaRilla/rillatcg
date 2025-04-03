@@ -16,7 +16,7 @@ app.use(session({
 // Step 2: Set up passport
 passport.use(new TwitchStrategy({
     clientID: 'sh11hwnsgw6eoeen8h17jpc99pn2wc',  // Replace with your actual Client ID
-    callbackURL: 'https://vanillarilla.github.io/rillatcg/auth.html',  // Callback URL from Twitch Developer Console
+    callbackURL: 'http://localhost:3000/auth/twitch/callback',  // Callback URL from Twitch Developer Console
     scope: 'user:read:email'  // This is the scope you are requesting access to (read email of the user)
 },
     function (accessToken, refreshToken, profile, done) {
