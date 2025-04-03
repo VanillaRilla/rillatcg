@@ -8,15 +8,15 @@
     <style>
 
         body {
-            background-color: #121212;
-            color: #e0e0e0;
-            padding-bottom: 120px;          
+            background-color: #121212; /* Dark background */
+            color: #e0e0e0; /* Light text color */
+            padding-bottom: 120px;
+            .inventory
+
+        {
+            text-align: center;
         }
 
-        #welcomeMessage {
-            font-size: 24px;
-            font-weight: bold;
-        }
         .card-gallery {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
@@ -27,7 +27,7 @@
 
         .card-container {
             width: 120px;
-            height: 220px; 
+            height: 220px; /* Allows space for the label */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -35,35 +35,12 @@
             position: relative;
         }
 
-        .card-container img {
-            width: 100%;
-            height: 180px;
-            object-fit: contain;
-        }
-
-        .card-container.locked img.front {
-            content: url('imgs/cardlocked.png');
-        }
-
-        .card-label {
-            text-align: center;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-
-        .button {
-            padding: 10px 20px;
-            font-size: 14px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            margin: 5px;
-        }
         .image-wrapper {
             width: 100%;
             height: 180px;
-            position: relative;
+            position: relative; /* Needed for stacking */
         }
+
             .image-wrapper img {
                 width: 100%;
                 height: 100%;
@@ -75,11 +52,11 @@
             }
 
         .front {
-            z-index: 1;
+            z-index: 1; /* Normal image */
         }
 
         .back {
-            z-index: 2; 
+            z-index: 2; /* Hover image */
             opacity: 0;
         }
 
@@ -95,11 +72,6 @@
             position: relative;
             z-index: 3;
         }
-        
-        .login-container {
-            text-align: right;
-            padding: 10px;
-        }
 
         .button {
             padding: 10px 20px;
@@ -109,7 +81,6 @@
             border-radius: 5px;
             margin: 5px;
         }
-
     </style>
 </head>
 <body>
@@ -117,20 +88,14 @@
         <a href="index.html"><button class="button">GALLERY</button></a>
         <a href="shop.html"><button class="button">SHOP</button></a>
         <a href="inventory.html"><button class="button">INVENTORY</button></a>
-        <div class="login-container">
-            <button class="button" id="loginButton">Login with Twitch</button>
-            <span id="userInfo"></span>
-            <button class="button" id="logoutButton">Log out</button>
-        </div>
         <h1>GALLERY</h1>
 
     </header>
-    <div id="welcomeMessage">Loading...</div>
+
     <section class="card-gallery" id="cardGallery"></section>
 
-    <script src="Card.js"></script>
+    <script src="card.js"></script>
     <script>
-
         const cardData = [
             { name: "Fred", image: "imgs/card1.png", hoverImage: "imgs/card1back.png", rarity: "COMMON" },
             { name: "Aron", image: "imgs/card2.png", hoverImage: "imgs/card2back.png", rarity: "UNCOMMON" },
@@ -142,60 +107,56 @@
 
         function displayCards() {
             const cardGallery = document.getElementById('cardGallery');
-            const user = JSON.parse(localStorage.getItem('twitchUser'));
             let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            let inventoryImages = inventory.map(card => card.image);
 
-           
-                    const inventoryImages = inventory.map(card => card.image);
+            cardData.forEach(cardInfo => {
+                const cardContainer = document.createElement('div');
+                cardContainer.classList.add('card-container');
 
-                    cardData.forEach(cardInfo => {
-                        const cardContainer = document.createElement('div');
-                        cardContainer.classList.add('card-container');
+                const isUnlocked = inventoryImages.includes(cardInfo.image);
 
-                        const isUnlocked = inventoryImages.includes(cardInfo.image);
+                const frontImage = document.createElement('img');
+                frontImage.src = isUnlocked ? cardInfo.image : 'imgs/cardlocked.png';
+                frontImage.classList.add('front');
+                frontImage.alt = isUnlocked ? cardInfo.name : "???";
 
-                        const frontImage = document.createElement('img');
-                        frontImage.src = isUnlocked ? cardInfo.image : 'imgs/cardlocked.png';
-                        frontImage.classList.add('front');
-                        frontImage.alt = isUnlocked ? cardInfo.name : "???";
+                if (!isUnlocked) {
+                    cardContainer.classList.add('locked');
+                }
 
-                        if (!isUnlocked) {
-                            cardContainer.classList.add('locked');
-                        }
+                const backImage = document.createElement('img');
+                backImage.src = cardInfo.hoverImage;
+                backImage.classList.add('back');
+                backImage.style.position = "absolute";
+                backImage.style.top = "0";
+                backImage.style.left = "0";
+                backImage.style.opacity = "0";
+                backImage.style.transition = "opacity 0.3s ease-in-out";
 
-                        const backImage = document.createElement('img');
-                        backImage.src = cardInfo.hoverImage;
-                        backImage.classList.add('back');
-                        backImage.style.position = "absolute";
-                        backImage.style.top = "0";
-                        backImage.style.left = "0";
-                        backImage.style.opacity = "0";
-                        backImage.style.transition = "opacity 0.3s ease-in-out";
-
-                        if (isUnlocked) {
-                            cardContainer.addEventListener("mouseover", () => {
-                                backImage.style.opacity = "1";
-                            });
-                            cardContainer.addEventListener("mouseout", () => {
-                                backImage.style.opacity = "0";
-                            });
-                        }
-
-                        const cardLabel = document.createElement("p");
-                        cardLabel.textContent = isUnlocked ? cardInfo.name : "???";
-                        cardLabel.classList.add('card-label');
-
-                        cardContainer.appendChild(frontImage);
-                        if (isUnlocked) {
-                            cardContainer.appendChild(backImage);
-                        }
-                        cardContainer.appendChild(cardLabel);
-                        cardGallery.appendChild(cardContainer);
+                if (isUnlocked) {
+                    cardContainer.addEventListener("mouseover", () => {
+                        backImage.style.opacity = "1";
                     });
-                
+                    cardContainer.addEventListener("mouseout", () => {
+                        backImage.style.opacity = "0";
+                    });
+                }
+
+                const cardLabel = document.createElement("p");
+                cardLabel.textContent = isUnlocked ? cardInfo.name : "???";
+                cardLabel.classList.add('card-label');
+
+                cardContainer.appendChild(frontImage);
+                if (isUnlocked) {
+                    cardContainer.appendChild(backImage);
+                }
+                cardContainer.appendChild(cardLabel);
+                cardGallery.appendChild(cardContainer);
+            });
         }
 
-        
+        document.addEventListener("DOMContentLoaded", displayCards);
     </script>
 </body>
 </html>

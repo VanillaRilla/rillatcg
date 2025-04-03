@@ -9,8 +9,8 @@
         body {
             background-color: #121212; /* Dark background */
             color: #e0e0e0; /* Light text color */
-            padding-bottom: 120px;       
-            text-align: center;
+            padding-bottom: 120px;
+            .inventory text-align: center;
         }
 
         #couponSection {
@@ -30,11 +30,12 @@
             transform: scale(0.8);
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
-        #couponSection.show {
-            display: flex;
-            opacity: 1;
-            transform: scale(1);
-        }
+
+            #couponSection.show {
+                display: flex;
+                opacity: 1;
+                transform: scale(1);
+            }
 
         #couponCode {
             width: 80%;
@@ -68,7 +69,6 @@
             cursor: pointer;
             font-size: 16px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            
         }
 
         .button {
@@ -101,10 +101,10 @@
             z-index: 1000;
         }
 
-        .card-popup img {
-            width: 100%;
-            height: auto;
-        }
+            .card-popup img {
+                width: 100%;
+                height: auto;
+            }
 
         .show-popup {
             transform: translate(-50%, -50%) scale(1);
@@ -117,18 +117,13 @@
         <a href="index.html"><button class="button">GALLERY</button></a>
         <a href="shop.html"><button class="button">SHOP</button></a>
         <a href="inventory.html"><button class="button">INVENTORY</button></a>
-        <div class="login-container">
-            <button class="button" id="loginButton">Login with Twitch</button>
-            <span id="userInfo"></span>
-            <button class="button" id="logoutButton">Log out</button>
-            <h1>SHOP</h1>
-            <p>Balance: <span id="balance">0</span> points</p>
-            <button id="addCardButton" class="button">Buy a random card (100 points)</button>
-            <button id="buyTenCardsButton" class="button">Buy 10 Cards (1000 points)</button>
-            <button id="getCreditsButton" class="button">Get 100 Credits</button>
-        </div>
+        <h1>SHOP</h1>
+        <p>Balance: <span id="balance">0</span> points</p>
+        <button id="addCardButton" class="button">Buy a random card (100 points)</button>
+        <button id="buyTenCardsButton" class="button">Buy 10 Cards (1000 points)</button>
+        <button id="getCreditsButton" class="button">Get 100 Credits</button>
     </header>
-    <div id="welcomeMessage">Loading...</div>
+
     <div id="cardPopup" class="card-popup">
         <img id="popupImage" src="" alt="New Card">
     </div>
@@ -141,241 +136,188 @@
     </section>
 
     <script>
-            const clientId = "sh11hwnsgw6eoeen8h17jpc99pn2wc";
-            const redirectUri = "https://vanillarilla.github.io/rillatcg/auth.html";
-            const addCardButton = document.getElementById('addCardButton');
-            const getCreditsButton = document.getElementById('getCreditsButton');
-            const balanceDisplay = document.getElementById('balance');
-            const user = JSON.parse(localStorage.getItem("twitchUser"));
-            let balance = parseInt(localStorage.getItem('balance')) || 0;
-            let isBuying = false;
+        const addCardButton = document.getElementById('addCardButton');
+        const getCreditsButton = document.getElementById('getCreditsButton');
+        const balanceDisplay = document.getElementById('balance');
 
-            const coupons = {
-                "FREE100": 100,
-                "BONUS50": 50,
-                "LUCKY2000": 2000
-            };
-            
-            let redeemedCoupons = JSON.parse(localStorage.getItem('redeemedCoupons')) || [];
+        let balance = parseInt(localStorage.getItem('balance')) || 0;
+        let isBuying = false;
 
-            document.getElementById('redeemButton').addEventListener('click', function () {
-                const couponSection = document.getElementById('couponSection');
-                if (couponSection.classList.contains('show')) {
-                    couponSection.classList.remove('show');
-                    setTimeout(() => {
-                        couponSection.style.display = 'none';
-                    }, 300);
-                } else {
-                    couponSection.style.display = 'flex';
-                    setTimeout(() => {
-                        couponSection.classList.add('show');
-                    }, 10);
-                }
-            });
+        const coupons = {
+            "FREE100": 100,
+            "BONUS50": 50,
+            "LUCKY2000": 2000
+        };
+        document.getElementById('redeemButton').addEventListener('click', function () {
+            const couponSection = document.getElementById('couponSection');
+            if (couponSection.classList.contains('show')) {
+                couponSection.classList.remove('show');
+                setTimeout(() => {
+                    couponSection.style.display = 'none';
+                }, 300);
+            } else {
+                couponSection.style.display = 'flex';
+                setTimeout(() => {
+                    couponSection.classList.add('show');
+                }, 10);
+            }
+        });
+        let redeemedCoupons = JSON.parse(localStorage.getItem('redeemedCoupons')) || [];
 
-            document.getElementById('redeemCoupon').addEventListener('click', () => {
-                const code = document.getElementById('couponCode').value.trim().toUpperCase();
-                const message = document.getElementById('couponMessage');
+        document.getElementById('redeemCoupon').addEventListener('click', () => {
+            const code = document.getElementById('couponCode').value.trim().toUpperCase();
+            const message = document.getElementById('couponMessage');
 
-                if (redeemedCoupons.includes(code)) {
-                    message.textContent = "This coupon has already been used.";
-                    message.style.color = "red";
-                } else if (coupons[code]) {
-                    balance += coupons[code];
-                    localStorage.setItem('balance', balance);
-                    document.getElementById('balance').textContent = balance;
-                    redeemedCoupons.push(code);
-                    localStorage.setItem('redeemedCoupons', JSON.stringify(redeemedCoupons));
-                    message.textContent = "Coupon redeemed successfully!";
-                    message.style.color = "green";
-                } else {
-                    message.textContent = "Invalid coupon code.";
-                    message.style.color = "red";
-                }
-            });
+            if (redeemedCoupons.includes(code)) {
+                message.textContent = "This coupon has already been used.";
+                message.style.color = "red";
+            } else if (coupons[code]) {
+                balance += coupons[code];
+                localStorage.setItem('balance', balance);
+                document.getElementById('balance').textContent = balance;
+                redeemedCoupons.push(code);
+                localStorage.setItem('redeemedCoupons', JSON.stringify(redeemedCoupons));
+                message.textContent = "Coupon redeemed successfully!";
+                message.style.color = "green";
+            } else {
+                message.textContent = "Invalid coupon code.";
+                message.style.color = "red";
+            }
+        });
 
-            balanceDisplay.textContent = balance;
+        balanceDisplay.textContent = balance;
 
+        const cardData = [
+            { image: "imgs/card1.png", name: "Fred", rarity: "common", probability: 0.60 },
+            { image: "imgs/card2.png", name: "Aron", rarity: "uncommon", probability: 0.25 },
+            { image: "imgs/card3.png", name: "Claudia", rarity: "rare", probability: 0.10 },
+            { image: "imgs/card4.png", name: "Bob", rarity: "epic", probability: 0.04 },
+            { image: "imgs/card5.png", name: "Felix", rarity: "legendary", probability: 0.01 },
+            { image: "imgs/card6.png", name: "Cloud", rarity: "common", probability: 0.60 }
+        ];
 
-            const cardData = [
-                { image: "imgs/card1.png", name: "Fred", rarity: "common", probability: 0.60 },
-                { image: "imgs/card2.png", name: "Aron", rarity: "uncommon", probability: 0.25 },
-                { image: "imgs/card3.png", name: "Claudia", rarity: "rare", probability: 0.10 },
-                { image: "imgs/card4.png", name: "Bob", rarity: "epic", probability: 0.04 },
-                { image: "imgs/card5.png", name: "Felix", rarity: "legendary", probability: 0.01 },
-                { image: "imgs/card6.png", name: "Cloud", rarity: "common", probability: 0.60 }
+        function getRandomCard() {
+            const rarityProbabilities = [
+                { rarity: "legendary", probability: 0.01 },
+                { rarity: "epic", probability: 0.04 },
+                { rarity: "rare", probability: 0.10 },
+                { rarity: "uncommon", probability: 0.25 },
+                { rarity: "common", probability: 0.60 }
             ];
 
-            document.getElementById("loginButton").addEventListener("click", () => {
-                const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=user:read:email`;
-                window.location.href = authUrl;
-            });
+            const randomValue = Math.random();
+            let cumulativeProbability = 0;
+            let selectedRarity = "common";
 
-            function getTokenFromUrl() {
-                const hash = window.location.hash;
-                if (hash.includes("access_token")) {
-                    const params = new URLSearchParams(hash.substring(1));
-                    return params.get("access_token");
-                }
-                return null;
-            }
-
-            // If user is logged in, display welcome message
-            if (user) {
-                document.getElementById("welcomeMessage").textContent = `Welcome, ${user.display_name}!`;
-            } else {
-                document.getElementById("welcomeMessage").textContent = "Not logged in";
-            }
-
-            // Login button functionality
-            document.getElementById("loginButton").addEventListener("click", () => {
-                const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=user:read:email`;
-                window.location.href = authUrl;  // This redirects to Twitch for login
-            });
-
-
-            const token = getTokenFromUrl();
-            if (token) {
-                fetch("https://api.twitch.tv/helix/users", {
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Client-Id": clientId
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.data.length > 0) {
-                            const user = data.data[0];
-                            document.getElementById("userInfo").textContent = `Logged in as ${user.display_name}`;
-                            localStorage.setItem("twitchUser", JSON.stringify(user));
-                        }
-                    });
-            }
-
-            function getRandomCard() {
-                const rarityProbabilities = [
-                    { rarity: "legendary", probability: 0.01 },
-                    { rarity: "epic", probability: 0.04 },
-                    { rarity: "rare", probability: 0.10 },
-                    { rarity: "uncommon", probability: 0.25 },
-                    { rarity: "common", probability: 0.60 }
-                ];
-
-                const randomValue = Math.random();
-                let cumulativeProbability = 0;
-                let selectedRarity = "common";
-
-                for (let rarityObj of rarityProbabilities) {
-                    cumulativeProbability += rarityObj.probability;
-                    if (randomValue <= cumulativeProbability) {
-                        selectedRarity = rarityObj.rarity;
-                        break;
-                    }
-                }
-
-                const filteredCards = cardData.filter(card => card.rarity === selectedRarity);
-                return filteredCards.length > 0
-                    ? filteredCards[Math.floor(Math.random() * filteredCards.length)]
-                    : cardData[Math.floor(Math.random() * cardData.length)];
-            }
-
-            function addRandomCardToInventory() {
-                if (balance >= 100 && !isBuying) {
-                    isBuying = true;
-                    addCardButton.disabled = true;
-
-                    setTimeout(() => {
-                        let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
-                        const randomCard = getRandomCard();
-                        let existingCard = inventory.find(card => card.image === randomCard.image);
-
-                        // Update inventory
-                        if (existingCard) {
-                            existingCard.count += 1;
-                        } else {
-                            inventory.push({ ...randomCard, count: 1 });
-                        }
-
-                        // Save updated inventory in localStorage
-                        localStorage.setItem('inventory', JSON.stringify(inventory));
-
-                        // Make a backend request to save the card to MySQL
-                        const user = JSON.parse(localStorage.getItem('twitchUser'));
-                        if (user) {
-                            fetch('http://localhost:3000/api/inventory', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    twitch_id: user.id,
-                                    card_name: randomCard.name,
-                                    image: randomCard.image,
-                                    rarity: randomCard.rarity
-                                })
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    console.log('Card saved to backend:', data);
-                                    updateBalance(balance - 100);
-                                    showCardPopup(randomCard.image);
-                                    setTimeout(() => {
-                                        addCardButton.disabled = balance < 100;
-                                        isBuying = false;
-                                    }, 3000);
-                                })
-                                .catch(error => {
-                                    console.error('Error saving card to backend:', error);
-                                });
-                        }
-                    }, 500);
-                } else {
-                    alert("You are already buying a card! Wait till the animation is done!");
+            for (let rarityObj of rarityProbabilities) {
+                cumulativeProbability += rarityObj.probability;
+                if (randomValue <= cumulativeProbability) {
+                    selectedRarity = rarityObj.rarity;
+                    break;
                 }
             }
 
-            function updateBalance(newBalance) {
-                balance = newBalance;
-                localStorage.setItem('balance', balance);
-                balanceDisplay.textContent = balance;
-                checkBalance();
-            }
+            const filteredCards = cardData.filter(card => card.rarity === selectedRarity);
+            return filteredCards.length > 0
+                ? filteredCards[Math.floor(Math.random() * filteredCards.length)]
+                : cardData[Math.floor(Math.random() * cardData.length)];
+        }
 
-            function checkBalance() {
-                addCardButton.disabled = balance < 100;
-            }
-
-            function showCardPopup(imageSrc) {
-                const popup = document.getElementById("cardPopup");
-                const popupImage = document.getElementById("popupImage");
-                popupImage.src = imageSrc;
-                popup.classList.add("show-popup");
+        function addRandomCardToInventory() {
+            if (balance >= 100 && !isBuying) {
+                isBuying = true;
+                addCardButton.disabled = true;
 
                 setTimeout(() => {
-                    popup.classList.remove("show-popup");
-                    addCardButton.disabled = balance < 100 ? true : false;
-                }, 2000);
+                    let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+                    const randomCard = getRandomCard();
+                    let existingCard = inventory.find(card => card.image === randomCard.image);
+                    if (existingCard) {
+                        existingCard.count += 1;
+                    } else {
+                        inventory.push({ ...randomCard, count: 1 });
+                    }
+                    localStorage.setItem('inventory', JSON.stringify(inventory));
+                    updateBalance(balance - 100);
+                    showCardPopup(randomCard.image);
+                    setTimeout(() => {
+                        addCardButton.disabled = balance < 100;
+                        isBuying = false;
+                    }, 3000);
+                }, 500);
+            } else {
+                alert("You are already buying a card! Wait till the animation is done!");
             }
+        }
+        document.getElementById("buyTenCardsButton").addEventListener("click", function () {
+            if (balance >= 1000 && !isBuying) {
+                isBuying = true;
+                buyTenCardsButton.disabled = true;
 
-            document.getElementById('addCardButton').addEventListener('click', () => {
-                const userId = 'user123';  // This should come from your login system, e.g., from Twitch
-                fetch(`/buyCard/${userId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ cardId: 1 })  // Example card ID
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data.message);  // Show success message or handle errors
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            });
-            getCreditsButton.addEventListener('click', () => updateBalance(balance + 100));
+                updateBalance(balance - 1000);
+                let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+                let drawnCards = [];
+
+                // Get 10 random cards and add them to the inventory
+                for (let i = 0; i < 10; i++) {
+                    const randomCard = getRandomCard();
+                    let existingCard = inventory.find(card => card.image === randomCard.image);
+                    if (existingCard) {
+                        existingCard.count += 1;
+                    } else {
+                        inventory.push({ ...randomCard, count: 1 });
+                    }
+                    drawnCards.push(randomCard.image);
+                }
+                localStorage.setItem("inventory", JSON.stringify(inventory));
+
+                // Function to show animations one after another
+                function revealNextCard(index) {
+                    if (index < drawnCards.length) {
+                        setTimeout(() => {
+                            showCardPopup(drawnCards[index]); // Show animation for each card
+                            revealNextCard(index + 1);
+                        }, 2000); // 2s delay for each animation
+                    } else {
+                        setTimeout(() => {
+                            buyTenCardsButton.disabled = balance < 1000;
+                            isBuying = false;
+                        }, 2000);
+                    }
+                }
+
+                // Start the animation sequence
+                revealNextCard(0);
+            } else {
+                alert("Not enough balance or a purchase is already in progress!");
+            }
+        });
+        function updateBalance(newBalance) {
+            balance = newBalance;
+            localStorage.setItem('balance', balance);
+            balanceDisplay.textContent = balance;
             checkBalance();
+        }
+
+        function checkBalance() {
+            addCardButton.disabled = balance < 100;
+        }
+
+        function showCardPopup(imageSrc) {
+            const popup = document.getElementById("cardPopup");
+            const popupImage = document.getElementById("popupImage");
+            popupImage.src = imageSrc;
+            popup.classList.add("show-popup");
+
+            setTimeout(() => {
+                popup.classList.remove("show-popup");
+                addCardButton.disabled = balance < 100 ? true : false; // Re-enable button only if the balance allows
+            }, 2000); // Match animation duration
+        }
+
+        document.getElementById('addCardButton').addEventListener('click', addRandomCardToInventory);
+        getCreditsButton.addEventListener('click', () => updateBalance(balance + 100));
+        checkBalance();
     </script>
 </body>
 </html>

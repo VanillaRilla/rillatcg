@@ -7,9 +7,12 @@
     <link rel="stylesheet" href="style.css">
     <style>
         body {
-            background-color: #121212; 
-            color: #e0e0e0; 
+            background-color: #121212; /* Dark background */
+            color: #e0e0e0; /* Light text color */
             padding-bottom: 120px;
+            .inventory
+
+        {
             text-align: center;
         }
 
@@ -84,34 +87,17 @@
     </section>
 
 
-    <script>
+    </section>
 
+    <script>
         const inventoryList = document.getElementById('inventoryList');
         const getCreditsButton = document.getElementById('getCreditsButton');
         const clearInventoryButton = document.getElementById('clearInventoryButton');
-        
+
         let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
 
-        function fetchInventory() {
-            // Get the user ID from localStorage (or other authentication method)
-            const user = JSON.parse(localStorage.getItem('twitchUser'));
-            if (!user) {
-                alert("You need to be logged in to view your inventory.");
-                return;
-            }
 
-            // Fetch the user's inventory from the server
-            fetch(`http://localhost:3000/api/inventory/${user.id}`)
-                .then(response => response.json())
-                .then(inventory => {
-                    displayInventory(inventory);
-                })
-                .catch(error => {
-                    console.error('Error fetching inventory:', error);
-                    alert("Failed to load inventory.");
-                });
-        }
 
 
 
@@ -127,28 +113,23 @@
         const rarityOrder = ["legendary", "epic", "rare", "uncommon", "common"];
 
         function clearInventory() {
-            localStorage.removeItem('inventory');  
-            alert("Inventory cleared!");          
-            location.reload();                     
+            localStorage.removeItem('inventory');  // Deletes stored inventory
+            alert("Inventory cleared!");          // Confirmation message
+            location.reload();                     // Refresh page to update
         }
 
-        function displayInventory(inventory) {
-            if (!inventory || inventory.length === 0) {
-                alert("No inventory found.");
-                return;
-            }
-
+        function displayInventory() {
             inventoryList.innerHTML = '';
 
             const rarityColors = {
                 common: "gray",
                 uncommon: "green",
-                rare: "DeepSkyBlue",
+                rare: "blue",
                 epic: "purple",
                 legendary: "gold"
             };
 
-            
+            inventory.sort((a, b) => rarityOrder.indexOf(b.rarity) - rarityOrder.indexOf(a.rarity));
 
             inventory.forEach(card => {
                 const listItem = document.createElement('li');
@@ -156,7 +137,10 @@
                 listItem.dataset.name = card.name.toLowerCase();
                 listItem.style.flexDirection = "column";
                 listItem.style.alignItems = "center";
-                const rarityColor = rarityColors[card.rarity] || "white";
+
+                // Get color based on rarity
+                const rarityColor = rarityColors[card.rarity] || "white"; // Default to white if not found
+
                 listItem.innerHTML = `
             <img src="${card.image}" alt="${card.name}" class="card-image">
             <div style="text-align: center; margin-top: 5px;">
@@ -169,28 +153,23 @@
             });
         }
 
-        inventory.sort((a, b) => rarityOrder.indexOf(b.rarity) - rarityOrder.indexOf(a.rarity));
+                        function searchInventory() {
+                const searchInput = document.getElementById("searchBox").value.toLowerCase();
+                        const inventoryItems = document.querySelectorAll("#inventoryList li");
 
-        function clearInventory() {
-            fetch('http://localhost:3000/api/clear-inventory', {
-                method: 'POST',
-                body: JSON.stringify({ userId: JSON.parse(localStorage.getItem('twitchUser')).id }),
-                headers: { 'Content-Type': 'application/json' }
-            })
-                .then(response => response.json())
-                .then(() => {
-                    alert("Inventory cleared!");
-                    fetchInventory(); // Reload inventory after clearing
-                })
-                .catch(error => {
-                    console.error('Error clearing inventory:', error);
-                    alert("Failed to clear inventory.");
+                inventoryItems.forEach(item => {
+                    const img = item.querySelector("img");
+                        const cardName = img ? img.alt.toLowerCase() : "";
+                        const rarityText = item.querySelector(".rarity") ? item.querySelector(".rarity").textContent.toLowerCase() : "";
+
+                        if (searchInput === "" || cardName.includes(searchInput) || rarityText.includes(searchInput)) {
+                            item.style.display = "";
+                    } else {
+                            item.style.display = "none";
+                    }
                 });
-        }
-
-        // Load inventory when the page is ready
-        fetchInventory();
-        displayInventory();
+            }
+                        displayInventory();
     </script>
 
 </body>
