@@ -147,8 +147,6 @@
             const addCardButton = document.getElementById('addCardButton');
             const getCreditsButton = document.getElementById('getCreditsButton');
             const balanceDisplay = document.getElementById('balance');
-
-
             const user = JSON.parse(localStorage.getItem("twitchUser"));
             let balance = parseInt(localStorage.getItem('balance')) || 0;
             let isBuying = false;
@@ -174,6 +172,23 @@
             });
             let redeemedCoupons = JSON.parse(localStorage.getItem('redeemedCoupons')) || [];
 
+            document.getElementById('redeemButton').addEventListener('click', function () {
+                const couponSection = document.getElementById('couponSection');
+                if (couponSection.classList.contains('show')) {
+                    couponSection.classList.remove('show');
+                    setTimeout(() => {
+                        couponSection.style.display = 'none';
+                    }, 300);
+                } else {
+                    couponSection.style.display = 'flex';
+                    setTimeout(() => {
+                        couponSection.classList.add('show');
+                    }, 10);
+                }
+            });
+
+            let redeemedCoupons = JSON.parse(localStorage.getItem('redeemedCoupons')) || [];
+
             document.getElementById('redeemCoupon').addEventListener('click', () => {
                 const code = document.getElementById('couponCode').value.trim().toUpperCase();
                 const message = document.getElementById('couponMessage');
@@ -197,6 +212,7 @@
 
             balanceDisplay.textContent = balance;
 
+
             const cardData = [
                 { image: "imgs/card1.png", name: "Fred", rarity: "common", probability: 0.60 },
                 { image: "imgs/card2.png", name: "Aron", rarity: "uncommon", probability: 0.25 },
@@ -208,7 +224,7 @@
 
             document.getElementById("loginButton").addEventListener("click", () => {
                 const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=user:read:email`;
-                window.location.href = authUrl;  // Redirect to Twitch for login
+                window.location.href = authUrl;
             });
 
             function getTokenFromUrl() {
@@ -232,6 +248,8 @@
                 const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=user:read:email`;
                 window.location.href = authUrl;  // This redirects to Twitch for login
             });
+
+
             const token = getTokenFromUrl();
             if (token) {
                 fetch("https://api.twitch.tv/helix/users", {
@@ -245,7 +263,7 @@
                         if (data.data.length > 0) {
                             const user = data.data[0];
                             document.getElementById("userInfo").textContent = `Logged in as ${user.display_name}`;
-                            localStorage.setItem("twitchUser", JSON.stringify(user));  // Keep user info in localStorage
+                            localStorage.setItem("twitchUser", JSON.stringify(user));
                         }
                     });
             }
