@@ -1,48 +1,71 @@
 const express = require('express');
-const mysql = require('mysql2');
-const cors = require('cors');
-
+const firebaseAdmin = require('firebase-admin');
 const app = express();
+const serviceAccount = require('./serviceAccountKey.json'); // Path to your downloaded JSON file
+
+// Initialize Firebase Admin
+firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert(serviceAccount)
+});
+
+const db = firebaseAdmin.firestore(); // You can also use firebaseAdmin.database() for Realtime Database
+
 app.use(express.json());
-app.use(cors());
 
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',  // Replace with your MySQL username
-    password: 'm.Hertwig97.1.',  // Replace with your MySQL password
-    database: 'rillatcg',
-    port: 3000
+app.post('/user/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const { balance, inventory } = req.body; // Get balance and inventory from the request
+
+    // Create or update user document in Firestore
+    db.collection('users').doc(userId).set({
+        balance: balance || 0, // Set balance (default to 0 if not provided)
+        inventory: inventory || [] // Set inventory (default to empty array if not provided)
+    })
+        .then(() => {
+            res.json({ message: 'User data created/updated successfully' });
+        })
+        .catch(error => {
+            res.status(500).json({ message: 'Error creating/updating user data', error: error });
+        });
 });
+app.post('/buyCard/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const { cardId } = req.body; // Card ID to buy
 
-db.connect(err => {
-    if (err) {
-        console.error('Error connecting to MySQL:', err);
-        return;
-    }
-    console.log('Connected to MySQL');
-});
+    // Get user data
+    db.collection('users').doc(userId).get()
+        .then(doc => {
+            if (!doc.exists) {
+                return res.status(404).json({ message: 'User not found' });
+            }
 
-app.post('/login', (req, res) => {
-    const { id, name } = req.body;
-    if (!id || !name) {
-        return res.status(400).json({ message: "Invalid Twitch data" });
-    }
+            const userData = doc.data();
+            let balance = userData.balance;
+            const cardCost = 100; // Example card cost
 
-    db.query('SELECT * FROM users WHERE id = ?', [id], (err, results) => {
-        if (err) return res.status(500).json({ message: "Database error", error: err });
+            if (balance < cardCost) {
+                return res.status(400).json({ message: 'Not enough points' });
+            }
 
-        if (results.length === 0) {
-            db.query('INSERT INTO users (id, name, balance) VALUES (?, ?, 500)', [id, name], (err) => {
-                if (err) return res.status(500).json({ message: "Failed to create user", error: err });
-                return res.json({ message: "User created", id, name, balance: 500 });
-            });
-        } else {
-            return res.json({ message: "User already exists", id, name, balance: results[0].balance });
-        }
-    });
-});
+            // Deduct points from balance
+            balance -= cardCost;
 
-// Start the server
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+            // Update user data: balance and inventory
+            const updatedInventory = [...userData.inventory, cardId]; // Add the card to the inventory
+
+            // Update both balance and inventory
+            db.collection('users').doc(userId).update({
+                balance: balance,
+                inventory: updatedInventory
+            })
+                .then(() => {
+                    res.json({ message: 'Card purchased successfully' });
+                })
+                .catch(error => {
+                    res.status(500).json({ message: 'Failed to update user data', error: error });
+                });
+        })
+        .catch(error => {
+            res.status(500).json({ message: 'Error fetching user data', error: error });
+        });
 });
