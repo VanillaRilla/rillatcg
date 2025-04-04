@@ -13,9 +13,8 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// Step 2: Set up passport
 passport.use(new TwitchStrategy({
-    clientID: process.env.TWITCH_CLIENT_ID,
+    clientID: process.env.TWITCH_CLIENT_ID,  // Make sure it's from the .env
     clientSecret: process.env.TWITCH_CLIENT_SECRET,
     callbackURL: 'http://localhost:3000/auth/twitch/callback',
     scope: 'user:read:email'
