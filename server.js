@@ -21,7 +21,7 @@ app.use(session({
 passport.use(new TwitchStrategy({
     clientID: process.env.TWITCH_CLIENT_ID,
     clientSecret: process.env.TWITCH_CLIENT_SECRET,
-    callbackURL: 'https://8a93-5-146-251-5.ngrok-free.app/auth/twitch/callback',
+    callbackURL: 'https://elk-hardy-previously.ngrok-free.app/auth/twitch/callback',
     scope: 'user:read:email' // Add more scopes as needed
 }, function (accessToken, refreshToken, profile, done) {
     return done(null, profile); // Save profile data, you can store it in the session or DB
