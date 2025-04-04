@@ -1,11 +1,8 @@
-require('dotenv').config();
+const dotenv = require('dotenv');
 const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 const TwitchStrategy = require('passport-twitch-new').Strategy;
-const dotenv = require('dotenv');
-dotenv.config();
-
 const app = express();
 const port = 3000;
 

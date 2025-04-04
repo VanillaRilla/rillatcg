@@ -7,10 +7,14 @@
     <link rel="stylesheet" href="style.css">
     <style>
         body {
-            background-color: #121212; /* Dark background */
-            color: #e0e0e0; /* Light text color */
+            background-color: #121212;
+            color: #e0e0e0;
             padding-bottom: 120px;
-            .inventory text-align: center;
+        }
+
+        #welcomeMessage {
+            font-size: 24px;
+            font-weight: bold;
         }
 
         #couponSection {
@@ -31,11 +35,11 @@
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
-            #couponSection.show {
-                display: flex;
-                opacity: 1;
-                transform: scale(1);
-            }
+        #couponSection.show {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
+        }
 
         #couponCode {
             width: 80%;
