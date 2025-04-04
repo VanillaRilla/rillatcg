@@ -1,8 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 const TwitchStrategy = require('passport-twitch-new').Strategy;
 const dotenv = require('dotenv');
+
 
 dotenv.config();
 
@@ -18,15 +20,13 @@ app.use(session({
 
 // Step 2: Set up passport
 passport.use(new TwitchStrategy({
-    clientID: 'sh11hwnsgw6eoeen8h17jpc99pn2wc',  // Replace with your actual Client ID
-    callbackURL: 'http://localhost:3000/auth/twitch/callback',  // Callback URL from Twitch Developer Console
-    scope: 'user:read:email'  // This is the scope you are requesting access to (read email of the user)
-},
-    function (accessToken, refreshToken, profile, done) {
-        // Store user profile in session
-        return done(null, profile);
-    }
-));
+    clientID: process.env.TWITCH_CLIENT_ID,
+    clientSecret: process.env.TWITCH_CLIENT_SECRET,
+    callbackURL: 'http://localhost:3000/auth/twitch/callback',
+    scope: 'user:read:email'
+}, function (accessToken, refreshToken, profile, done) {
+    return done(null, profile);
+}));
 
 // Step 3: Serialize and deserialize user for session management
 passport.serializeUser(function (user, done) {
