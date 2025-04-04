@@ -2,13 +2,16 @@ const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 const TwitchStrategy = require('passport-twitch-new').Strategy;
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const app = express();
 const port = 3000;
 
 // Step 1: Set up session
 app.use(session({
-    secret: 'your-secret-key',
+    secret: process.env.SESSION_SECRET, // Use session secret from .env
     resave: false,
     saveUninitialized: true
 }));
@@ -34,11 +37,11 @@ passport.deserializeUser(function (obj, done) {
     done(null, obj);
 });
 
-// Step 4: Initialize passport and sessions
+// Initialize passport and sessions
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Step 5: Routes for Twitch Authentication
+// Routes for Twitch Authentication
 app.get('/auth/twitch',
     passport.authenticate('twitch', {
         scope: 'user:read:email'  // Request user's email
@@ -47,11 +50,11 @@ app.get('/auth/twitch',
 app.get('/auth/twitch/callback',
     passport.authenticate('twitch', { failureRedirect: '/' }),
     function (req, res) {
-        // Successful authentication, redirect home.
+        // Successful authentication, redirect home
         res.redirect('/');
     });
 
-// Step 6: Add a route to check if the user is logged in
+// Route to check if the user is logged in
 app.get('/', (req, res) => {
     if (req.isAuthenticated()) {
         res.send(`<h1>Hello ${req.user.display_name}</h1><p>Your email: ${req.user.email}</p>`);
@@ -60,7 +63,7 @@ app.get('/', (req, res) => {
     }
 });
 
-// Step 7: Start the server
+// Start the server
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });

@@ -123,72 +123,105 @@
         <h1>GALLERY</h1>
 
     </header>
+    <a href="http://localhost:3000/auth/twitch">
+        <button id="twitch-login" class="button" style="background-color: purple; color: white;">
+            Login with Twitch
+        </button>
+    </a>
 
-    <section class="card-gallery" id="cardGallery"></section>
+    <!-- Logout Button (only shows when logged in) -->
+    <button id="logout" class="button" style="display: none;" onclick="logout()">
+        Logout
+    </button>
 
-    <script src="card.js"></script>
-    <script>
-        const cardData = [
-            { name: "Fred", image: "imgs/card1.png", hoverImage: "imgs/card1back.png", rarity: "COMMON" },
-            { name: "Aron", image: "imgs/card2.png", hoverImage: "imgs/card2back.png", rarity: "UNCOMMON" },
-            { name: "Claudia", image: "imgs/card3.png", hoverImage: "imgs/card3back.png", rarity: "RARE" },
-            { name: "Bob", image: "imgs/card4.png", hoverImage: "imgs/card4back.png", rarity: "EPIC" },
-            { name: "Felix", image: "imgs/card5.png", hoverImage: "imgs/card5back.png", rarity: "LEGENDARY" },
-            { name: "Cloud", image: "imgs/card6.png", hoverImage: "imgs/card6back.png", rarity: "COMMON" }
-        ];
+    
 
-        function displayCards() {
-            const cardGallery = document.getElementById('cardGallery');
-            let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
-            let inventoryImages = inventory.map(card => card.image);
+        checkLoginStatus();
+        <section class="card-gallery" id="cardGallery"></section>
 
-            cardData.forEach(cardInfo => {
-                const cardContainer = document.createElement('div');
-                cardContainer.classList.add('card-container');
+        <script src="card.js"></script>
+        <script>
+            function checkLoginStatus() {
+                fetch('http://localhost:3000/user', { credentials: 'include' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.loggedIn) {
+                            document.getElementById('twitch-login').style.display = 'none';
+                            document.getElementById('logout').style.display = 'block';
+                        }
+                    })
+                    .catch(error => console.error('Error checking login status:', error));
+            }
 
-                const isUnlocked = inventoryImages.includes(cardInfo.image);
-
-                const frontImage = document.createElement('img');
-                frontImage.src = isUnlocked ? cardInfo.image : 'imgs/cardlocked.png';
-                frontImage.classList.add('front');
-                frontImage.alt = isUnlocked ? cardInfo.name : "???";
-
-                if (!isUnlocked) {
-                    cardContainer.classList.add('locked');
-                }
-
-                const backImage = document.createElement('img');
-                backImage.src = cardInfo.hoverImage;
-                backImage.classList.add('back');
-                backImage.style.position = "absolute";
-                backImage.style.top = "0";
-                backImage.style.left = "0";
-                backImage.style.opacity = "0";
-                backImage.style.transition = "opacity 0.3s ease-in-out";
-
-                if (isUnlocked) {
-                    cardContainer.addEventListener("mouseover", () => {
-                        backImage.style.opacity = "1";
+            function logout() {
+                fetch('http://localhost:3000/logout', { method: 'POST', credentials: 'include' })
+                    .then(() => {
+                        document.getElementById('twitch-login').style.display = 'block';
+                        document.getElementById('logout').style.display = 'none';
+                        alert('Logged out!');
                     });
-                    cardContainer.addEventListener("mouseout", () => {
-                        backImage.style.opacity = "0";
-                    });
-                }
+            }
+            const cardData = [
+                { name: "Fred", image: "imgs/card1.png", hoverImage: "imgs/card1back.png", rarity: "COMMON" },
+                { name: "Aron", image: "imgs/card2.png", hoverImage: "imgs/card2back.png", rarity: "UNCOMMON" },
+                { name: "Claudia", image: "imgs/card3.png", hoverImage: "imgs/card3back.png", rarity: "RARE" },
+                { name: "Bob", image: "imgs/card4.png", hoverImage: "imgs/card4back.png", rarity: "EPIC" },
+                { name: "Felix", image: "imgs/card5.png", hoverImage: "imgs/card5back.png", rarity: "LEGENDARY" },
+                { name: "Cloud", image: "imgs/card6.png", hoverImage: "imgs/card6back.png", rarity: "COMMON" }
+            ];
 
-                const cardLabel = document.createElement("p");
-                cardLabel.textContent = isUnlocked ? cardInfo.name : "???";
-                cardLabel.classList.add('card-label');
+            function displayCards() {
+                const cardGallery = document.getElementById('cardGallery');
+                let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+                let inventoryImages = inventory.map(card => card.image);
 
-                cardContainer.appendChild(frontImage);
-                if (isUnlocked) {
-                    cardContainer.appendChild(backImage);
-                }
-                cardContainer.appendChild(cardLabel);
-                cardGallery.appendChild(cardContainer);
-            });
-        }
+                cardData.forEach(cardInfo => {
+                    const cardContainer = document.createElement('div');
+                    cardContainer.classList.add('card-container');
 
-        document.addEventListener("DOMContentLoaded", displayCards);
-    </script>
+                    const isUnlocked = inventoryImages.includes(cardInfo.image);
+
+                    const frontImage = document.createElement('img');
+                    frontImage.src = isUnlocked ? cardInfo.image : 'imgs/cardlocked.png';
+                    frontImage.classList.add('front');
+                    frontImage.alt = isUnlocked ? cardInfo.name : "???";
+
+                    if (!isUnlocked) {
+                        cardContainer.classList.add('locked');
+                    }
+
+                    const backImage = document.createElement('img');
+                    backImage.src = cardInfo.hoverImage;
+                    backImage.classList.add('back');
+                    backImage.style.position = "absolute";
+                    backImage.style.top = "0";
+                    backImage.style.left = "0";
+                    backImage.style.opacity = "0";
+                    backImage.style.transition = "opacity 0.3s ease-in-out";
+
+                    if (isUnlocked) {
+                        cardContainer.addEventListener("mouseover", () => {
+                            backImage.style.opacity = "1";
+                        });
+                        cardContainer.addEventListener("mouseout", () => {
+                            backImage.style.opacity = "0";
+                        });
+                    }
+
+                    const cardLabel = document.createElement("p");
+                    cardLabel.textContent = isUnlocked ? cardInfo.name : "???";
+                    cardLabel.classList.add('card-label');
+
+                    cardContainer.appendChild(frontImage);
+                    if (isUnlocked) {
+                        cardContainer.appendChild(backImage);
+                    }
+                    cardContainer.appendChild(cardLabel);
+                    cardGallery.appendChild(cardContainer);
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", displayCards);
+        </script>
 </body>
 </html>

@@ -18,6 +18,7 @@
   "homepage": "https://github.com/VanillaRilla/rillatcg#readme",
   "description": "",
   "dependencies": {
+    "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "firebase": "^11.6.0",
