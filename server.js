@@ -4,8 +4,6 @@ const passport = require('passport');
 const session = require('express-session');
 const TwitchStrategy = require('passport-twitch-new').Strategy;
 const dotenv = require('dotenv');
-
-
 dotenv.config();
 
 const app = express();
