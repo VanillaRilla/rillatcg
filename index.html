@@ -129,6 +129,7 @@
 
     <script src="card.js"></script>
     <script>
+
         const cardData = [
             { name: "Fred", image: "imgs/card1.png", hoverImage: "imgs/card1back.png", rarity: "COMMON" },
             { name: "Aron", image: "imgs/card2.png", hoverImage: "imgs/card2back.png", rarity: "UNCOMMON" },
@@ -190,6 +191,53 @@
         }
 
         document.addEventListener("DOMContentLoaded", displayCards);
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+
+    <!-- Firestore (or use firebase-database if using Realtime DB) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+
+    <script>
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+        // Your Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAW75d_4o7XdCsJ1_LmM_h4b2MxSJzrxfU",
+            authDomain: "rillatcg-ab6ba.firebaseapp.com",
+            projectId: "rillatcg-ab6ba",
+            storageBucket: "rillatcg-ab6ba.firebasestorage.app",
+            messagingSenderId: "36231086933",
+            appId: "1:36231086933:web:28450b8b754eff95f7a5dc"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(); // or firebase.database() for Realtime DB
+
+        const userData = JSON.parse(localStorage.getItem('twitchUser'));
+
+        if (userData) {
+            db.collection("users").doc(userData.id).set(userData)
+                .then(() => {
+                    console.log("User data saved to Firestore!");
+                })
+                .catch((error) => {
+                    console.error("Error writing document: ", error);
+                });
+        }
+        function saveUserToFirebase(userData) {
+            db.collection("users").doc(userData.id).set({
+                id: userData.id,
+                displayName: userData.display_name,
+                profileImage: userData.profile_image_url,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                console.log("User data saved!");
+            }).catch(error => {
+                console.error("Error saving user:", error);
+            });
+        }
     </script>
 </body>
 </html>
