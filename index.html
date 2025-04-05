@@ -199,32 +199,38 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-        // Your Firebase config
+        // Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyAW75d_4o7XdCsJ1_LmM_h4b2MxSJzrxfU",
             authDomain: "rillatcg-ab6ba.firebaseapp.com",
             projectId: "rillatcg-ab6ba",
-            storageBucket: "rillatcg-ab6ba.firebasestorage.app",
+            storageBucket: "rillatcg-ab6ba.appspot.com",  // Fixed typo here
             messagingSenderId: "36231086933",
             appId: "1:36231086933:web:28450b8b754eff95f7a5dc"
         };
 
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore(); // or firebase.database() for Realtime DB
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
+        // Get Twitch user from localStorage
         const userData = JSON.parse(localStorage.getItem('twitchUser'));
 
         if (userData) {
-            db.collection("users").doc(userData.id).set(userData)
-                .then(() => {
-                    console.log("User data saved to Firestore!");
-                })
-                .catch((error) => {
-                    console.error("Error writing document: ", error);
+            try {
+                const userRef = doc(db, "users", userData.id);
+                await setDoc(userRef, {
+                    id: userData.id,
+                    displayName: userData.display_name,
+                    profileImage: userData.profile_image_url,
+                    createdAt: serverTimestamp()
                 });
+                console.log("User data saved to Firestore!");
+            } catch (error) {
+                console.error("Error writing document: ", error);
+            }
         }
         function saveUserToFirebase(userData) {
             db.collection("users").doc(userData.id).set({
