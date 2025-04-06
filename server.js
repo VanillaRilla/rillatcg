@@ -60,7 +60,7 @@ app.get('/auth/twitch/callback',
 
         // Send a request to the ngrok URL with the skip warning header before redirecting
         try {
-            const response = await fetch('https://elk-hardy-previously.ngrok-free.app/auth/twitch', {
+            const response = await fetch('https://elk-hardy-previously.ngrok-free.app/auth/twitch/callback', {
                 method: 'GET',
                 headers: {
                     'ngrok-skip-browser-warning': 'true'
