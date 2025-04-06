@@ -76,6 +76,8 @@
         <a href="index.html"><button class="button">GALLERY</button></a>
         <a href="shop.html"><button class="button">SHOP</button></a>
         <a href="inventory.html"><button class="button">INVENTORY</button></a>
+        <button id="twitch-login" class="button" style="background-color: purple; color: white;">Login with Twitch</button>
+        <button id="logout-button" class="button" style="background-color: #444; color: white;">Logout</button>
         <h1>Inventory</h1>
     </header>
 
@@ -155,13 +157,13 @@
                 const rarityColor = rarityColors[card.rarity] || "white"; // Default to white if not found
 
                 listItem.innerHTML = `
-                    <img src="${card.image}" alt="${card.name}" class="card-image">
-                    <div style="text-align: center; margin-top: 5px;">
-                        <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p>
-                        <p style="font-weight: bold; margin: 0;">${card.name}</p>
-                        <p style="font-size: 20px; margin: 0;">x${card.count}</p>
-                    </div>
-                `;
+                            <img src="${card.image}" alt="${card.name}" class="card-image">
+                            <div style="text-align: center; margin-top: 5px;">
+                                <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p>
+                                <p style="font-weight: bold; margin: 0;">${card.name}</p>
+                                <p style="font-size: 20px; margin: 0;">x${card.count}</p>
+                            </div>
+                        `;
                 inventoryList.appendChild(listItem);
             });
         }
@@ -185,5 +187,206 @@
         displayInventory();
     </script>
 
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+
+    <!-- Firestore (or use firebase-database if using Realtime DB) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAW75d_4o7XdCsJ1_LmM_h4b2MxSJzrxfU",
+            authDomain: "rillatcg-ab6ba.firebaseapp.com",
+            projectId: "rillatcg-ab6ba",
+            storageBucket: "rillatcg-ab6ba.appspot.com",
+            messagingSenderId: "36231086933",
+            appId: "1:36231086933:web:28450b8b754eff95f7a5dc"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+
+        async function loadUserData() {
+            const userData = JSON.parse(localStorage.getItem('twitchUser'));
+            if (userData) {
+                try {
+                    const userRef = doc(db, "users", userData.id);
+                    const userDoc = await getDoc(userRef);
+                    if (userDoc.exists()) {
+                        const user = userDoc.data();
+                        localStorage.setItem('balance', user.balance);
+                        document.getElementById('balance').textContent = user.balance;
+
+                        // Load user's inventory
+                        const inventory = user.inventory || [];
+                        localStorage.setItem('inventory', JSON.stringify(inventory));
+
+                        // Display cards based on inventory
+                        displayCards();
+                    } else {
+                        console.log("User document not found in Firestore.");
+                    }
+                } catch (error) {
+                    console.error("Error loading user data: ", error);
+                }
+            } else {
+                console.log("No user data found in localStorage.");
+            }
+        }
+
+        async function logOut() {
+            // Clear user data from localStorage
+            localStorage.removeItem('twitchUser');
+            localStorage.removeItem('balance');
+            localStorage.removeItem('inventory');
+            document.getElementById('balance').textContent = "0"; // Reset balance on the UI
+
+            // Optionally, update Firebase (e.g., track logout status)
+            const userData = JSON.parse(localStorage.getItem('twitchUser'));
+            if (userData) {
+                const userRef = doc(db, "users", userData.id);
+                // Only update the loggedIn status to false, not balance or inventory
+                await updateDoc(userRef, {
+                    loggedIn: false
+                }).then(() => {
+                    console.log("User logged out in Firestore.");
+                }).catch((error) => {
+                    console.error("Error updating user logout state in Firestore: ", error);
+                });
+            }
+
+            // Hide the logout button and show login button
+            document.getElementById('logoutButton').style.display = 'none';
+            document.getElementById('loginButton').style.display = 'block';
+
+            // Redirect to login page or home page if needed
+            window.location.href = "index.html"; // Adjust as necessary
+        }
+
+        const userData = JSON.parse(localStorage.getItem("twitchUser"));
+        if (userData) {
+            const userRef = doc(db, "users", userData.id);
+            const docSnap = await getDoc(userRef);
+            if (!docSnap.exists()) {
+                // Create a new user if no data exists for the user
+                const newUser = {
+                    id: userData.id,
+                    displayName: userData.display_name,
+                    profileImage: userData.profile_image_url,
+                    inventory: [],
+                    balance: 0,
+                    createdAt: serverTimestamp()
+                };
+                await setDoc(userRef, newUser);
+                console.log("New user created and data saved to Firestore!");
+            } else {
+                console.log("User data already exists in Firestore.");
+                // No action needed since we don't want to reset existing user's data
+            }
+        }
+
+        const loginBtn = document.getElementById("twitch-login");
+        const logoutBtn = document.getElementById("logout-button");
+
+        // Check if user is logged in
+        const twitchUser = JSON.parse(localStorage.getItem("twitchUser"));
+
+        if (twitchUser) {
+            loginBtn.style.display = "none";
+            logoutBtn.style.display = "inline-block";
+        } else {
+            loginBtn.style.display = "inline-block";
+            logoutBtn.style.display = "none";
+        }
+
+        // Login button click -> Redirect to Twitch OAuth
+        loginBtn.addEventListener("click", () => {
+            window.location.href = "https://elk-hardy-previously.ngrok-free.app/auth/twitch";
+        });
+
+        logoutBtn.addEventListener("click", async () => {
+            const userData = JSON.parse(localStorage.getItem("twitchUser"));
+            if (userData) {
+                // Clear localStorage
+                localStorage.removeItem("twitchUser");
+                localStorage.setItem("balance", 0);
+                localStorage.setItem("inventory", JSON.stringify([]));
+
+                console.log("Local storage cleared.");
+            }
+
+            // Hide the logout button and show the login button
+            document.getElementById('logoutButton').style.display = 'none';
+            document.getElementById('loginButton').style.display = 'block';
+
+            // Redirect to the home page or login page
+            window.location.href = "index.html"; // Adjust as necessary
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const userDataEncoded = urlParams.get("user");
+
+        if (userDataEncoded) {
+            try {
+                const userData = JSON.parse(decodeURIComponent(userDataEncoded));
+                localStorage.setItem("twitchUser", JSON.stringify(userData));
+                console.log("Logged in as:", userData.display_name);
+
+                const userRef = doc(db, "users", userData.id);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    const user = userSnap.data();
+                    localStorage.setItem("balance", user.balance);
+                    localStorage.setItem("inventory", JSON.stringify(user.inventory || []));
+                    console.log("Loaded user data from Firestore.");
+                } else {
+                    const newUser = {
+                        id: userData.id,
+                        displayName: userData.display_name,
+                        profileImage: userData.profile_image_url,
+                        inventory: [],
+                        balance: 0,
+                        createdAt: serverTimestamp()
+                    };
+                    await setDoc(userRef, newUser);
+                    localStorage.setItem("balance", 0);
+                    localStorage.setItem("inventory", JSON.stringify([]));
+                    console.log("New user created.");
+                }
+
+                // Hide login, show logout
+                document.getElementById("twitch-login").style.display = "none";
+                document.getElementById("logout-button").style.display = "inline-block";
+
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } catch (err) {
+                console.error("Failed to parse or store user:", err);
+            }
+        }
+        document.getElementById("logout-button").addEventListener("click", async () => {
+            const userData = JSON.parse(localStorage.getItem("twitchUser"));
+            if (userData) {
+                try {
+                    const userRef = doc(db, "users", userData.id);
+                    await updateDoc(userRef, {
+                        loggedIn: false
+                    });
+                    console.log("User data reset in Firestore.");
+                } catch (err) {
+                    console.error("Error updating Firestore on logout:", err);
+                }
+            }
+            // Clear local data
+            localStorage.clear();
+            window.location.href = "index.html";
+        });
+    </script>
 </body>
 </html>
