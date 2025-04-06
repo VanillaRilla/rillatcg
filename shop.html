@@ -316,12 +316,12 @@
                         setTimeout(() => {
                             showCardPopup(drawnCards[index].image);  // Assuming `showCardPopup` takes card image as input
                             revealNextCard(index + 1);
-                        }, 1500);  // Adjust timing as needed
+                        }, 2500);  // Adjust timing as needed
                     } else {
                         setTimeout(() => {
                             buyTenCardsButton.disabled = balance < 1000;
                             isBuying = false;
-                        }, 2500);
+                        }, 3000);
                     }
                 }
 
