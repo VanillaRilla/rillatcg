@@ -357,13 +357,14 @@
                 stackContainer.style.display = "block";
                 stackContainer.style.pointerEvents = "auto";
 
-                for (let i = drawnCards.length - 1; i >= 0; i--) {
+                for (let i = 0; i < drawnCards.length; i++) {
                     const card = drawnCards[i];
                     const img = document.createElement("img");
                     img.src = card.image;
-                    img.style.zIndex = `${i + 1}`;
+                    img.style.zIndex = `${100 - i}`; // Higher z-index = on top
                     img.style.transform = `translate(${i * 2}px, ${i * 2}px)`;
                     stackContainer.appendChild(img);
+                }
                 }
 
                 function handleClickCard(e) {
