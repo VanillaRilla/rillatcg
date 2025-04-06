@@ -101,10 +101,21 @@
             z-index: 1000;
         }
 
-            .card-popup img {
-                width: 100%;
-                height: auto;
+        .card-popup img {
+            width: 100%;
+            height: auto;
+        }
+
+        .card-popup.fade-left {
+            animation: fadeLeft 0.5s forwards;
+        }
+
+        @keyframes fadeLeft {
+            to {
+                transform: translate(-100%, -50%) scale(0);
+                opacity: 0;
             }
+        }
 
         .show-popup {
             transform: translate(-50%, -50%) scale(1);
@@ -303,29 +314,36 @@
                     drawnCards.push(randomCard);
                 }
 
-                // Sort drawn cards based on rarity, with the rarest one last
+                // Sort drawn cards with rarest last
                 drawnCards.sort((a, b) => {
                     const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4 };
-                    return rarityOrder[a.rarity] - rarityOrder[b.rarity]; // Sort in ascending order (common to rare)
+                    return rarityOrder[a.rarity.toLowerCase()] - rarityOrder[b.rarity.toLowerCase()];
                 });
+
                 localStorage.setItem("inventory", JSON.stringify(inventory));
                 await updateFirebaseInventory(balance, inventory);
 
-                function revealNextCard(index) {
-                    if (index < drawnCards.length) {
-                        setTimeout(() => {
-                            showCardPopup(drawnCards[index].image);  // Assuming `showCardPopup` takes card image as input
-                            revealNextCard(index + 1);
-                        }, 2400);  // Adjust timing as needed
+                const popup = document.getElementById("cardPopup");
+                const popupImage = document.getElementById("popupImage");
+                let currentIndex = 0;
+
+                function showNextCard() {
+                    if (currentIndex < drawnCards.length) {
+                        popup.classList.remove("fade-left"); // Reset class
+                        popupImage.src = drawnCards[currentIndex].image;
+                        popup.classList.add("show-popup");
+                        currentIndex++;
                     } else {
-                        setTimeout(() => {
-                            buyTenCardsButton.disabled = balance < 1000;
-                            isBuying = false;
-                        }, 3000);
+                        popup.classList.remove("show-popup");
+                        popup.removeEventListener("click", showNextCard);
+                        buyTenCardsButton.disabled = balance < 1000;
+                        isBuying = false;
                     }
                 }
-
-                revealNextCard(0);
+                popup.addEventListener("click", () => {
+                    popup.classList.add("fade-left");
+                    setTimeout(showNextCard, 300);
+                });
             } else {
                 alert("Not enough balance or a purchase is already in progress!");
             }
