@@ -358,36 +358,39 @@
                 stackContainer.style.display = "block";
                 stackContainer.style.pointerEvents = "auto";
 
-                for (let i = 0; i < drawnCards.length; i++) {
-                    const card = drawnCards[i];
+                // Create the cards
+                drawnCards.forEach((card, index) => {
                     const img = document.createElement("img");
                     img.src = card.image;
-                    img.style.zIndex = `${100 - i}`; // Higher z-index = on top
-                    img.style.transform = `translate(${i * 2}px, ${i * 2}px)`;
+                    img.style.zIndex = `${100 - index}`; // Higher z-index = on top
+                    img.style.transform = `translate(${index * 2}px, ${index * 2}px)`;
                     img.classList.add('card');  // Add a class for better control (optional)
                     stackContainer.appendChild(img);
 
                     // Add click event listener to each card
                     img.addEventListener("click", function handleClickCard(e) {
-                        const topCard = stackContainer.querySelector("img:last-child");
-                        if (!topCard || e.target !== topCard) return; // Ensure only the top card is clickable
+                        // Only trigger on top card
+                        if (stackContainer.children.length === 0) return;
 
-                        // Add fade-out class and remove after fade
+                        const topCard = stackContainer.querySelector("img:last-child");
+                        if (e.target !== topCard) return; // Ensure only the top card is clickable
+
+                        // Fade out and remove the top card
                         topCard.classList.add("fade-out");
 
                         setTimeout(() => {
                             topCard.remove();
 
-                            // If no cards are left, disable the stack
+                            // If no cards are left, disable the stack and reset states
                             if (stackContainer.children.length === 0) {
                                 stackContainer.style.display = "none";
                                 stackContainer.style.pointerEvents = "none";
                                 isBuying = false;
                                 buyTenCardsButton.disabled = balance < 1000;
                             }
-                        }, 300);
+                        }, 300); // Wait for fade-out animation
                     });
-                }
+                });
             } else {
                 alert("Not enough balance or a purchase is already in progress!");
             }
