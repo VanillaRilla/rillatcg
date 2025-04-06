@@ -385,7 +385,25 @@
                 }
 
                 // Attach the click event to the whole container (only top card will trigger it)
-                stackContainer.addEventListener("click", handleClickCard);
+                for (let i = 0; i < stackContainer.children.length; i++) {
+                    const img = stackContainer.children[i];
+                    img.addEventListener("click", (e) => {
+                        // Only allow click on the top card
+                        const topCard = stackContainer.querySelector("img:last-child");
+                        if (e.target !== topCard) return;
+
+                        topCard.classList.add("fade-out");
+                        setTimeout(() => {
+                            topCard.remove();
+                            if (stackContainer.children.length === 0) {
+                                stackContainer.style.display = "none";
+                                stackContainer.style.pointerEvents = "none";
+                                isBuying = false;
+                                buyTenCardsButton.disabled = balance < 1000;
+                            }
+                        }, 300);
+                    });
+                }
             } else {
                 alert("Not enough balance or a purchase is already in progress!");
             }
