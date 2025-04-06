@@ -277,9 +277,33 @@
         }
     </script>
     <script>
-        const loginBtn = document.getElementById("twitch-login");
-        const logoutBtn = document.getElementById("logout-button");
+        window.addEventListener('DOMContentLoaded', () => {
+            const loginBtn = document.getElementById("twitch-login");
+            const logoutBtn = document.getElementById("logout-button");
 
+            const urlParams = new URLSearchParams(window.location.search);
+            const userDataEncoded = urlParams.get('user');
+
+            if (userDataEncoded) {
+                try {
+                    const userData = JSON.parse(decodeURIComponent(userDataEncoded));
+                    localStorage.setItem('twitchUser', JSON.stringify(userData));
+                    console.log("Twitch user saved to localStorage:", userData);
+
+                    // Immediately update UI without refresh
+                    loginBtn.style.display = "none";
+                    logoutBtn.style.display = "inline-block";
+
+                    // Clean the URL so the user param disappears
+                    window.history.replaceState({}, document.title, window.location.pathname);
+
+                    // Load user data (inventory, balance, etc.)
+                    loadUserData();
+                } catch (e) {
+                    console.error("Failed to parse user data:", e);
+                }
+            }
+        });
         // Check if user is logged in
         const twitchUser = JSON.parse(localStorage.getItem("twitchUser"));
 
@@ -297,8 +321,12 @@
         });
 
         logoutBtn.addEventListener("click", async () => {
-            localStorage.clear();
-            window.location.href = "index.html";
+            // Set specific localStorage values to null instead of clearing everything
+            localStorage.setItem('twitchUser', null);
+            localStorage.setItem('inventory', JSON.stringify([])); // Clear inventory
+            localStorage.setItem('balance', JSON.stringify(0));   // Reset balance
+
+        });
 
             // Optionally, update Firebase (e.g., track logout status)
             const userData = JSON.parse(localStorage.getItem('twitchUser'));
@@ -313,8 +341,8 @@
                 });
             }
 
-            // Redirect to home page or login page
-            window.location.href = "index.html"; // Or any other page you prefer after logout
+        // Update UI or do any other logout actions
+        window.location.href = "index.html"; // Optionally redirect after logout
         });
 
         async function loadUserData() {
@@ -325,10 +353,12 @@
                     const userDoc = await getDoc(userRef);
                     if (userDoc.exists()) {
                         const user = userDoc.data();
-                        localStorage.setItem('balance', user.balance);
+
+                        // Update localStorage with user balance
+                        localStorage.setItem('balance', JSON.stringify(user.balance));
                         document.getElementById('balance').textContent = user.balance;
 
-                        // Load user's inventory
+                        // Update localStorage with user inventory
                         const inventory = user.inventory || [];
                         localStorage.setItem('inventory', JSON.stringify(inventory));
 
