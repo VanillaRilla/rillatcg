@@ -111,11 +111,6 @@
 
         let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
-
-
-
-
-
         const cardData = [
             { image: "imgs/card1.png", name: "Fred", rarity: "common", probability: 0.60 },
             { image: "imgs/card2.png", name: "Aron", rarity: "uncommon", probability: 0.25 },
@@ -157,13 +152,13 @@
                 const rarityColor = rarityColors[card.rarity] || "white"; // Default to white if not found
 
                 listItem.innerHTML = `
-                                <img src="${card.image}" alt="${card.name}" class="card-image">
-                                <div style="text-align: center; margin-top: 5px;">
-                                    <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p>
-                                    <p style="font-weight: bold; margin: 0;">${card.name}</p>
-                                    <p style="font-size: 20px; margin: 0;">x${card.count}</p>
-                                </div>
-                            `;
+                                    <img src="${card.image}" alt="${card.name}" class="card-image">
+                                    <div style="text-align: center; margin-top: 5px;">
+                                        <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p>
+                                        <p style="font-weight: bold; margin: 0;">${card.name}</p>
+                                        <p style="font-size: 20px; margin: 0;">x${card.count}</p>
+                                    </div>
+                                `;
                 inventoryList.appendChild(listItem);
             });
         }
@@ -186,7 +181,29 @@
         }
         displayInventory();
     </script>
+    <script>
+        // Function to check if user is logged in and update buttons
+        function updateLoginState() {
+            const loginBtn = document.getElementById("twitch-login");
+            const logoutBtn = document.getElementById("logout-button");
+            const twitchUser = JSON.parse(localStorage.getItem("twitchUser"));
 
+            if (twitchUser) {
+                // If user is logged in, hide login button and show logout button
+                loginBtn.style.display = "none";
+                logoutBtn.style.display = "inline-block";
+            } else {
+                // If user is not logged in, show login button and hide logout button
+                loginBtn.style.display = "inline-block";
+                logoutBtn.style.display = "none";
+            }
+        }
+
+        // Call the function on page load to ensure correct button visibility
+        window.addEventListener('DOMContentLoaded', () => {
+            updateLoginState();
+        });
+    </script>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
 
@@ -294,16 +311,6 @@
         const loginBtn = document.getElementById("twitch-login");
         const logoutBtn = document.getElementById("logout-button");
 
-        // Check if user is logged in
-        const twitchUser = JSON.parse(localStorage.getItem("twitchUser"));
-
-        if (twitchUser) {
-            loginBtn.style.display = "none";
-            logoutBtn.style.display = "inline-block";
-        } else {
-            loginBtn.style.display = "inline-block";
-            logoutBtn.style.display = "none";
-        }
 
         // Login button click -> Redirect to Twitch OAuth
         loginBtn.addEventListener("click", () => {

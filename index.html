@@ -129,32 +129,25 @@
 
     <script src="Card.js"></script>
     <script>
-        window.addEventListener('DOMContentLoaded', () => {
+        function updateLoginState() {
             const loginBtn = document.getElementById("twitch-login");
             const logoutBtn = document.getElementById("logout-button");
+            const twitchUser = JSON.parse(localStorage.getItem("twitchUser"));
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const userDataEncoded = urlParams.get('user');
-
-            if (userDataEncoded) {
-                try {
-                    const userData = JSON.parse(decodeURIComponent(userDataEncoded));
-                    localStorage.setItem('twitchUser', JSON.stringify(userData));
-                    console.log("Twitch user saved to localStorage:", userData);
-
-                    // Immediately update UI without refresh
-                    loginBtn.style.display = "none";
-                    logoutBtn.style.display = "inline-block";
-
-                    // Clean the URL so the user param disappears
-                    window.history.replaceState({}, document.title, window.location.pathname);
-
-                    // Load user data (inventory, balance, etc.)
-                    loadUserData();
-                } catch (e) {
-                    console.error("Failed to parse user data:", e);
-                }
+            if (twitchUser) {
+                // If user is logged in, hide login button and show logout button
+                loginBtn.style.display = "none";
+                logoutBtn.style.display = "inline-block";
+            } else {
+                // If user is not logged in, show login button and hide logout button
+                loginBtn.style.display = "inline-block";
+                logoutBtn.style.display = "none";
             }
+        }
+
+        // Call the function on page load to ensure correct button visibility
+        window.addEventListener('DOMContentLoaded', () => {
+            updateLoginState();
         });
     </script>
 
