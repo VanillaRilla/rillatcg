@@ -150,6 +150,9 @@
 
                     // Clean the URL so the user param disappears
                     window.history.replaceState({}, document.title, window.location.pathname);
+
+                    // Load user data (inventory, balance, etc.)
+                    loadUserData();
                 } catch (e) {
                     console.error("Failed to parse user data:", e);
                 }
@@ -251,13 +254,14 @@
                     const userDoc = await getDoc(userRef);
                     if (userDoc.exists()) {
                         const user = userDoc.data();
-
-                        // Load user data (balance and inventory)
                         localStorage.setItem('balance', user.balance);
-                        localStorage.setItem('inventory', JSON.stringify(user.inventory));
-                        document.getElementById('balance').textContent = `Balance: ${user.balance}`;
+                        document.getElementById('balance').textContent = user.balance;
 
-                        // Call function to display the updated inventory
+                        // Load user's inventory
+                        const inventory = user.inventory || [];
+                        localStorage.setItem('inventory', JSON.stringify(inventory));
+
+                        // Display cards based on inventory
                         displayCards();
                     } else {
                         console.log("User document not found in Firestore.");
@@ -346,11 +350,9 @@
             window.location.href = "https://elk-hardy-previously.ngrok-free.app/auth/twitch";
         });
 
-
-        // Logout button click -> Clear localStorage + destroy session
         logoutBtn.addEventListener("click", async () => {
-            // Clear everything from localStorage
             localStorage.clear();
+            window.location.href = "index.html";
 
             // Optionally, update Firebase (e.g., track logout status)
             const userData = JSON.parse(localStorage.getItem('twitchUser'));
