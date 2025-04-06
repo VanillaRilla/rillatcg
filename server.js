@@ -67,3 +67,15 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
+app.get('/auth/twitch/callback',
+    passport.authenticate('twitch', { failureRedirect: '/' }),
+    function (req, res) {
+        const user = req.user;
+        const encodedUser = encodeURIComponent(JSON.stringify({
+            id: user.id,
+            display_name: user.display_name,
+            profile_image_url: user.profile_image_url
+        }));
+        // Redirect back to frontend with Twitch user info
+        res.redirect(`https://elk-hardy-previously.ngrok-free.app/auth/twitch/callback/?user=${encodedUser}`);
+    });
