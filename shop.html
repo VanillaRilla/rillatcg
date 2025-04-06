@@ -331,6 +331,7 @@
                 let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
                 let drawnCards = [];
 
+                // Draw 10 cards
                 for (let i = 0; i < 10; i++) {
                     const randomCard = getRandomCard();
                     let existingCard = inventory.find(card => card.image === randomCard.image);
@@ -363,38 +364,21 @@
                     img.src = card.image;
                     img.style.zIndex = `${100 - i}`; // Higher z-index = on top
                     img.style.transform = `translate(${i * 2}px, ${i * 2}px)`;
+                    img.classList.add('card');  // Add a class for better control (optional)
                     stackContainer.appendChild(img);
-                }
 
-                function handleClickCard(e) {
-                    const topCard = stackContainer.querySelector("img:last-child");
-                    if (!topCard) return;
-
-                    topCard.classList.add("fade-out");
-                    topCard.removeEventListener("click", handleClickCard);
-
-                    setTimeout(() => {
-                        topCard.remove();
-                        if (stackContainer.children.length === 0) {
-                            stackContainer.style.display = "none";
-                            stackContainer.style.pointerEvents = "none";
-                            isBuying = false;
-                            buyTenCardsButton.disabled = balance < 1000;
-                        }
-                    }, 300);
-                }
-
-                // Attach the click event to the whole container (only top card will trigger it)
-                for (let i = 0; i < stackContainer.children.length; i++) {
-                    const img = stackContainer.children[i];
-                    img.addEventListener("click", (e) => {
-                        // Only allow click on the top card
+                    // Add click event listener to each card
+                    img.addEventListener("click", function handleClickCard(e) {
                         const topCard = stackContainer.querySelector("img:last-child");
-                        if (e.target !== topCard) return;
+                        if (!topCard || e.target !== topCard) return; // Ensure only the top card is clickable
 
+                        // Add fade-out class and remove after fade
                         topCard.classList.add("fade-out");
+
                         setTimeout(() => {
                             topCard.remove();
+
+                            // If no cards are left, disable the stack
                             if (stackContainer.children.length === 0) {
                                 stackContainer.style.display = "none";
                                 stackContainer.style.pointerEvents = "none";
