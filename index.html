@@ -326,8 +326,6 @@
             localStorage.setItem('inventory', JSON.stringify([])); // Clear inventory
             localStorage.setItem('balance', JSON.stringify(0));   // Reset balance
 
-        });
-
             // Optionally, update Firebase (e.g., track logout status)
             const userData = JSON.parse(localStorage.getItem('twitchUser'));
             if (userData) {
@@ -341,8 +339,8 @@
                 });
             }
 
-        // Update UI or do any other logout actions
-        window.location.href = "index.html"; // Optionally redirect after logout
+            // Update UI or do any other logout actions
+            window.location.href = "index.html"; // Optionally redirect after logout
         });
 
         async function loadUserData() {
@@ -350,7 +348,7 @@
             if (userData) {
                 try {
                     const userRef = doc(db, "users", userData.id);
-                    const userDoc = await getDoc(userRef);
+                    const userDoc = await getDoc(userRef);  // this requires await
                     if (userDoc.exists()) {
                         const user = userDoc.data();
 
