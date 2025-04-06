@@ -269,7 +269,7 @@
                     }
                     localStorage.setItem('inventory', JSON.stringify(inventory));
                     updateBalance(balance - 100);
-                    await updateFirebaseInventory(balance - 100, inventory);
+                    await updateFirebaseInventory(balance, inventory);
                     showCardPopup(randomCard.image);
                     setTimeout(() => {
                         addCardButton.disabled = balance < 100;
@@ -301,7 +301,7 @@
                     drawnCards.push(randomCard.image);
                 }
                 localStorage.setItem("inventory", JSON.stringify(inventory));
-                await updateFirebaseInventory(balance - 1000, inventory);
+                await updateFirebaseInventory(balance, inventory);
 
                 function revealNextCard(index) {
                     if (index < drawnCards.length) {
