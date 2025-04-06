@@ -319,5 +319,42 @@
         getCreditsButton.addEventListener('click', () => updateBalance(balance + 100));
         checkBalance();
     </script>
+    <script type="module">
+        import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+        // Example function when a user buys a card
+        async function buyCard(card) {
+            const userData = JSON.parse(localStorage.getItem('twitchUser'));
+            if (userData) {
+                const db = getFirestore();
+                const userRef = doc(db, "users", userData.id);
+
+                const userDoc = await getDoc(userRef);
+                if (userDoc.exists()) {
+                    const user = userDoc.data();
+                    const currentBalance = user.balance;
+
+                    // Check if the user has enough balance
+                    if (currentBalance >= card.price) {
+                        // Update inventory
+                        const newInventory = [...user.inventory, card]; // Add the new card to inventory
+
+                        // Update balance
+                        const newBalance = currentBalance - card.price;
+
+                        // Update Firestore
+                        await updateDoc(userRef, {
+                            inventory: newInventory,
+                            balance: newBalance
+                        });
+
+                        console.log("Card bought successfully! Inventory and balance updated.");
+                    } else {
+                        console.log("Not enough balance!");
+                    }
+                }
+            }
+        }
+    </script>
 </body>
 </html>

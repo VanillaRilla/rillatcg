@@ -227,8 +227,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
+        // Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyAW75d_4o7XdCsJ1_LmM_h4b2MxSJzrxfU",
             authDomain: "rillatcg-ab6ba.firebaseapp.com",
@@ -238,32 +239,36 @@
             appId: "1:36231086933:web:28450b8b754eff95f7a5dc"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Check if we're coming back from Twitch with user data
-        const urlParams = new URLSearchParams(window.location.search);
-        const userDataEncoded = urlParams.get('user');
+        // Get Twitch user from localStorage
+        const userData = JSON.parse(localStorage.getItem('twitchUser'));
 
-        if (userDataEncoded) {
-            try {
-                const userData = JSON.parse(decodeURIComponent(userDataEncoded));
-                localStorage.setItem('twitchUser', JSON.stringify(userData));
-                console.log("Twitch user saved to localStorage:", userData);
+        // Check if user is logged in
+        if (userData) {
+            const userRef = doc(db, "users", userData.id);
 
-                // Save to Firebase
-                const userRef = doc(db, "users", userData.id);
-                await setDoc(userRef, {
+            // Check if the user document exists
+            const docSnap = await getDoc(userRef);
+
+            if (!docSnap.exists()) {
+                // User doesn't exist, create a new document with inventory and balance
+                const newUser = {
                     id: userData.id,
                     displayName: userData.display_name,
                     profileImage: userData.profile_image_url,
-                    createdAt: serverTimestamp()
-                });
+                    inventory: [], // Empty inventory initially
+                    balance: 100, // Initial balance
+                    createdAt: serverTimestamp(),
+                };
 
-                // Clean URL after saving
-                window.history.replaceState({}, document.title, window.location.pathname);
-            } catch (e) {
-                console.error("Failed to handle Twitch login data:", e);
+                // Save to Firestore
+                await setDoc(userRef, newUser);
+                console.log("New user created and data saved to Firestore!");
+            } else {
+                console.log("User data already exists in Firestore.");
             }
         }
     </script>
