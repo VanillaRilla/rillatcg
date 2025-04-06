@@ -135,7 +135,7 @@
         <p id="couponMessage"></p>
     </section>
 
-    <script>
+    <script type="module">
         import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
         const db = getFirestore();
@@ -338,9 +338,8 @@
         getCreditsButton.addEventListener('click', () => updateBalance(balance + 100));
         checkBalance()
     </script>
-    <script type="module">
-        import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-
+    
+    <script>
         // Example function when a user buys a card
         async function buyCard(card) {
             const userData = JSON.parse(localStorage.getItem('twitchUser'));
