@@ -372,28 +372,28 @@
     </script>
 
     <script>
-        // Function to check if user is logged in and update buttons
-        function updateLoginState() {
-            const loginBtn = document.getElementById("twitch-login");
-            const logoutBtn = document.getElementById("logout-button");
-            const twitchUser = JSON.parse(localStorage.getItem("twitchUser"));
+    // Function to check if user is logged in and update buttons
+    function updateLoginState() {
+        const loginBtn = document.getElementById("twitch-login");
+        const logoutBtn = document.getElementById("logout-button");
+        const twitchUser = JSON.parse(localStorage.getItem("twitchUser"));
 
-            if (twitchUser) {
-                // If user is logged in, hide login button and show logout button
-                loginBtn.style.display = "none";
-                logoutBtn.style.display = "inline-block";
-            } else {
-                // If user is not logged in, show login button and hide logout button
-                loginBtn.style.display = "inline-block";
-                logoutBtn.style.display = "none";
-            }
+        if (twitchUser) {
+            // If user is logged in, hide login button and show logout button
+            loginBtn.style.display = "none";
+            logoutBtn.style.display = "inline-block";
+        } else {
+            // If user is not logged in, show login button and hide logout button
+            loginBtn.style.display = "inline-block";
+            logoutBtn.style.display = "none";
         }
+    }
 
-        // Call the function on page load to ensure correct button visibility
-        window.addEventListener('DOMContentLoaded', () => {
-            updateLoginState();
-        });
-    </script>
+    // Call the function on page load to ensure correct button visibility
+    window.addEventListener('DOMContentLoaded', () => {
+        updateLoginState();
+    });
+</script>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
 
@@ -469,8 +469,8 @@
             }
 
             // Hide the logout button and show login button
-            document.getElementById('logoutButton').style.display = 'none';
-            document.getElementById('loginButton').style.display = 'block';
+            //document.getElementById('logoutButton').style.display = 'none';
+            //document.getElementById('loginButton').style.display = 'block';
 
             // Redirect to login page or home page if needed
             window.location.href = "index.html"; // Adjust as necessary
