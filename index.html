@@ -251,8 +251,14 @@
                     const userDoc = await getDoc(userRef);
                     if (userDoc.exists()) {
                         const user = userDoc.data();
+
+                        // Load user data (balance and inventory)
                         localStorage.setItem('balance', user.balance);
-                        document.getElementById('balance').textContent = user.balance;
+                        localStorage.setItem('inventory', JSON.stringify(user.inventory));
+                        document.getElementById('balance').textContent = `Balance: ${user.balance}`;
+
+                        // Call function to display the updated inventory
+                        displayCards();
                     } else {
                         console.log("User document not found in Firestore.");
                     }
