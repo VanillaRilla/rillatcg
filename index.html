@@ -228,7 +228,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
         // Firebase config
         const firebaseConfig = {
@@ -349,25 +349,62 @@
         });
 
         logoutBtn.addEventListener("click", async () => {
-            localStorage.clear();
-            window.location.href = "index.html";
-
-            // Optionally, update Firebase (e.g., track logout status)
-            const userData = JSON.parse(localStorage.getItem('twitchUser'));
+            const userData = JSON.parse(localStorage.getItem("twitchUser"));
             if (userData) {
                 const userRef = doc(db, "users", userData.id);
-                await updateDoc(userRef, {
-                    loggedIn: false
-                }).then(() => {
-                    console.log("User logged out in Firestore.");
-                }).catch((error) => {
-                    console.error("Error updating user logout state in Firestore: ", error);
-                });
+
+                try {
+                    // Reset user data in Firestore
+                    await updateDoc(userRef, {
+                        balance: 0,
+                        inventory: [],
+                        loggedIn: false
+                    });
+                    console.log("User balance and inventory reset.");
+                } catch (err) {
+                    console.error("Error resetting user data:", err);
+                }
+
+                // Clear localStorage
+                localStorage.removeItem("twitchUser");
+                localStorage.setItem("balance", 0);
+                localStorage.setItem("inventory", JSON.stringify([]));
             }
 
-            // Redirect to home page or login page
-            window.location.href = "index.html"; // Or any other page you prefer after logout
+            // Reload to reflect logout
+            window.location.href = "index.html";
         });
+        const urlParams = new URLSearchParams(window.location.search);
+        const userDataEncoded = urlParams.get("user");
+
+        if (userDataEncoded) {
+            try {
+                const userData = JSON.parse(decodeURIComponent(userDataEncoded));
+                localStorage.setItem("twitchUser", JSON.stringify(userData));
+                console.log("Logged in as:", userData.display_name);
+
+                const userRef = doc(db, "users", userData.id);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    const user = userSnap.data();
+                    localStorage.setItem("balance", user.balance);
+                    localStorage.setItem("inventory", JSON.stringify(user.inventory || []));
+                    console.log("Loaded user data from Firestore.");
+                } else {
+                    const newUser = {
+                        id: userData.id,
+                        displayName: userData.display_name,
+                        profileImage: userData.profile_image_url,
+                        inventory: [],
+                        balance: 0,
+                        createdAt: serverTimestamp()
+                    };
+                    await setDoc(userRef, newUser);
+                    localStorage.setItem("balance", 0);
+                    localStorage.setItem("inventory", JSON.stringify([]));
+                    console.log("New user created.");
+                }
     </script>
 </body>
 </html>
