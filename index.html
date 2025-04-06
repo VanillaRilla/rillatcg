@@ -131,9 +131,10 @@
 
     <script src="Card.js"></script>
     <script>
-        // This function runs once the page loads
         window.addEventListener('DOMContentLoaded', () => {
-            // Check if we're coming back from Twitch with user data in the URL
+            const loginBtn = document.getElementById("twitch-login");
+            const logoutBtn = document.getElementById("logout-button");
+
             const urlParams = new URLSearchParams(window.location.search);
             const userDataEncoded = urlParams.get('user');
 
@@ -142,6 +143,10 @@
                     const userData = JSON.parse(decodeURIComponent(userDataEncoded));
                     localStorage.setItem('twitchUser', JSON.stringify(userData));
                     console.log("Twitch user saved to localStorage:", userData);
+
+                    // Immediately update UI without refresh
+                    loginBtn.style.display = "none";
+                    logoutBtn.style.display = "inline-block";
 
                     // Clean the URL so the user param disappears
                     window.history.replaceState({}, document.title, window.location.pathname);
