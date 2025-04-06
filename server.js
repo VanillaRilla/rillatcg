@@ -9,7 +9,19 @@ const TwitchStrategy = require('passport-twitch-new').Strategy; // or passport-t
 const app = express();
 const port = 3000;
 
+const fetch = require('node-fetch');
 
+fetch('https://elk-hardy-previously.ngrok-free.app/auth/twitch', {
+    method: 'GET',
+    headers: {
+        'ngrok-skip-browser-warning': 'true'
+    }
+})
+    .then(response => response.text())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => console.error('Error:', error));
 // Step 1: Set up session middleware
 app.use(session({
     secret: process.env.SESSION_SECRET, // Your session secret from the .env file
