@@ -137,7 +137,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
         // Firebase config
         const firebaseConfig = {
@@ -149,7 +149,9 @@
             appId: "1:36231086933:web:28450b8b754eff95f7a5dc"
         };
 
-        const db = getFirestore();
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig); // Initialize Firebase App
+        const db = getFirestore(app);  // Initialize Firestore with the Firebase app
 
         const addCardButton = document.getElementById('addCardButton');
         const getCreditsButton = document.getElementById('getCreditsButton');
