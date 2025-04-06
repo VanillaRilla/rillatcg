@@ -411,8 +411,6 @@
                 try {
                     const userRef = doc(db, "users", userData.id);
                     await updateDoc(userRef, {
-                        balance: 0,
-                        inventory: [],
                         loggedIn: false
                     });
                     console.log("User data reset in Firestore.");
