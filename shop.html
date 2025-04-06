@@ -331,6 +331,16 @@
             checkBalance();
         }
 
+        async function updateFirebaseBalance(newBalance) {
+            const userData = JSON.parse(localStorage.getItem('twitchUser'));
+            if (userData) {
+                const userRef = doc(db, "users", userData.id);
+                await updateDoc(userRef, {
+                    balance: newBalance
+                });
+            }
+        }
+
         function checkBalance() {
             addCardButton.disabled = balance < 100;
         }
@@ -356,15 +366,7 @@
         });
         checkBalance()
    
-        async function updateFirebaseBalance(newBalance) {
-            const userData = JSON.parse(localStorage.getItem('twitchUser'));
-            if (userData) {
-                const userRef = doc(db, "users", userData.id);
-                await updateDoc(userRef, {
-                    balance: newBalance
-                });
-            }
-        }
+        
     </script>
 </body>
 </html>
