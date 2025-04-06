@@ -278,13 +278,15 @@
             // Clear user data from localStorage
             localStorage.removeItem('twitchUser');
             localStorage.removeItem('balance');
-            document.getElementById('balance').textContent = "0"; // Reset balance
+            localStorage.removeItem('inventory');
+            document.getElementById('balance').textContent = "0"; // Reset balance on the UI
 
             // Optionally, update Firebase (e.g., track logout status)
             const userData = JSON.parse(localStorage.getItem('twitchUser'));
             if (userData) {
                 const userRef = doc(db, "users", userData.id);
-                updateDoc(userRef, {
+                // Only update the loggedIn status to false, not balance or inventory
+                await updateDoc(userRef, {
                     loggedIn: false
                 }).then(() => {
                     console.log("User logged out in Firestore.");
@@ -298,7 +300,7 @@
             document.getElementById('loginButton').style.display = 'block';
 
             // Redirect to login page or home page if needed
-            window.location.href = "login.html"; // Adjust as necessary
+            window.location.href = "index.html"; // Adjust as necessary
         }
 
         const userData = JSON.parse(localStorage.getItem('twitchUser'));
