@@ -300,8 +300,14 @@
                     } else {
                         inventory.push({ ...randomCard, count: 1 });
                     }
-                    drawnCards.push(randomCard.image);
+                    drawnCards.push(randomCard);
                 }
+
+                // Sort drawn cards based on rarity, with the rarest one last
+                drawnCards.sort((a, b) => {
+                    const rarityOrder = { "COMMON": 0, "UNCOMMON": 1, "RARE": 2, "EPIC": 3, "LEGENDARY": 4 };
+                    return rarityOrder[a.rarity] - rarityOrder[b.rarity]; // Sort in ascending order (common to rare)
+                });
                 localStorage.setItem("inventory", JSON.stringify(inventory));
                 await updateFirebaseInventory(balance, inventory);
 
