@@ -349,7 +349,11 @@
 
         document.getElementById('addCardButton').addEventListener('click', addRandomCardToInventory);
         document.getElementById('buyTenCardsButton').addEventListener('click', buyTenCards);
-        getCreditsButton.addEventListener('click', () => updateBalance(balance + 100));
+        getCreditsButton.addEventListener('click', () => {
+            const newBalance = balance + 100;
+            updateBalance(newBalance);
+            updateFirebaseBalance(newBalance);
+        });
         checkBalance()
     </script>
     
