@@ -47,10 +47,18 @@ app.get('/auth/twitch',
 
 // Step 6: Handle the callback after successful authentication from Twitch
 app.get('/auth/twitch/callback',
-    passport.authenticate('twitch', { failureRedirect: '/' }), // Redirect if authentication fails
+    passport.authenticate('twitch', { failureRedirect: '/' }),
     function (req, res) {
-        // Successful login, redirect the user
-        res.redirect('/'); // Or redirect to another page after login
+        const user = req.user;
+
+        const encodedUser = encodeURIComponent(JSON.stringify({
+            id: user.id,
+            display_name: user.display_name,
+            profile_image_url: user.profile_image_url
+        }));
+
+        // Redirect back to the frontend index.html with the Twitch user info in the URL
+        res.redirect(`https://elk-hardy-previously.ngrok-free.app/index.html?user=${encodedUser}`);
     }
 );
 
@@ -67,15 +75,3 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
-app.get('/auth/twitch/callback',
-    passport.authenticate('twitch', { failureRedirect: '/' }),
-    function (req, res) {
-        const user = req.user;
-        const encodedUser = encodeURIComponent(JSON.stringify({
-            id: user.id,
-            display_name: user.display_name,
-            profile_image_url: user.profile_image_url
-        }));
-        // Redirect back to frontend with Twitch user info
-        res.redirect(`https://elk-hardy-previously.ngrok-free.app/auth/twitch/callback/?user=${encodedUser}`);
-    });
