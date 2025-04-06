@@ -58,7 +58,7 @@ app.get('/auth/twitch/callback',
         }));
 
         // Redirect back to the frontend index.html with the Twitch user info in the URL
-        res.redirect(`https://elk-hardy-previously.ngrok-free.app/index.html?user=${encodedUser}`);
+        res.redirect(`https://vanillarilla.github.io/rillatcg/index.html?user=${encodedUser}`);
     }
 );
 
