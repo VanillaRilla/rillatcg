@@ -345,29 +345,22 @@
         logoutBtn.addEventListener("click", async () => {
             const userData = JSON.parse(localStorage.getItem("twitchUser"));
             if (userData) {
-                const userRef = doc(db, "users", userData.id);
-
-                try {
-                    // Reset user data in Firestore
-                    await updateDoc(userRef, {
-                        balance: 0,
-                        inventory: [],
-                        loggedIn: false
-                    });
-                    console.log("User balance and inventory reset.");
-                } catch (err) {
-                    console.error("Error resetting user data:", err);
-                }
-
                 // Clear localStorage
                 localStorage.removeItem("twitchUser");
                 localStorage.setItem("balance", 0);
                 localStorage.setItem("inventory", JSON.stringify([]));
+
+                console.log("Local storage cleared.");
             }
 
-            // Reload to reflect logout
-            window.location.href = "index.html";
+            // Hide the logout button and show the login button
+            document.getElementById('logoutButton').style.display = 'none';
+            document.getElementById('loginButton').style.display = 'block';
+
+            // Redirect to the home page or login page
+            window.location.href = "index.html"; // Adjust as necessary
         });
+
         const urlParams = new URLSearchParams(window.location.search);
         const userDataEncoded = urlParams.get("user");
 
