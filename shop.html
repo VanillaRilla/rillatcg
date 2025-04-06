@@ -327,6 +327,7 @@
             balance = newBalance;
             localStorage.setItem('balance', balance);
             balanceDisplay.textContent = balance;
+            updateFirebaseBalance(balance); // <-- Add this line
             checkBalance();
         }
 
@@ -384,6 +385,16 @@
                         console.log("Not enough balance!");
                     }
                 }
+            }
+        }
+
+        async function updateFirebaseBalance(newBalance) {
+            const userData = JSON.parse(localStorage.getItem('twitchUser'));
+            if (userData) {
+                const userRef = doc(db, "users", userData.id);
+                await updateDoc(userRef, {
+                    balance: newBalance
+                });
             }
         }
     </script>
