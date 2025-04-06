@@ -6,22 +6,11 @@ const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 const TwitchStrategy = require('passport-twitch-new').Strategy; // or passport-twitch depending on the package
+const fetch = require('node-fetch'); // You need to install node-fetch package
 const app = express();
 const port = 3000;
 
-const fetch = require('node-fetch');
 
-fetch('https://elk-hardy-previously.ngrok-free.app/auth/twitch', {
-    method: 'GET',
-    headers: {
-        'ngrok-skip-browser-warning': 'true'
-    }
-})
-    .then(response => response.text())
-    .then(data => {
-        console.log(data);
-    })
-    .catch(error => console.error('Error:', error));
 // Step 1: Set up session middleware
 app.use(session({
     secret: process.env.SESSION_SECRET, // Your session secret from the .env file
@@ -60,7 +49,7 @@ app.get('/auth/twitch',
 // Step 6: Handle the callback after successful authentication from Twitch
 app.get('/auth/twitch/callback',
     passport.authenticate('twitch', { failureRedirect: '/' }),
-    function (req, res) {
+    async function (req, res) {
         const user = req.user;
 
         const encodedUser = encodeURIComponent(JSON.stringify({
@@ -68,6 +57,25 @@ app.get('/auth/twitch/callback',
             display_name: user.display_name,
             profile_image_url: user.profile_image_url
         }));
+
+        // Send a request to the ngrok URL with the skip warning header before redirecting
+        try {
+            const response = await fetch('https://elk-hardy-previously.ngrok-free.app/auth/twitch', {
+                method: 'GET',
+                headers: {
+                    'ngrok-skip-browser-warning': 'true'
+                }
+            });
+
+            if (response.ok) {
+                console.log('Successfully skipped ngrok browser warning.');
+            } else {
+                console.error('Failed to skip the ngrok browser warning.');
+            }
+
+        } catch (error) {
+            console.error('Error while sending ngrok skip warning header:', error);
+        }
 
         // Redirect back to the frontend index.html with the Twitch user info in the URL
         res.redirect(`https://vanillarilla.github.io/rillatcg/index.html?user=${encodedUser}`);
