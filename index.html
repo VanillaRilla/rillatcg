@@ -303,11 +303,12 @@
             window.location.href = "index.html"; // Adjust as necessary
         }
 
-        const userData = JSON.parse(localStorage.getItem('twitchUser'));
+        const userData = JSON.parse(localStorage.getItem("twitchUser"));
         if (userData) {
             const userRef = doc(db, "users", userData.id);
             const docSnap = await getDoc(userRef);
             if (!docSnap.exists()) {
+                // Create a new user if no data exists for the user
                 const newUser = {
                     id: userData.id,
                     displayName: userData.display_name,
@@ -320,6 +321,7 @@
                 console.log("New user created and data saved to Firestore!");
             } else {
                 console.log("User data already exists in Firestore.");
+                // No action needed since we don't want to reset existing user's data
             }
         }
 
