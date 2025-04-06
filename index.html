@@ -157,6 +157,31 @@
             }
         });
     </script>
+
+    <script>
+        // Function to check if user is logged in and update buttons
+        function updateLoginState() {
+            const loginBtn = document.getElementById("twitch-login");
+            const logoutBtn = document.getElementById("logout-button");
+            const twitchUser = JSON.parse(localStorage.getItem("twitchUser"));
+
+            if (twitchUser) {
+                // If user is logged in, hide login button and show logout button
+                loginBtn.style.display = "none";
+                logoutBtn.style.display = "inline-block";
+            } else {
+                // If user is not logged in, show login button and hide logout button
+                loginBtn.style.display = "inline-block";
+                logoutBtn.style.display = "none";
+            }
+        }
+
+        // Call the function on page load to ensure correct button visibility
+        window.addEventListener('DOMContentLoaded', () => {
+            updateLoginState();
+        });
+    </script>
+
     <script>
 
         const cardData = [
@@ -226,7 +251,7 @@
     <!-- Firestore (or use firebase-database if using Realtime DB) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
 
-    
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
