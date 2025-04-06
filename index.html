@@ -226,9 +226,17 @@
     <!-- Firestore (or use firebase-database if using Realtime DB) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+    
+        <script type="module">
+            import {initializeApp} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+            import {
+                getFirestore,
+                doc,
+                getDoc,
+                setDoc,
+                updateDoc,
+                serverTimestamp
+            } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
         // Firebase config
         const firebaseConfig = {
@@ -243,6 +251,7 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
 
         async function loadUserData() {
             const userData = JSON.parse(localStorage.getItem('twitchUser'));
@@ -405,6 +414,36 @@
                     localStorage.setItem("inventory", JSON.stringify([]));
                     console.log("New user created.");
                 }
+
+                // Hide login, show logout
+                document.getElementById("twitch-login").style.display = "none";
+                document.getElementById("logout-button").style.display = "inline-block";
+
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } catch (err) {
+                console.error("Failed to parse or store user:", err);
+            }
+        }
+        document.getElementById("logout-button").addEventListener("click", async () => {
+            const userData = JSON.parse(localStorage.getItem("twitchUser"));
+            if (userData) {
+                try {
+                    const userRef = doc(db, "users", userData.id);
+                    await updateDoc(userRef, {
+                        balance: 0,
+                        inventory: [],
+                        loggedIn: false
+                    });
+                    console.log("User data reset in Firestore.");
+                } catch (err) {
+                    console.error("Error updating Firestore on logout:", err);
+                }
+            }
+            // Clear local data
+            localStorage.clear();
+            window.location.href = "index.html";
+        });
     </script>
 </body>
 </html>
