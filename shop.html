@@ -322,7 +322,7 @@
             }
         }
 
-        async function buyTenCards() {
+        sync function buyTenCards() {
             if (balance >= 1000 && !isBuying) {
                 isBuying = true;
                 buyTenCardsButton.disabled = true;
@@ -342,35 +342,51 @@
                     drawnCards.push(randomCard);
                 }
 
-                // Sort drawn cards with rarest last
-                drawnCards.sort((a, b) => {
-                    const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4 };
-                    return rarityOrder[a.rarity.toLowerCase()] - rarityOrder[b.rarity.toLowerCase()];
-                });
+                // Sort so the rarest card is shown last
+                const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4 };
+                drawnCards.sort((a, b) => rarityOrder[a.rarity] - rarityOrder[b.rarity]);
 
                 localStorage.setItem("inventory", JSON.stringify(inventory));
                 await updateFirebaseInventory(balance, inventory);
 
-                const popup = document.getElementById("cardPopup");
-                const popupImage = document.getElementById("popupImage");
-                let currentIndex = 0;
+                // Clear old popups
+                const existing = document.querySelector(".card-popup-stack");
+                if (existing) existing.remove();
 
-                function showNextCard() {
-                    if (currentIndex < drawnCards.length) {
-                        popup.classList.remove("fade-left"); // Reset class
-                        popupImage.src = drawnCards[currentIndex].image;
-                        popup.classList.add("show-popup");
-                        currentIndex++;
-                    } else {
-                        popup.classList.remove("show-popup");
-                        popup.removeEventListener("click", showNextCard);
-                        buyTenCardsButton.disabled = balance < 1000;
-                        isBuying = false;
+                // Create stack container
+                const stackContainer = document.createElement("div");
+                stackContainer.classList.add("card-popup", "card-popup-stack");
+                stackContainer.style.cursor = "pointer";
+
+                drawnCards.forEach((card, i) => {
+                    const img = document.createElement("img");
+                    img.src = card.image;
+                    img.style.position = "absolute";
+                    img.style.transition = "transform 0.4s ease, opacity 0.4s ease";
+                    img.style.zIndex = `${100 - i}`;
+                    img.style.transform = `translate(${i * 2}px, ${i * 2}px)`;
+                    stackContainer.appendChild(img);
+                });
+
+                document.body.appendChild(stackContainer);
+                stackContainer.classList.add("show-popup");
+
+                stackContainer.addEventListener("click", () => {
+                    const children = stackContainer.querySelectorAll("img");
+                    if (children.length > 0) {
+                        const topCard = children[0];
+                        topCard.style.transform = "translateX(-500px)";
+                        topCard.style.opacity = "0";
+                        setTimeout(() => topCard.remove(), 400);
                     }
-                }
-                popup.addEventListener("click", () => {
-                    popup.classList.add("fade-left");
-                    setTimeout(showNextCard, 300);
+
+                    if (stackContainer.querySelectorAll("img").length === 0) {
+                        stackContainer.classList.remove("show-popup");
+                        setTimeout(() => stackContainer.remove(), 500);
+                        isBuying = false;
+                        buyTenCardsButton.disabled = balance < 1000;
+                        addCardButton.disabled = balance < 100;
+                    }
                 });
             } else {
                 alert("Not enough balance or a purchase is already in progress!");
