@@ -322,7 +322,7 @@
             }
         }
 
-        sync function buyTenCards() {
+        async function buyTenCards() {
             if (balance >= 1000 && !isBuying) {
                 isBuying = true;
                 buyTenCardsButton.disabled = true;
@@ -342,52 +342,50 @@
                     drawnCards.push(randomCard);
                 }
 
-                // Sort so the rarest card is shown last
-                const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4 };
-                drawnCards.sort((a, b) => rarityOrder[a.rarity] - rarityOrder[b.rarity]);
+                // Sort drawn cards with rarest last
+                drawnCards.sort((a, b) => {
+                    const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4 };
+                    return rarityOrder[a.rarity.toLowerCase()] - rarityOrder[b.rarity.toLowerCase()];
+                });
 
                 localStorage.setItem("inventory", JSON.stringify(inventory));
                 await updateFirebaseInventory(balance, inventory);
 
-                // Clear old popups
-                const existing = document.querySelector(".card-popup-stack");
-                if (existing) existing.remove();
+                // Display stacked cards
+                const stackContainer = document.getElementById("cardStackContainer");
+                stackContainer.innerHTML = "";
+                stackContainer.style.display = "block";
+                stackContainer.style.pointerEvents = "auto";
 
-                // Create stack container
-                const stackContainer = document.createElement("div");
-                stackContainer.classList.add("card-popup", "card-popup-stack");
-                stackContainer.style.cursor = "pointer";
-
-                drawnCards.forEach((card, i) => {
+                for (let i = 0; i < drawnCards.length; i++) {
+                    const card = drawnCards[i];
                     const img = document.createElement("img");
                     img.src = card.image;
-                    img.style.position = "absolute";
-                    img.style.transition = "transform 0.4s ease, opacity 0.4s ease";
-                    img.style.zIndex = `${100 - i}`;
+                    img.style.zIndex = `${100 - i}`; // Higher z-index = on top
                     img.style.transform = `translate(${i * 2}px, ${i * 2}px)`;
                     stackContainer.appendChild(img);
-                });
+                }
 
-                document.body.appendChild(stackContainer);
-                stackContainer.classList.add("show-popup");
+                function handleClickCard(e) {
+                    const topCard = stackContainer.querySelector("img:last-child");
+                    if (!topCard) return;
 
-                stackContainer.addEventListener("click", () => {
-                    const children = stackContainer.querySelectorAll("img");
-                    if (children.length > 0) {
-                        const topCard = children[0];
-                        topCard.style.transform = "translateX(-500px)";
-                        topCard.style.opacity = "0";
-                        setTimeout(() => topCard.remove(), 400);
-                    }
+                    topCard.classList.add("fade-out");
+                    topCard.removeEventListener("click", handleClickCard);
 
-                    if (stackContainer.querySelectorAll("img").length === 0) {
-                        stackContainer.classList.remove("show-popup");
-                        setTimeout(() => stackContainer.remove(), 500);
-                        isBuying = false;
-                        buyTenCardsButton.disabled = balance < 1000;
-                        addCardButton.disabled = balance < 100;
-                    }
-                });
+                    setTimeout(() => {
+                        topCard.remove();
+                        if (stackContainer.children.length === 0) {
+                            stackContainer.style.display = "none";
+                            stackContainer.style.pointerEvents = "none";
+                            isBuying = false;
+                            buyTenCardsButton.disabled = balance < 1000;
+                        }
+                    }, 300);
+                }
+
+                // Attach the click event to the whole container (only top card will trigger it)
+                stackContainer.addEventListener("click", handleClickCard);
             } else {
                 alert("Not enough balance or a purchase is already in progress!");
             }
