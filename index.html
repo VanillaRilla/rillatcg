@@ -246,61 +246,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        async function loadUserData() {
-            const userData = JSON.parse(localStorage.getItem('twitchUser'));
-            if (userData) {
-                try {
-                    const userRef = doc(db, "users", userData.id);
-                    const userDoc = await getDoc(userRef);
-                    if (userDoc.exists()) {
-                        const user = userDoc.data();
-                        localStorage.setItem('balance', user.balance);
-                        document.getElementById('balance').textContent = user.balance;
-
-                        // Load user's inventory
-                        const inventory = user.inventory || [];
-                        localStorage.setItem('inventory', JSON.stringify(inventory));
-
-                        // Display cards based on inventory
-                        displayCards();
-                    } else {
-                        console.log("User document not found in Firestore.");
-                    }
-                } catch (error) {
-                    console.error("Error loading user data: ", error);
-                }
-            } else {
-                console.log("No user data found in localStorage.");
-            }
-        }
-
-        function logOut() {
-            // Clear user data from localStorage
-            localStorage.removeItem('twitchUser');
-            localStorage.removeItem('balance');
-            document.getElementById('balance').textContent = "0"; // Reset balance
-
-            // Optionally, update Firebase (e.g., track logout status)
-            const userData = JSON.parse(localStorage.getItem('twitchUser'));
-            if (userData) {
-                const userRef = doc(db, "users", userData.id);
-                updateDoc(userRef, {
-                    loggedIn: false
-                }).then(() => {
-                    console.log("User logged out in Firestore.");
-                }).catch((error) => {
-                    console.error("Error updating user logout state in Firestore: ", error);
-                });
-            }
-
-            // Hide the logout button and show login button
-            document.getElementById('logoutButton').style.display = 'none';
-            document.getElementById('loginButton').style.display = 'block';
-
-            // Redirect to login page or home page if needed
-            window.location.href = "login.html"; // Adjust as necessary
-        }
-
+        
         // Get Twitch user from localStorage
         const userData = JSON.parse(localStorage.getItem('twitchUser'));
 
@@ -370,6 +316,62 @@
             // Redirect to home page or login page
             window.location.href = "index.html"; // Or any other page you prefer after logout
         });
+
+        async function loadUserData() {
+            const userData = JSON.parse(localStorage.getItem('twitchUser'));
+            if (userData) {
+                try {
+                    const userRef = doc(db, "users", userData.id);
+                    const userDoc = await getDoc(userRef);
+                    if (userDoc.exists()) {
+                        const user = userDoc.data();
+                        localStorage.setItem('balance', user.balance);
+                        document.getElementById('balance').textContent = user.balance;
+
+                        // Load user's inventory
+                        const inventory = user.inventory || [];
+                        localStorage.setItem('inventory', JSON.stringify(inventory));
+
+                        // Display cards based on inventory
+                        displayCards();
+                    } else {
+                        console.log("User document not found in Firestore.");
+                    }
+                } catch (error) {
+                    console.error("Error loading user data: ", error);
+                }
+            } else {
+                console.log("No user data found in localStorage.");
+            }
+        }
+
+        function logOut() {
+            // Clear user data from localStorage
+            localStorage.removeItem('twitchUser');
+            localStorage.removeItem('balance');
+            document.getElementById('balance').textContent = "0"; // Reset balance
+
+            // Optionally, update Firebase (e.g., track logout status)
+            const userData = JSON.parse(localStorage.getItem('twitchUser'));
+            if (userData) {
+                const userRef = doc(db, "users", userData.id);
+                updateDoc(userRef, {
+                    loggedIn: false
+                }).then(() => {
+                    console.log("User logged out in Firestore.");
+                }).catch((error) => {
+                    console.error("Error updating user logout state in Firestore: ", error);
+                });
+            }
+
+            // Hide the logout button and show login button
+            document.getElementById('logoutButton').style.display = 'none';
+            document.getElementById('loginButton').style.display = 'block';
+
+            // Redirect to login page or home page if needed
+            window.location.href = "login.html"; // Adjust as necessary
+        }
+
     </script>
 </body>
 </html>
