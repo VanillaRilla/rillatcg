@@ -86,10 +86,21 @@
         <button id="clearInventoryButton" class="button" onclick="clearInventory()">Clear Inventory</button>
     </section>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-    </section>
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAW75d_4o7XdCsJ1_LmM_h4b2MxSJzrxfU",
+            authDomain: "rillatcg-ab6ba.firebaseapp.com",
+            projectId: "rillatcg-ab6ba",
+            storageBucket: "rillatcg-ab6ba.appspot.com",
+            messagingSenderId: "36231086933",
+            appId: "1:36231086933:web:28450b8b754eff95f7a5dc"
+        };
 
-    <script>
+        const db = getFirestore();
         const inventoryList = document.getElementById('inventoryList');
         const getCreditsButton = document.getElementById('getCreditsButton');
         const clearInventoryButton = document.getElementById('clearInventoryButton');
@@ -142,34 +153,34 @@
                 const rarityColor = rarityColors[card.rarity] || "white"; // Default to white if not found
 
                 listItem.innerHTML = `
-            <img src="${card.image}" alt="${card.name}" class="card-image">
-            <div style="text-align: center; margin-top: 5px;">
-                <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p> 
-                <p style="font-weight: bold; margin: 0;">${card.name}</p>
-                <p style="font-size: 20px; margin: 0;">x${card.count}</p>
-            </div>
-        `;
+                <img src="${card.image}" alt="${card.name}" class="card-image">
+                <div style="text-align: center; margin-top: 5px;">
+                    <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p>
+                    <p style="font-weight: bold; margin: 0;">${card.name}</p>
+                    <p style="font-size: 20px; margin: 0;">x${card.count}</p>
+                </div>
+            `;
                 inventoryList.appendChild(listItem);
             });
         }
 
-                        function searchInventory() {
-                const searchInput = document.getElementById("searchBox").value.toLowerCase();
-                        const inventoryItems = document.querySelectorAll("#inventoryList li");
+        function searchInventory() {
+            const searchInput = document.getElementById("searchBox").value.toLowerCase();
+            const inventoryItems = document.querySelectorAll("#inventoryList li");
 
-                inventoryItems.forEach(item => {
-                    const img = item.querySelector("img");
-                        const cardName = img ? img.alt.toLowerCase() : "";
-                        const rarityText = item.querySelector(".rarity") ? item.querySelector(".rarity").textContent.toLowerCase() : "";
+            inventoryItems.forEach(item => {
+                const img = item.querySelector("img");
+                const cardName = img ? img.alt.toLowerCase() : "";
+                const rarityText = item.querySelector(".rarity") ? item.querySelector(".rarity").textContent.toLowerCase() : "";
 
-                        if (searchInput === "" || cardName.includes(searchInput) || rarityText.includes(searchInput)) {
-                            item.style.display = "";
-                    } else {
-                            item.style.display = "none";
-                    }
-                });
-            }
-                        displayInventory();
+                if (searchInput === "" || cardName.includes(searchInput) || rarityText.includes(searchInput)) {
+                    item.style.display = "";
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        }
+        displayInventory();
     </script>
 
 </body>

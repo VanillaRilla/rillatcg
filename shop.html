@@ -136,7 +136,18 @@
     </section>
 
     <script type="module">
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAW75d_4o7XdCsJ1_LmM_h4b2MxSJzrxfU",
+            authDomain: "rillatcg-ab6ba.firebaseapp.com",
+            projectId: "rillatcg-ab6ba",
+            storageBucket: "rillatcg-ab6ba.appspot.com",
+            messagingSenderId: "36231086933",
+            appId: "1:36231086933:web:28450b8b754eff95f7a5dc"
+        };
 
         const db = getFirestore();
 
