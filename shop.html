@@ -355,9 +355,7 @@
             updateFirebaseBalance(newBalance);
         });
         checkBalance()
-    </script>
-    
-    <script>
+   
         async function updateFirebaseBalance(newBalance) {
             const userData = JSON.parse(localStorage.getItem('twitchUser'));
             if (userData) {
