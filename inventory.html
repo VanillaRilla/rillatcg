@@ -288,11 +288,11 @@
 
         // Call the function on page load to ensure correct button visibility
         window.addEventListener('DOMContentLoaded', () => {
-            document.addEventListener('DOMContentLoaded', () => {
-                loadUserData();
+            window.addEventListener('DOMContentLoaded', () => {
+                displayInventory(); // Show localStorage inventory immediately
+                loadUserData(); // Try to update it with Firestore if logged in
+                updateLoginState();
             });
-            updateLoginState();
-        });
     </script>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
