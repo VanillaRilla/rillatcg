@@ -235,14 +235,14 @@
                 // Get color based on rarity
                 const rarityColor = rarityColors[card.rarity] || "white"; // Default to white if not found
 
-                listItem.innerHTML = `
-                                    <img src="${card.image}" alt="${card.name}" class="card-image">
-                                    <div style="text-align: center; margin-top: 5px;">
-                                        <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p>
-                                        <p style="font-weight: bold; margin: 0;">${card.name}</p>
-                                        <p style="font-size: 20px; margin: 0;">x${card.count}</p>
-                                    </div>
-                                `;
+                    listItem.innerHTML = `
+                    <img src = "${card.image}" alt = "${card.name}" class="card-image">
+                        <div style="text-align: center; margin-top: 5px;">
+                            <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p>
+                            <p class="card-name" style="font-weight: bold; margin: 0;">${card.name}</p>
+                            <p style="font-size: 20px; margin: 0;">x${card.count}</p>
+                        </div>
+`;
                 inventoryList.appendChild(listItem);
             });
         }
@@ -252,12 +252,14 @@
             const inventoryItems = document.querySelectorAll("#inventoryList li");
 
             inventoryItems.forEach(item => {
-                const img = item.querySelector("img");
-                const cardName = img ? img.alt.toLowerCase() : "";
-                const rarityText = item.querySelector(".rarity") ? item.querySelector(".rarity").textContent.toLowerCase() : "";
+                const nameEl = item.querySelector(".card-name");
+                const rarityEl = item.querySelector(".rarity");
 
-                if (searchInput === "" || cardName.includes(searchInput) || rarityText.includes(searchInput)) {
-                    item.style.display = "";
+                const name = nameEl ? nameEl.textContent.toLowerCase() : "";
+                const rarity = rarityEl ? rarityEl.textContent.toLowerCase() : "";
+
+                if (name.includes(searchInput) || rarity.includes(searchInput)) {
+                    item.style.display = "flex";
                 } else {
                     item.style.display = "none";
                 }
@@ -333,7 +335,7 @@
                         localStorage.setItem('inventory', JSON.stringify(inventory));
 
                         // Display cards based on inventory
-                        displayCards();
+                        displayInventory();
                     } else {
                         console.log("User document not found in Firestore.");
                     }
