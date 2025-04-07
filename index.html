@@ -111,20 +111,100 @@
             border-radius: 5px;
             margin: 5px;
         }
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            background-color: #1e1e1e;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+            color: #ffffff;
+            margin-left: 10px;
+        }
+
+        .nav-button {
+            background-color: #2c2c2c;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .nav-button:hover {
+            background-color: #3f3f3f;
+            transform: translateY(-2px);
+        }
+        
+        .nav-button.purple {
+            background-color: purple;
+        }
+        
+        .nav-button.purple:hover {
+            background-color: #a020f0;
+        }
+
+        .nav-button.gray {
+            background-color: #444;
+        }
+
+        .balance-display {
+            color: #90ee90;
+            font-weight: bold;
+            font-size: 16px;
+            margin-left: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px;
+            }
+
+            .nav-left, .nav-right {
+                flex-wrap: wrap;
+                gap: 8px;
+                justify-content: flex-start;
+            }
+
+            .navbar h1 {
+                margin: 10px 0;
+            }
+        }
+
     </style>
 </head>
 <body>
-    <header>
-        <a href="index.html"><button class="button">GALLERY</button></a>
-        <a href="shop.html"><button class="button">SHOP</button></a>
-        <a href="inventory.html"><button class="button">INVENTORY</button></a>
-        <button id="twitch-login" class="button" style="background-color: purple; color: white;">Login with Twitch</button>
-        <button id="logout-button" class="button" style="background-color: #444; color: white;">Logout</button>
-
+    <header class="navbar">
+        <div class="nav-left">
+            <a href="index.html"><button class="nav-button">GALLERY</button></a>
+            <a href="shop.html"><button class="nav-button">SHOP</button></a>
+            <a href="inventory.html"><button class="nav-button">INVENTORY</button></a>
+        </div>
         <h1>GALLERY</h1>
-
+        <div class="nav-right">
+            <button id="twitch-login" class="nav-button purple">Login with Twitch</button>
+            <button id="logout-button" class="nav-button gray">Logout</button>
+            <span class="balance-display">Balance: <span id="balance">0</span> points</span>
+        </div>
     </header>
-
+    
     <section class="card-gallery" id="cardGallery"></section>
 
     <script src="Card.js"></script>
