@@ -500,6 +500,30 @@
             localStorage.clear();
             window.location.href = "index.html";
         });
+
+        function updateBalance(newBalance) {
+            balance = newBalance;
+            localStorage.setItem('balance', balance);
+            balanceDisplay.textContent = balance;
+            updateFirebaseBalance(balance); // <-- Add this line
+            checkBalance();
+        }
+
+        async function updateFirebaseBalance(newBalance) {
+            const userData = JSON.parse(localStorage.getItem('twitchUser'));
+            if (userData) {
+                const userRef = doc(db, "users", userData.id);
+                await updateDoc(userRef, {
+                    balance: newBalance
+                });
+            }
+        }
+
+        function checkBalance() {
+            addCardButton.disabled = balance < 100;
+        }
+        checkBalance()
+
     </script>
 </body>
 </html>
