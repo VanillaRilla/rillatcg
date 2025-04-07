@@ -455,7 +455,7 @@
         const logoutBtn = document.getElementById("logout-button");
 
         // Check if user is logged in
-        /*const twitchUser = JSON.parse(localStorage.getItem("twitchUser"));
+        const twitchUser = JSON.parse(localStorage.getItem("twitchUser"));
 
         if (twitchUser) {
             loginBtn.style.display = "none";
@@ -469,7 +469,7 @@
         loginBtn.addEventListener("click", () => {
             window.location.href = "https://elk-hardy-previously.ngrok-free.app/auth/twitch";
         });
-        */
+        
 
         logoutBtn.addEventListener("click", async () => {
             const userData = JSON.parse(localStorage.getItem("twitchUser"));
