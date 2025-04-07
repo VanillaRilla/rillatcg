@@ -286,6 +286,9 @@
 
         // Call the function on page load to ensure correct button visibility
         window.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('DOMContentLoaded', () => {
+                loadUserData();
+            });
             updateLoginState();
         });
     </script>
