@@ -190,7 +190,9 @@
         const inventoryList = document.getElementById('inventoryList');
         const getCreditsButton = document.getElementById('getCreditsButton');
         const clearInventoryButton = document.getElementById('clearInventoryButton');
+        const balanceDisplay = document.getElementById('balance');
 
+        let balance = parseInt(localStorage.getItem('balance')) || 0;
         let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
         const cardData = [

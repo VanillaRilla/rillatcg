@@ -307,7 +307,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        const balanceDisplay = document.getElementById('balance');
 
+        let balance = parseInt(localStorage.getItem('balance')) || 0;
         // Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyAW75d_4o7XdCsJ1_LmM_h4b2MxSJzrxfU",
