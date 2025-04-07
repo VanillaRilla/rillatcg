@@ -252,20 +252,20 @@
             const inventoryItems = document.querySelectorAll("#inventoryList li");
 
             inventoryItems.forEach(item => {
-                const nameEl = item.querySelector(".card-name");
-                const rarityEl = item.querySelector(".rarity");
+                const name = item.dataset.name || "";
+                const rarity = item.dataset.rarity || "";
 
-                const name = nameEl ? nameEl.textContent.toLowerCase() : "";
-                const rarity = rarityEl ? rarityEl.textContent.toLowerCase() : "";
+                const matchesName = name.includes(searchInput);
+                const matchesRarity = rarity.includes(searchInput);
 
-                if (name.includes(searchInput) || rarity.includes(searchInput)) {
+                if (searchInput === "" || matchesName || matchesRarity) {
                     item.style.display = "flex";
                 } else {
                     item.style.display = "none";
                 }
             });
         }
-        displayInventory();
+       
     </script>
     <script>
         // Function to check if user is logged in and update buttons
@@ -507,6 +507,7 @@
         function checkBalance() {
             addCardButton.disabled = balance < 100;
         }
+        displayInventory();
         checkBalance()
     </script>
 </body>
