@@ -235,14 +235,14 @@
                 // Get color based on rarity
                 const rarityColor = rarityColors[card.rarity] || "white"; // Default to white if not found
 
-                    listItem.innerHTML = `
-                    <img src = "${card.image}" alt = "${card.name}" class="card-image">
-                        <div style="text-align: center; margin-top: 5px;">
-                            <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p>
-                            <p class="card-name" style="font-weight: bold; margin: 0;">${card.name}</p>
-                            <p style="font-size: 20px; margin: 0;">x${card.count}</p>
-                        </div>
-`;
+                listItem.innerHTML = `
+                                    <img src="${card.image}" alt="${card.name}" class="card-image">
+                                    <div style="text-align: center; margin-top: 5px;">
+                                        <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p>
+                                        <p style="font-weight: bold; margin: 0;">${card.name}</p>
+                                        <p style="font-size: 20px; margin: 0;">x${card.count}</p>
+                                    </div>
+                                `;
                 inventoryList.appendChild(listItem);
             });
         }
@@ -252,20 +252,18 @@
             const inventoryItems = document.querySelectorAll("#inventoryList li");
 
             inventoryItems.forEach(item => {
-                const name = item.dataset.name || "";
-                const rarity = item.dataset.rarity || "";
+                const img = item.querySelector("img");
+                const cardName = img ? img.alt.toLowerCase() : "";
+                const rarityText = item.querySelector(".rarity") ? item.querySelector(".rarity").textContent.toLowerCase() : "";
 
-                const matchesName = name.includes(searchInput);
-                const matchesRarity = rarity.includes(searchInput);
-
-                if (searchInput === "" || matchesName || matchesRarity) {
-                    item.style.display = "flex";
+                if (searchInput === "" || cardName.includes(searchInput) || rarityText.includes(searchInput)) {
+                    item.style.display = "";
                 } else {
                     item.style.display = "none";
                 }
             });
         }
-       
+        displayInventory();
     </script>
     <script>
         // Function to check if user is logged in and update buttons
@@ -288,11 +286,11 @@
 
         // Call the function on page load to ensure correct button visibility
         window.addEventListener('DOMContentLoaded', () => {
-            window.addEventListener('DOMContentLoaded', () => {
-                displayInventory(); // Show localStorage inventory immediately
-                loadUserData(); // Try to update it with Firestore if logged in
-                updateLoginState();
+            document.addEventListener('DOMContentLoaded', () => {
+                loadUserData();
             });
+            updateLoginState();
+        });
     </script>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
@@ -331,12 +329,11 @@
                         document.getElementById('balance').textContent = user.balance;
 
                         // Load user's inventory
-                        inventory = user.inventory || [];
+                        const inventory = user.inventory || [];
                         localStorage.setItem('inventory', JSON.stringify(inventory));
-                        displayInventory();
 
                         // Display cards based on inventory
-                        displayInventory();
+                        displayCards();
                     } else {
                         console.log("User document not found in Firestore.");
                     }
@@ -505,6 +502,10 @@
             }
         }
 
+        function checkBalance() {
+            addCardButton.disabled = balance < 100;
+        }
+        checkBalance()
     </script>
 </body>
 </html>
