@@ -31,11 +31,11 @@
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
-            #couponSection.show {
-                display: flex;
-                opacity: 1;
-                transform: scale(1);
-            }
+        #couponSection.show {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
+        }
 
         #couponCode {
             width: 80%;
@@ -97,19 +97,45 @@
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transition: transform 0.2s ease, opacity 0.2s ease;
+            transition: transform 0.5s ease, opacity 0.5s ease; /* Smoother transition for pop-up */
             z-index: 1000;
         }
 
             .card-popup img {
                 width: 100%;
                 height: auto;
+                opacity: 0; /* Initial state - invisible */
+                transform: scale(0.5); /* Smaller size to start */
+                transition: opacity 0.5s ease, transform 0.5s ease; /* Add a zoom-in effect */
             }
+
+            .card-popup.show-popup img {
+                opacity: 1; /* Make the image fully visible */
+                transform: scale(1); /* Zoom in to normal size */
+            }
+
+        /* For the fade-out of the card on click */
+        .fade-out-left {
+            animation: fadeOutLeft 0.5s forwards;
+        }
+
+        @keyframes fadeOutLeft {
+            0% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+        }
 
         .show-popup {
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
         }
+
     </style>
 </head>
 <body>
@@ -305,27 +331,48 @@
 
                 // Sort drawn cards based on rarity, with the rarest one last
                 drawnCards.sort((a, b) => {
-                    const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "": 4 };
+                    const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4 };
                     return rarityOrder[a.rarity] - rarityOrder[b.rarity]; // Sort in ascending order (common to rare)
                 });
+
                 localStorage.setItem("inventory", JSON.stringify(inventory));
                 await updateFirebaseInventory(balance, inventory);
 
-                function revealNextCard(index) {
-                    if (index < drawnCards.length) {
-                        setTimeout(() => {
-                            showCardPopup(drawnCards[index].image);  // Assuming `showCardPopup` takes card image as input
-                            revealNextCard(index + 1);
-                        }, 2500);  // Adjust timing as needed
+                const popup = document.getElementById("cardPopup");
+                const popupImage = document.getElementById("popupImage");
+                let currentIndex = 0;
+
+                function showNextCard() {
+                    if (currentIndex < drawnCards.length) {
+                        const nextCard = drawnCards[currentIndex];
+
+                        // Add fade-out effect to previous card before displaying the next one
+                        if (popupImage.src) {
+                            popupImage.classList.add('fade-out-left');
+                            setTimeout(() => {
+                                popupImage.src = nextCard.image; // Change the card image
+                                popupImage.classList.remove('fade-out-left'); // Remove fade-out class
+                                popupImage.style.opacity = 0; // Make the image invisible temporarily
+                                setTimeout(() => {
+                                    popupImage.style.opacity = 1;  // Fade the image in
+                                    popup.classList.add("show-popup");
+                                }, 200);  // Small delay before fading in
+                            }, 500); // Match timeout with the fade-out effect duration
+                        } else {
+                            // If no previous card, just show the next one normally
+                            popupImage.src = nextCard.image;
+                            popup.classList.add("show-popup");
+                        }
+
+                        currentIndex++;
                     } else {
-                        setTimeout(() => {
-                            buyTenCardsButton.disabled = balance < 1000;
-                            isBuying = false;
-                        }, 3000);
+                        popup.classList.remove("show-popup");
+                        buyTenCardsButton.disabled = balance < 1000;
+                        isBuying = false;
                     }
                 }
 
-                revealNextCard(0);
+                showNextCard(); // Show the first card immediately
             } else {
                 alert("Not enough balance or a purchase is already in progress!");
             }
