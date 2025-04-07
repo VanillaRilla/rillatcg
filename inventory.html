@@ -236,13 +236,14 @@
                 const rarityColor = rarityColors[card.rarity] || "white"; // Default to white if not found
 
                 listItem.innerHTML = `
-                                    <img src="${card.image}" alt="${card.name}" class="card-image">
-                                    <div style="text-align: center; margin-top: 5px;">
-                                        <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p>
-                                        <p style="font-weight: bold; margin: 0;">${card.name}</p>
-                                        <p style="font-size: 20px; margin: 0;">x${card.count}</p>
-                                    </div>
-                                `;
+                                    listItem.innerHTML = `
+                    < img src = "${card.image}" alt = "${card.name}" class="card-image" >
+                        <div style="text-align: center; margin-top: 5px;">
+                            <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p>
+                            <p class="card-name" style="font-weight: bold; margin: 0;">${card.name}</p>
+                            <p style="font-size: 20px; margin: 0;">x${card.count}</p>
+                        </div>
+`;
                 inventoryList.appendChild(listItem);
             });
         }
