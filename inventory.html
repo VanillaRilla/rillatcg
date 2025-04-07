@@ -331,9 +331,8 @@
                         document.getElementById('balance').textContent = user.balance;
 
                         // Load user's inventory
-                        const inventory = user.inventory || [];
+                        inventory = user.inventory || [];
                         localStorage.setItem('inventory', JSON.stringify(inventory));
-                        inventory = inventory; // reload local var
                         displayInventory();
 
                         // Display cards based on inventory
