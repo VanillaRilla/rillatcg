@@ -110,6 +110,12 @@
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
         }
+
+        .card.fade-out-left {
+            opacity: 0;
+            transform: translateX(-100%) scale(0.8); /* Moves the card to the left and scales it down */
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
     </style>
 </head>
 <body>
@@ -282,6 +288,24 @@
                 alert("You are already buying a card! Wait till the animation is done!");
             }
         }
+
+        // Function to handle card click
+        function handleCardClick(e) {
+            const clickedCard = e.target;
+
+            // Add the fade-out-left class to the clicked card
+            clickedCard.classList.add('fade-out-left');
+
+            // After the fade-out animation ends, remove the card from the DOM
+            setTimeout(() => {
+                clickedCard.remove(); // Remove the card from the DOM
+            }, 500); // Match this timeout with the duration of the CSS transition (0.5s)
+        }
+
+        // Add the click event listener to each card
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', handleCardClick);
+        });
 
         async function buyTenCards() {
             if (balance >= 1000 && !isBuying) {
