@@ -101,20 +101,14 @@
             z-index: 1000;
         }
 
-        .card-popup img {
-            width: 100%;
-            height: auto;
-        }
+            .card-popup img {
+                width: 100%;
+                height: auto;
+            }
 
         .show-popup {
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
-        }
-
-        .card.fade-out-left {
-            opacity: 0;
-            transform: translateX(-100%) scale(0.8); /* Moves the card to the left and scales it down */
-            transition: transform 0.5s ease, opacity 0.5s ease;
         }
     </style>
 </head>
@@ -289,19 +283,6 @@
             }
         }
 
-        // Function to handle card click
-        function handleCardClick(e) {
-            const clickedCard = e.target;
-
-            // Add the fade-out-left class to the clicked card
-            clickedCard.classList.add('fade-out-left');
-
-            // After the fade-out animation ends, remove the card from the DOM
-            setTimeout(() => {
-                clickedCard.remove(); // Remove the card from the DOM
-            }, 500); // Match this timeout with the duration of the CSS transition (0.5s)
-        }
-
         async function buyTenCards() {
             if (balance >= 1000 && !isBuying) {
                 isBuying = true;
@@ -322,40 +303,29 @@
                     drawnCards.push(randomCard);
                 }
 
-                // Sort drawn cards with rarest last
+                // Sort drawn cards based on rarity, with the rarest one last
                 drawnCards.sort((a, b) => {
-                    const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4 };
-                    return rarityOrder[a.rarity.toLowerCase()] - rarityOrder[b.rarity.toLowerCase()];
+                    const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "": 4 };
+                    return rarityOrder[a.rarity] - rarityOrder[b.rarity]; // Sort in ascending order (common to rare)
                 });
-
                 localStorage.setItem("inventory", JSON.stringify(inventory));
                 await updateFirebaseInventory(balance, inventory);
 
-                const popup = document.getElementById("cardPopup");
-                const popupImage = document.getElementById("popupImage");
-                let currentIndex = 0;
-
-                function showNextCard() {
-                    if (currentIndex < drawnCards.length) {
-                        // Set the image source for the current card
-                        popupImage.src = drawnCards[currentIndex].image;
-                        popup.classList.add("show-popup");
-
-                        // Attach the event listener for clicking on the current card image
-                        popupImage.addEventListener('click', handleCardClick);
-
-                        currentIndex++;
+                function revealNextCard(index) {
+                    if (index < drawnCards.length) {
+                        setTimeout(() => {
+                            showCardPopup(drawnCards[index].image);  // Assuming `showCardPopup` takes card image as input
+                            revealNextCard(index + 1);
+                        }, 2500);  // Adjust timing as needed
                     } else {
-                        // All cards have been shown, reset and disable further actions
-                        popup.classList.remove("show-popup");
-                        popup.removeEventListener("click", showNextCard);
-                        buyTenCardsButton.disabled = balance < 1000;
-                        isBuying = false;
+                        setTimeout(() => {
+                            buyTenCardsButton.disabled = balance < 1000;
+                            isBuying = false;
+                        }, 3000);
                     }
                 }
 
-                popup.addEventListener("click", showNextCard);
-                showNextCard(); // Show the first card immediately
+                revealNextCard(0);
             } else {
                 alert("Not enough balance or a purchase is already in progress!");
             }
@@ -503,6 +473,12 @@
                     console.error("Error updating user logout state in Firestore: ", error);
                 });
             }
+
+            // Hide the logout button and show login button
+            //document.getElementById('logoutButton').style.display = 'none';
+            //document.getElementById('loginButton').style.display = 'block';
+
+            // Redirect to login page or home page if needed
             window.location.href = "index.html"; // Adjust as necessary
         }
 
