@@ -333,6 +333,8 @@
                         // Load user's inventory
                         const inventory = user.inventory || [];
                         localStorage.setItem('inventory', JSON.stringify(inventory));
+                        inventory = inventory; // reload local var
+                        displayInventory();
 
                         // Display cards based on inventory
                         displayInventory();
@@ -507,7 +509,6 @@
         function checkBalance() {
             addCardButton.disabled = balance < 100;
         }
-        displayInventory();
         checkBalance()
     </script>
 </body>
