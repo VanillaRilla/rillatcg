@@ -302,11 +302,6 @@
             }, 500); // Match this timeout with the duration of the CSS transition (0.5s)
         }
 
-        // Add the click event listener to each card
-        document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('click', handleCardClick);
-        });
-
         async function buyTenCards() {
             if (balance >= 1000 && !isBuying) {
                 isBuying = true;
@@ -342,14 +337,16 @@
 
                 function showNextCard() {
                     if (currentIndex < drawnCards.length) {
+                        // Set the image source for the current card
                         popupImage.src = drawnCards[currentIndex].image;
                         popup.classList.add("show-popup");
 
-                        // Attach the event listener for clicking on the card
+                        // Attach the event listener for clicking on the current card image
                         popupImage.addEventListener('click', handleCardClick);
 
                         currentIndex++;
                     } else {
+                        // All cards have been shown, reset and disable further actions
                         popup.classList.remove("show-popup");
                         popup.removeEventListener("click", showNextCard);
                         buyTenCardsButton.disabled = balance < 1000;
