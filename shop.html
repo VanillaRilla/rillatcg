@@ -344,6 +344,10 @@
                     if (currentIndex < drawnCards.length) {
                         popupImage.src = drawnCards[currentIndex].image;
                         popup.classList.add("show-popup");
+
+                        // Attach the event listener for clicking on the card
+                        popupImage.addEventListener('click', handleCardClick);
+
                         currentIndex++;
                     } else {
                         popup.classList.remove("show-popup");
@@ -502,12 +506,6 @@
                     console.error("Error updating user logout state in Firestore: ", error);
                 });
             }
-
-            // Hide the logout button and show login button
-            //document.getElementById('logoutButton').style.display = 'none';
-            //document.getElementById('loginButton').style.display = 'block';
-
-            // Redirect to login page or home page if needed
             window.location.href = "index.html"; // Adjust as necessary
         }
 
