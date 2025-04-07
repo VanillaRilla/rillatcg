@@ -156,10 +156,11 @@
             transition: transform 0.3s, opacity 0.3s;
         }
 
-        .card.fade-out {
-            opacity: 0;
-            transform: translateX(100px); /* You can adjust the distance for the card movement */
-        }
+            .card.fade-out {
+                opacity: 0;
+                transform: translateX(100px); /* Adjust the distance */
+                z-index: 10; /* Ensure it is above other cards during animation */
+            }
 
     </style>
 </head>
