@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHOP</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lacquer&display=swap" rel="stylesheet">
+
     <style>
         body {
             background-color: #121212; /* Dark background */
@@ -187,21 +190,25 @@
                 margin: 10px 0;
             }
         }
-
     </style>
 </head>
 <body>
     <header class="navbar">
-        <div class="nav-left">
-            <a href="index.html"><button class="nav-button">GALLERY</button></a>
-            <a href="shop.html"><button class="nav-button">SHOP</button></a>
-            <a href="inventory.html"><button class="nav-button">INVENTORY</button></a>
-        </div>
-        <h1>SHOP</h1>
-        <div class="nav-right">
-            <button id="twitch-login" class="nav-button purple">Login with Twitch</button>
-            <button id="logout-button" class="nav-button gray">Logout</button>
-            <span class="balance-display">Balance: <span id="balance">0</span> points</span>
+        <div class="navbar-inner">
+            <div class="nav-left">
+                <a href="index.html"><button class="nav-button">GALLERY</button></a>
+                <a href="shop.html"><button class="nav-button">SHOP</button></a>
+                <a href="inventory.html"><button class="nav-button">INVENTORY</button></a>
+            </div>
+            <h1>DIE HÄSSLONS</h1>
+            <div class="nav-right">
+                <span class="balance-display">
+                    <img src="imgs/balance.png" alt="Balance Icon" class="balance-icon">
+                    <span id="balance"> 0</span>
+                </span>
+                <button id="twitch-login" class="nav-button purple">Login with Twitch</button>
+                <button id="logout-button" class="nav-button gray">Logout</button>
+            </div>
         </div>
     </header>
         <button id="addCardButton" class="button">Buy a random card (100 points)</button>
