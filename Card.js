@@ -2,7 +2,7 @@
 let nextID = 1; 
 
 const cardNames = {
-    "imgs/card1.png": "Fred",
+    "imgs/card001.png": "Fred",
     "imgs/card2.png": "Aron",
     "imgs/card3.png": "Claudia",
     "imgs/card4.png": "Bob",
