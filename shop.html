@@ -106,62 +106,10 @@
             height: auto;
         }
 
-        .card-popup.fade-left {
-            animation: fadeLeft 0.5s forwards;
-        }
-
-        @keyframes fadeLeft {
-            to {
-                transform: translate(-100%, -50%) scale(0);
-                opacity: 0;
-            }
-        }
-
         .show-popup {
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
         }
-
-        .card-stack-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 360px;
-            height: 450px;
-            z-index: 1000;
-            display: none;
-            pointer-events: none; /* enables pointer-events only when cards are shown */
-        }
-
-        .card-stack-popup img {
-            position: absolute;
-            width: 100%;
-            height: auto;
-            top: 0;
-            left: 0;
-            border-radius: 10px;
-            transition: transform 0.4s ease, opacity 0.3s ease;
-            cursor: pointer;
-            pointer-events: auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-        
-        .card-stack-popup img.fade-out {
-            transform: translateX(150%) rotate(15deg);
-            opacity: 0;
-        }
-
-        .card {
-            transition: transform 0.3s, opacity 0.3s;
-        }
-
-            .card.fade-out {
-                opacity: 0;
-                transform: translateX(100px); /* Adjust the distance */
-                z-index: 10; /* Ensure it is above other cards during animation */
-            }
-
     </style>
 </head>
 <body>
@@ -178,7 +126,9 @@
         <button id="getCreditsButton" class="button">Get 100 Credits</button>
     </header>
 
-    <div id="cardStackContainer" class="card-stack-popup"></div>
+    <div id="cardPopup" class="card-popup">
+        <img id="popupImage" src="" alt="New Card">
+    </div>
     <button id="redeemButton">HAVE A CODE?</button>
     <section id="couponSection">
         <p style="color: black; font-weight: bold;font-size: 24px;">Redeem a CODE:</p>
@@ -342,7 +292,6 @@
                 let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
                 let drawnCards = [];
 
-                // Draw 10 cards
                 for (let i = 0; i < 10; i++) {
                     const randomCard = getRandomCard();
                     let existingCard = inventory.find(card => card.image === randomCard.image);
@@ -363,45 +312,25 @@
                 localStorage.setItem("inventory", JSON.stringify(inventory));
                 await updateFirebaseInventory(balance, inventory);
 
-                // Display stacked cards
-                const stackContainer = document.getElementById("cardStackContainer");
-                stackContainer.innerHTML = "";
-                stackContainer.style.display = "block";
-                stackContainer.style.pointerEvents = "auto";
+                const popup = document.getElementById("cardPopup");
+                const popupImage = document.getElementById("popupImage");
+                let currentIndex = 0;
 
-                // Create the cards
-                drawnCards.forEach((card, index) => {
-                    const img = document.createElement("img");
-                    img.src = card.image;
-                    img.style.zIndex = `${100 - index}`; // Higher z-index = on top
-                    img.style.transform = `translate(${index * 2}px, ${index * 2}px)`;
-                    img.classList.add('card');  // Add a class for better control (optional)
-                    stackContainer.appendChild(img);
+                function showNextCard() {
+                    if (currentIndex < drawnCards.length) {
+                        popupImage.src = drawnCards[currentIndex].image;
+                        popup.classList.add("show-popup");
+                        currentIndex++;
+                    } else {
+                        popup.classList.remove("show-popup");
+                        popup.removeEventListener("click", showNextCard);
+                        buyTenCardsButton.disabled = balance < 1000;
+                        isBuying = false;
+                    }
+                }
 
-                    // Add click event listener to each card
-                    img.addEventListener("click", function handleClickCard(e) {
-                        // Only trigger on top card
-                        if (stackContainer.children.length === 0) return;
-
-                        const topCard = stackContainer.querySelector("img:last-child");
-                        if (e.target !== topCard) return; // Ensure only the top card is clickable
-
-                        // Fade out and remove the top card
-                        topCard.classList.add("fade-out");
-
-                        setTimeout(() => {
-                            topCard.remove();
-
-                            // If no cards are left, disable the stack and reset states
-                            if (stackContainer.children.length === 0) {
-                                stackContainer.style.display = "none";
-                                stackContainer.style.pointerEvents = "none";
-                                isBuying = false;
-                                buyTenCardsButton.disabled = balance < 1000;
-                            }
-                        }, 300); // Wait for fade-out animation
-                    });
-                });
+                popup.addEventListener("click", showNextCard);
+                showNextCard(); // Show the first card immediately
             } else {
                 alert("Not enough balance or a purchase is already in progress!");
             }
@@ -428,12 +357,7 @@
         function checkBalance() {
             addCardButton.disabled = balance < 100;
         }
-        function cardClickHandler(e) {
-            // Handle card click logic here
-            console.log('Card clicked!');
-        }
 
-        /*
         function showCardPopup(imageSrc) {
             const popup = document.getElementById("cardPopup");
             const popupImage = document.getElementById("popupImage");
@@ -445,8 +369,6 @@
                 addCardButton.disabled = balance < 100 ? true : false;
             }, 2000);
         }
-
-        */
 
         document.getElementById('addCardButton').addEventListener('click', addRandomCardToInventory);
         document.getElementById('buyTenCardsButton').addEventListener('click', buyTenCards);
