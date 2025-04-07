@@ -136,7 +136,7 @@
         }
 
         .nav-button {
-            background-color: #2c2c2c;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: white;
             border: none;
             padding: 10px 16px;
@@ -147,7 +147,7 @@
         }
 
         .nav-button:hover {
-            background-color: #3f3f3f;
+            background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%);
             transform: translateY(-2px);
         }
         
@@ -161,6 +161,11 @@
 
         .nav-button.gray {
             background-color: #444;
+        }
+
+        .nav-button:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
         }
 
         .balance-display {
