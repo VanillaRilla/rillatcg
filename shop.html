@@ -428,7 +428,12 @@
         function checkBalance() {
             addCardButton.disabled = balance < 100;
         }
+        function cardClickHandler(e) {
+            // Handle card click logic here
+            console.log('Card clicked!');
+        }
 
+        /*
         function showCardPopup(imageSrc) {
             const popup = document.getElementById("cardPopup");
             const popupImage = document.getElementById("popupImage");
@@ -440,6 +445,8 @@
                 addCardButton.disabled = balance < 100 ? true : false;
             }, 2000);
         }
+
+        */
 
         document.getElementById('addCardButton').addEventListener('click', addRandomCardToInventory);
         document.getElementById('buyTenCardsButton').addEventListener('click', buyTenCards);
