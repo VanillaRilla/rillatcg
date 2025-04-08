@@ -92,7 +92,7 @@
             align-items: center;
             opacity: 0;
             transition: transform 0.2s ease, opacity 0.2s ease;
-            z-index: 1000;
+            z-index: 1100;
         }
 
             .card-popup img {
@@ -145,10 +145,11 @@
             margin-bottom: 4px;
             margin-left: -20px;
             text-align: center;
-            background-image: linear-gradient(180deg,#ffffff, #ffffff, #eeffed, #072905 );
+            background-image: linear-gradient(180deg, #0a9c02, #3ec236 );
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             gap: 10px;
+            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 0, 0, 0.5);
         }
 
 
@@ -205,6 +206,83 @@
             height: 20px;
         }
 
+        .shop-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            justify-content: center;
+        }
+
+        .shop-item {
+            border-radius: 15px;
+            width: 200px;
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.4); /* <-- 10% transparent white */
+            transition: transform 0.3s ease;
+        }
+
+        .shop-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .shop-item img {
+            width: 100%;
+        }
+
+        .shop-item h3 {
+            font-size: 18px;
+            margin: 10px 0 5px;
+        }
+
+        .shop-item .price {
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .shop-item button {
+            background-color: #9b4dca;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+
+        .shop-item button:hover {
+            background-color: #7a3ca1;
+        }
+
+        .price-icon {
+            width: 16px !important;
+            height: 16px !important;
+            object-fit: contain;
+            image-rendering: crisp-edges;
+            aspect-ratio: 1 / 1;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 4px;
+            transform: translateY(-1px);
+        }
+
+        #shop-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95); /* semi-transparent black */
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        #shop-overlay.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
     </style>
 </head>
 <body>
@@ -215,13 +293,14 @@
                 <a href="index.html"><h1>DIE HÄSSLONS</h1></a>
             </div>
 
-            <a href="index.html"><button class="nav-button">GALLERY</button></a>
-            <a href="shop.html"><button class="nav-button">SHOP</button></a>
             <a href="inventory.html"><button class="nav-button">INVENTORY</button></a>
+            <a href="shop.html"><button class="nav-button">SHOP</button></a>
+            <a href="index.html"><button class="nav-button">GALLERY</button></a>
+
 
             <div class="nav-right">
                 <span class="balance-display">
-                    <img src="imgs/balance.png" alt="Balance Icon" class="balance-icon">
+                    <img src="imgs/balance.png" alt="balance-icon" class="balance-icon">
                     <span id="balance"> 0</span>
                 </span>
                 <button id="twitch-login" class="nav-button purple">Login with Twitch</button>
@@ -231,8 +310,29 @@
         </div>
     </header>
 
-    <button id="addCardButton" class="button">Buy a random card (100 points)</button>
-    <button id="buyTenCardsButton" class="button">Buy 10 Cards (1000 points)</button>
+
+    <section class="shop-container">
+        <!-- Items will be inserted here dynamically or manually -->
+        <div class="shop-item">
+            <img src="imgs/bingrey.png" alt="bingrey">
+            <h3>1x CARD</h3>
+            <p class="item-price">
+                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">100</span>
+            </p>
+            <button id="addCardButton" class="button">Buy</button>
+        </div>
+
+        <div class="shop-item">
+            <img src="imgs/bingold.png" alt="bingold">
+            <h3>10x CARDS</h3>
+            <p class="item-price">
+                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">1000</span>
+            </p>
+            <button id="buyTenCardsButton" class="button">Buy</button>
+        </div>
+
+    </section>
+
     <button id="getCreditsButton" class="button">Get 100 Credits</button>
 
     <div id="cardPopup" class="card-popup">
@@ -366,13 +466,16 @@
 
         async function addRandomCardToInventory() {
             if (balance >= 100 && !isBuying) {
+                document.getElementById("shop-overlay").classList.add("active");
                 isBuying = true;
                 addCardButton.disabled = true;
 
                 setTimeout(async () => {
+
                     let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
                     const randomCard = getRandomCard();
                     let existingCard = inventory.find(card => card.image === randomCard.image);
+ 
                     if (existingCard) {
                         existingCard.count += 1;
                     } else {
@@ -385,15 +488,19 @@
                     setTimeout(() => {
                         addCardButton.disabled = balance < 100;
                         isBuying = false;
-                    }, 3000);
+                        document.getElementById("shop-overlay").classList.remove("active");
+                    }, 2200);
                 }, 500);
+
             } else {
                 alert("You are already buying a card! Wait till the animation is done!");
             }
+
         }
 
         async function buyTenCards() {
             if (balance >= 1000 && !isBuying) {
+                document.getElementById("shop-overlay").classList.add("active");
                 isBuying = true;
                 buyTenCardsButton.disabled = true;
 
@@ -435,6 +542,7 @@
                         setTimeout(() => {
                             buyTenCardsButton.disabled = balance < 1000;
                             isBuying = false;
+                            document.getElementById("shop-overlay").classList.remove("active");
                         }, 3000);
                     }
                 }
@@ -717,5 +825,6 @@
             window.location.href = "index.html";
         });
     </script>
+    <div id="shop-overlay"></div>
 </body>
 </html>
