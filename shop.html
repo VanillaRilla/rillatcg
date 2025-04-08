@@ -422,10 +422,15 @@
 
                 function revealNextCard(index) {
                     if (index < drawnCards.length) {
-                        setTimeout(() => {
-                            showCardPopup(drawnCards[index].image);  // Assuming showCardPopup takes card image as input
+                        if (index === 0) {
+                            showCardPopup(drawnCards[index].image); // Show first immediately
                             revealNextCard(index + 1);
-                        }, 2500);  // Adjust timing as needed
+                        } else {
+                            setTimeout(() => {
+                                showCardPopup(drawnCards[index].image);
+                                revealNextCard(index + 1);
+                            }, 2500);
+                        }
                     } else {
                         setTimeout(() => {
                             buyTenCardsButton.disabled = balance < 1000;
@@ -439,6 +444,7 @@
                 alert("Not enough balance or a purchase is already in progress!");
             }
         }
+
 
         function updateBalance(newBalance) {
             balance = newBalance;
