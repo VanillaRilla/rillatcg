@@ -420,7 +420,7 @@
                 }, 10);
             }
         });
-            }
+            
 
             const codeRef = doc(db, "redeemCodes", code);
             const codeSnap = await getDoc(codeRef);
@@ -459,7 +459,7 @@
 
             message.textContent = `Coupon redeemed successfully! +${reward}`;
             message.style.color = "green";
-        });
+        
 
         balanceDisplay.textContent = balance;
 
