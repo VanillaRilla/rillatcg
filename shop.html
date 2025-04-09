@@ -394,6 +394,57 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        document.addEventListener("DOMContentLoaded", () => {
+            const redeemBtn = document.getElementById("redeemCoupon");
+            const codeInput = document.getElementById("couponCode");
+            const message = document.getElementById("couponMessage");
+            const balanceDisplay = document.getElementById("balance");
+
+            redeemBtn?.addEventListener("click", async () => {
+                const code = codeInput.value.trim().toUpperCase();
+                const userData = JSON.parse(localStorage.getItem("twitchUser"));
+
+                if (!userData) {
+                    message.textContent = "Please log in to redeem a code.";
+                    message.style.color = "red";
+                    return;
+                }
+
+                const codeRef = doc(db, "redeemCodes", code);
+                const codeSnap = await getDoc(codeRef);
+
+                if (!codeSnap.exists()) {
+                    message.textContent = "Invalid coupon code.";
+                    message.style.color = "red";
+                    return;
+                }
+
+                const codeData = codeSnap.data();
+                if (codeData.used) {
+                    message.textContent = "This coupon has already been used.";
+                    message.style.color = "red";
+                    return;
+                }
+
+                const reward = codeData.value || 0;
+                let currentBalance = parseInt(localStorage.getItem("balance")) || 0;
+                currentBalance += reward;
+                localStorage.setItem("balance", currentBalance);
+                balanceDisplay.textContent = currentBalance;
+
+                const userRef = doc(db, "users", userData.id);
+                await updateDoc(userRef, { balance: currentBalance });
+
+                await updateDoc(codeRef, {
+                    used: true,
+                    redeemedBy: userData.id,
+                    redeemedAt: new Date().toISOString()
+                });
+
+                message.textContent = `Coupon redeemed successfully! +${reward}`;
+                message.style.color = "green";
+            });
+        });
 
         const redeemBtn = document.getElementById("redeemCoupon");
         const codeInput = document.getElementById("couponCode");
@@ -420,23 +471,8 @@
                 }, 10);
             }
         });
+    
             
-
-            const codeRef = doc(db, "redeemCodes", code);
-            const codeSnap = await getDoc(codeRef);
-
-            if (!codeSnap.exists()) {
-                message.textContent = "Invalid coupon code.";
-                message.style.color = "red";
-                return;
-            }
-
-            const codeData = codeSnap.data();
-            if (codeData.used) {
-                message.textContent = "This coupon has already been used.";
-                message.style.color = "red";
-                return;
-            }
 
             const reward = codeData.value || 0;
             let currentBalance = parseInt(localStorage.getItem("balance")) || 0;
