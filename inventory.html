@@ -60,7 +60,7 @@
         .navbar {
             position: sticky;
             z-index: 999;
-            background-color: linear-gradient(180deg, #062b06, #020f02);
+            background-color: #1c1c1c;
             width: 100%;
             padding: 4px 16px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
@@ -81,8 +81,8 @@
 
         .navbar h1 {
             font-family: "Lacquer", system-ui;
-            font-weight: 400;
-            font-size: 50px;
+            font-weight: 500;
+            font-size: 40px;
             color: #ffffff;
             margin-top: 4px;
             margin-bottom: 4px;
@@ -95,31 +95,31 @@
             text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 0, 0, 0.5);
         }
 
-        
+
 
         .nav-left {
             flex: 1;
         }
 
-        .nav-left a {
-            text-decoration: none;
-            color: inherit; /* Keeps the h1 gradient effect */
-        }
+            .nav-left a {
+                text-decoration: none;
+                color: inherit; /* Keeps the h1 gradient effect */
+            }
+
         .nav-right {
             flex: 1;
             display: flex;
             justify-content: flex-end;
             gap: 10px;
-            align-items: center;
         }
 
         .nav-button {
-            background: linear-gradient(165deg, #77ab37, #c6dbab);
-            color: #333333;
-            border: 2px solid #96c758;
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #ffffff;
             padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 22px;
+            border-radius: 55px;
+            font-size: 20px;
             font-family: "Staatliches", sans-serif;
             font-weight: 400;
             cursor: pointer;
@@ -128,11 +128,36 @@
         }
 
             .nav-button:hover {
-                background: linear-gradient(180deg, #3f5c1c, #6c785c);
-                color: #0cad00;
+                background: #838383;
+                color: #ffffff;
                 transform: translateY(-2px);
+                border: 1px solid #838383;
                 box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
             }
+
+
+        .nav-button_twitch {
+            background: #6441a5;
+            color: #000000;
+            border: 1px solid #6441a5;
+            padding: 8px 16px;
+            border-radius: 55px;
+            font-size: 20px;
+            font-family: "Staatliches", sans-serif;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+            .nav-button_twitch:hover {
+                background: #3f266c;
+                color: #ffffff;
+                transform: translateY(-2px);
+                border: 1px solid #3f266c;
+                box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+            }
+
 
         .balance-display {
             display: flex;
@@ -166,8 +191,8 @@
                     <img src="imgs/balance.png" alt="Balance Icon" class="balance-icon">
                     <span id="balance"> 0</span>
                 </span>
-                <button id="twitch-login" class="nav-button purple">Login with Twitch</button>
-                <button id="logout-button" class="nav-button gray">Logout</button>
+                <button id="twitch-login" class="nav-button_twitch">Login with Twitch</button>
+                <button id="logout-button" class="nav-button_twitch">Logout</button>
             </div>
 
         </div>
