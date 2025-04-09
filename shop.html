@@ -405,13 +405,21 @@
         let balance = parseInt(localStorage.getItem('balance')) || 0;
         let isBuying = false;
 
-        redeemBtn.addEventListener("click", async () => {
-            const code = codeInput.value.trim().toUpperCase();
-            const userData = JSON.parse(localStorage.getItem("twitchUser"));
-            if (!userData) {
-                message.textContent = "Please log in to redeem a code.";
-                message.style.color = "red";
-                return;
+        redeemButton.addEventListener("click", () => {
+            const couponSection = document.getElementById("couponSection");
+
+            if (couponSection.classList.contains("show")) {
+                couponSection.classList.remove("show");
+                setTimeout(() => {
+                    couponSection.style.display = "none";
+                }, 300);
+            } else {
+                couponSection.style.display = "flex";
+                setTimeout(() => {
+                    couponSection.classList.add("show");
+                }, 10);
+            }
+        });
             }
 
             const codeRef = doc(db, "redeemCodes", code);
