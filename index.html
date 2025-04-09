@@ -289,6 +289,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             document.addEventListener('DOMContentLoaded', () => {
                 loadUserData();
+                
             });
             updateLoginState();
         });
@@ -512,6 +513,7 @@
             try {
                 const userData = JSON.parse(decodeURIComponent(userDataEncoded));
                 localStorage.setItem("twitchUser", JSON.stringify(userData));
+                loadUserData();
                 console.log("Logged in as:", userData.display_name);
 
                 const userRef = doc(db, "users", userData.id);
