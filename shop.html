@@ -16,63 +16,6 @@
             .inventory text-align: center;
         }
 
-        #couponSection {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 10px;
-            width: 250px;
-            text-align: center;
-            opacity: 0;
-            transform: scale(0.8);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-
-            #couponSection.show {
-                display: flex;
-                opacity: 1;
-                transform: scale(1);
-            }
-
-        #couponCode {
-            width: 80%;
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        #redeemCoupon {
-            width: 100%;
-            padding: 8px;
-            font-size: 14px;
-            background-color: green;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #redeemButton {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #28a745;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 16px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
 
         #getCreditsButton {
             background-color: green;
@@ -399,50 +342,6 @@
 
         let balance = parseInt(localStorage.getItem('balance')) || 0;
         let isBuying = false;
-
-        const coupons = {
-            "FREE100": 100,
-            "BONUS50": 50,
-            "LUCKY2000": 2000
-        };
-
-        document.getElementById('redeemButton').addEventListener('click', function () {
-            const couponSection = document.getElementById('couponSection');
-            if (couponSection.classList.contains('show')) {
-                couponSection.classList.remove('show');
-                setTimeout(() => {
-                    couponSection.style.display = 'none';
-                }, 300);
-            } else {
-                couponSection.style.display = 'flex';
-                setTimeout(() => {
-                    couponSection.classList.add('show');
-                }, 10);
-            }
-        });
-
-        let redeemedCoupons = JSON.parse(localStorage.getItem('redeemedCoupons')) || [];
-
-        document.getElementById('redeemCoupon').addEventListener('click', () => {
-            const code = document.getElementById('couponCode').value.trim().toUpperCase();
-            const message = document.getElementById('couponMessage');
-
-            if (redeemedCoupons.includes(code)) {
-                message.textContent = "This coupon has already been used.";
-                message.style.color = "red";
-            } else if (coupons[code]) {
-                balance += coupons[code];
-                localStorage.setItem('balance', balance);
-                document.getElementById('balance').textContent = balance;
-                redeemedCoupons.push(code);
-                localStorage.setItem('redeemedCoupons', JSON.stringify(redeemedCoupons));
-                message.textContent = "Coupon redeemed successfully!";
-                message.style.color = "green";
-            } else {
-                message.textContent = "Invalid coupon code.";
-                message.style.color = "red";
-            }
-        });
 
         balanceDisplay.textContent = balance;
 
