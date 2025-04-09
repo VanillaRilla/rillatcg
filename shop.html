@@ -249,6 +249,27 @@
                 opacity: 1;
                 pointer-events: auto;
             }
+
+        .coupon-redeem {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+            .coupon-redeem input {
+                padding: 8px;
+                border-radius: 6px;
+                border: 1px solid #ccc;
+            }
+
+            .coupon-redeem button {
+                margin-left: 8px;
+                padding: 8px 12px;
+                border-radius: 6px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+            }
+
     </style>
 </head>
 <body>
@@ -300,7 +321,10 @@
     </section>
 
     <button id="getCreditsButton" class="button">Get 100 Credits</button>
-
+    <div class="coupon-redeem">
+        <input type="text" id="couponCodeInput" placeholder="Enter coupon code">
+        <button id="redeemCouponButton">Redeem</button>
+    </div>
     <div id="cardPopup" class="card-popup">
         <img id="popupImage" src="" alt="New Card">
     </div>
@@ -396,7 +420,7 @@
                     let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
                     const randomCard = getRandomCard();
                     let existingCard = inventory.find(card => card.image === randomCard.image);
- 
+
                     if (existingCard) {
                         existingCard.count += 1;
                     } else {
@@ -518,6 +542,35 @@
         });
         checkBalance()
 
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+        document.getElementById("redeemCouponButton").addEventListener("click", async () => {
+            const couponCode = document.getElementById("couponCodeInput").value.trim().toUpperCase();
+            const userData = JSON.parse(localStorage.getItem("twitchUser"));
+            if (!userData || !couponCode) return alert("Login first and enter a coupon code.");
+
+            const couponRef = doc(db, "coupons", couponCode);
+            const couponSnap = await getDoc(couponRef);
+
+            if (!couponSnap.exists()) {
+                return alert("Invalid coupon code.");
+            }
+
+            const couponData = couponSnap.data();
+
+            if (couponData.usedBy && couponData.usedBy.includes(userData.id)) {
+                return alert("You've already redeemed this code.");
+            }
+
+            const newBalance = balance + couponData.amount;
+            updateBalance(newBalance);
+            await updateDoc(couponRef, {
+                usedBy: [...(couponData.usedBy || []), userData.id]
+            });
+
+            alert(`You received ${couponData.amount} credits!`);
+        });
+        checkBalance()
 
     </script>
 
