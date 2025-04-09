@@ -152,16 +152,14 @@
             text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 0, 0, 0.5);
         }
 
-
-
         .nav-left {
             flex: 1;
         }
 
-            .nav-left a {
-                text-decoration: none;
-                color: inherit; /* Keeps the h1 gradient effect */
-            }
+        .nav-left a {
+            text-decoration: none;
+            color: inherit; /* Keeps the h1 gradient effect */
+        }
 
         .nav-right {
             flex: 1;
@@ -373,7 +371,13 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            updateDoc,
+            setDoc
+        } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
         // Firebase config
         const firebaseConfig = {
@@ -386,9 +390,13 @@
         };
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig); // Initialize Firebase App
-        const db = getFirestore(app);  // Initialize Firestore with the Firebase app
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
+
+        const redeemBtn = document.getElementById("redeemCoupon");
+        const codeInput = document.getElementById("couponCode");
+        const message = document.getElementById("couponMessage");
         const addCardButton = document.getElementById('addCardButton');
         const getCreditsButton = document.getElementById('getCreditsButton');
         const balanceDisplay = document.getElementById('balance');
@@ -396,48 +404,52 @@
         let balance = parseInt(localStorage.getItem('balance')) || 0;
         let isBuying = false;
 
-        const coupons = {
-            "FREE100": 100,
-            "BONUS50": 50,
-            "LUCKY2000": 2000
-        };
-
-        document.getElementById('redeemButton').addEventListener('click', function () {
-            const couponSection = document.getElementById('couponSection');
-            if (couponSection.classList.contains('show')) {
-                couponSection.classList.remove('show');
-                setTimeout(() => {
-                    couponSection.style.display = 'none';
-                }, 300);
-            } else {
-                couponSection.style.display = 'flex';
-                setTimeout(() => {
-                    couponSection.classList.add('show');
-                }, 10);
-            }
-        });
-
-        let redeemedCoupons = JSON.parse(localStorage.getItem('redeemedCoupons')) || [];
-
-        document.getElementById('redeemCoupon').addEventListener('click', () => {
-            const code = document.getElementById('couponCode').value.trim().toUpperCase();
-            const message = document.getElementById('couponMessage');
-
-            if (redeemedCoupons.includes(code)) {
-                message.textContent = "This coupon has already been used.";
+        redeemBtn.addEventListener("click", async () => {
+            const code = codeInput.value.trim().toUpperCase();
+            const userData = JSON.parse(localStorage.getItem("twitchUser"));
+            if (!userData) {
+                message.textContent = "Please log in to redeem a code.";
                 message.style.color = "red";
-            } else if (coupons[code]) {
-                balance += coupons[code];
-                localStorage.setItem('balance', balance);
-                document.getElementById('balance').textContent = balance;
-                redeemedCoupons.push(code);
-                localStorage.setItem('redeemedCoupons', JSON.stringify(redeemedCoupons));
-                message.textContent = "Coupon redeemed successfully!";
-                message.style.color = "green";
-            } else {
+                return;
+            }
+
+            const codeRef = doc(db, "redeemCodes", code);
+            const codeSnap = await getDoc(codeRef);
+
+            if (!codeSnap.exists()) {
                 message.textContent = "Invalid coupon code.";
                 message.style.color = "red";
+                return;
             }
+
+            const codeData = codeSnap.data();
+            if (codeData.used) {
+                message.textContent = "This coupon has already been used.";
+                message.style.color = "red";
+                return;
+            }
+
+            const reward = codeData.value || 0;
+            let currentBalance = parseInt(localStorage.getItem("balance")) || 0;
+            currentBalance += reward;
+            localStorage.setItem("balance", currentBalance);
+            balanceDisplay.textContent = currentBalance;
+
+            // Update Firebase user balance
+            const userRef = doc(db, "users", userData.id);
+            await updateDoc(userRef, {
+                balance: currentBalance
+            });
+
+            // Mark coupon as used
+            await updateDoc(codeRef, {
+                used: true,
+                redeemedBy: userData.id,
+                redeemedAt: new Date().toISOString()
+            });
+
+            message.textContent = `Coupon redeemed successfully! +${reward}`;
+            message.style.color = "green";
         });
 
         balanceDisplay.textContent = balance;
