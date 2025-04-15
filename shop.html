@@ -299,14 +299,26 @@
 
 
     <section class="shop-container">
+
         <!-- Items will be inserted here dynamically or manually -->
+        <div class="shop-item">
+            <img src="imgs/binfree.png" alt="bingrey">
+            <h3>FREE</h3>
+            <p id="dailyCreditsMessage"></p>
+                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">FREE</span>
+            </p>
+            <button id="dailyCreditsButton" class="button">CLAIM</button>
+        </div>
+
+  
+
         <div class="shop-item">
             <img src="imgs/bingrey.png" alt="bingrey">
             <h3>1x CARD</h3>
             <p class="item-price">
                 <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">100</span>
             </p>
-            <button id="addCardButton" class="button">Buy</button>
+            <button id="addCardButton" class="button">BUY</button>
         </div>
 
         <div class="shop-item">
@@ -315,7 +327,7 @@
             <p class="item-price">
                 <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">1000</span>
             </p>
-            <button id="buyTenCardsButton" class="button">Buy</button>
+            <button id="buyTenCardsButton" class="button">BUY</button>
         </div>
 
     </section>
@@ -848,6 +860,51 @@
             localStorage.clear();
             window.location.href = "index.html";
         });
+
+        const dailyCreditsButton = document.getElementById("dailyCreditsButton");
+        const dailyCreditsMessage = document.getElementById("dailyCreditsMessage");
+
+        dailyCreditsButton.addEventListener("click", async () => {
+            const userData = JSON.parse(localStorage.getItem("twitchUser"));
+            if (!userData) {
+                dailyCreditsMessage.textContent = "You must be logged in to claim daily credits.";
+                return;
+            }
+
+            const userRef = doc(db, "users", userData.id);
+            const userSnap = await getDoc(userRef);
+
+            if (!userSnap.exists()) {
+                dailyCreditsMessage.textContent = "User not found.";
+                return;
+            }
+
+            const user = userSnap.data();
+            const now = Timestamp.now();
+            const lastClaim = user.lastDailyClaim;
+
+            if (lastClaim && now.seconds - lastClaim.seconds < 86400) {
+                const remaining = 86400 - (now.seconds - lastClaim.seconds);
+                const hours = Math.floor(remaining / 3600);
+                const minutes = Math.floor((remaining % 3600) / 60);
+                dailyCreditsMessage.textContent = `You can claim again in ${hours}h ${minutes}m.`;
+                return;
+            }
+
+            // Update balance and lastDailyClaim
+            const newBalance = (user.balance || 0) + 100;
+
+            await updateDoc(userRef, {
+                balance: newBalance,
+                lastDailyClaim: now
+            });
+
+            localStorage.setItem("balance", newBalance);
+            document.getElementById("balance").textContent = newBalance;
+            dailyCreditsMessage.textContent = "You've claimed your 100 free credits! Come back in 24 hours.";
+        });
+
+
     </script>
     <div id="shop-overlay"></div>
 </body>
