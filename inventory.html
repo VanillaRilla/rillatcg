@@ -208,6 +208,19 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
+        function startBalanceListener(userId) {
+            const userRef = doc(db, "users", userId);
+            const balanceElement = document.getElementById("balance");
+
+            onSnapshot(userRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const balance = docSnap.data().balance || 0;
+                    if (balanceElement) balanceElement.textContent = balance;
+                    localStorage.setItem("balance", balance); // optional caching
+                }
+            });
+        }
+
         // Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyAW75d_4o7XdCsJ1_LmM_h4b2MxSJzrxfU",
@@ -299,6 +312,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             document.addEventListener('DOMContentLoaded', () => {
                 loadUserData();
+                startBalanceListener(twitchUser.id);
             });
             updateLoginState();
         });
