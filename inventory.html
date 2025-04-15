@@ -243,15 +243,16 @@
         let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
         const cardData = [
-            { image: "imgs/card001.png", name: "Fred", rarity: "common", probability: 0.60 },
-            { image: "imgs/card2.png", name: "Aron", rarity: "uncommon", probability: 0.25 },
-            { image: "imgs/card3.png", name: "Claudia", rarity: "rare", probability: 0.10 },
-            { image: "imgs/card4.png", name: "Bob", rarity: "epic", probability: 0.04 },
-            { image: "imgs/card5.png", name: "Felix", rarity: "legendary", probability: 0.01 },
-            { image: "imgs/card6.png", name: "Cloud", rarity: "common", probability: 0.60 }
+            { image: "imgs/card001.png", name: "Fred", rarity: "common", probability: 0.50 },
+            { image: "imgs/card2.png", name: "Aron", rarity: "uncommon", probability: 0.30 },
+            { image: "imgs/card3.png", name: "Claudia", rarity: "rare", probability: 0.12 },
+            { image: "imgs/card4.png", name: "Bob", rarity: "epic", probability: 0.06 },
+            { image: "imgs/card5.png", name: "Felix", rarity: "legendary", probability: 0.019 },
+            { image: "imgs/card6.png", name: "Cloud", rarity: "common", probability: 0.50 }
+            { image: "imgs/card7.png", name: "Hässli", rarity: "hässlich", probability: 0.001 }
         ];
 
-        const rarityOrder = ["legendary", "epic", "rare", "uncommon", "common"];
+        const rarityOrder = ["hässlich","legendary", "epic", "rare", "uncommon", "common"];
 
         function displayInventory() {
             inventoryList.innerHTML = '';
@@ -261,7 +262,8 @@
                 uncommon: "green",
                 rare: "blue",
                 epic: "purple",
-                legendary: "gold"
+                legendary: "gold",
+                hässlich: "red"
             };
 
             inventory.sort((a, b) => rarityOrder.indexOf(b.rarity) - rarityOrder.indexOf(a.rarity));
