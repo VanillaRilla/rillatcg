@@ -255,7 +255,7 @@
             <div class="nav-right">
                 <span class="balance-display">
                     <img src="imgs/balance.png" alt="Balance Icon" class="balance-icon">
-                    <span id="balance"> 0</span>
+                    <span id="balance">0</span>
                 </span>
                 <button id="twitch-login" class="nav-button_twitch">Login with Twitch</button>
                 <button id="logout-button" class="nav-button_twitch">Logout</button>
@@ -374,27 +374,7 @@
         import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
         import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-        function startBalanceListener(userId) {
-            const userRef = doc(db, "users", userId);
-
-            onSnapshot(userRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const user = docSnap.data();
-                    const updatedBalance = user.balance || 0;
-
-                    // Update UI from Firestore only
-                    const balanceElement = document.getElementById('balance');
-                    if (balanceElement) {
-                        balanceElement.textContent = updatedBalance;
-                    }
-
-                    // Optional: update localStorage for caching or other uses
-                    localStorage.setItem('balance', updatedBalance);
-                } else {
-                    console.warn("User doc not found.");
-                }
-            });
-        }
+      
         const balanceDisplay = document.getElementById('balance');
 
         let balance = parseInt(localStorage.getItem('balance')) || 0;
@@ -408,9 +388,28 @@
             appId: "1:36231086933:web:28450b8b754eff95f7a5dc"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        // ✅ Start listening to Firestore updates
+        function startBalanceListener(userId) {
+            const balanceElement = document.getElementById("balance");
+            const userRef = doc(db, "users", userId);
+
+            onSnapshot(userRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const balance = docSnap.data().balance || 0;
+                    if (balanceElement) {
+                        balanceElement.textContent = balance;
+                    }
+                    localStorage.setItem("balance", balance); // optional caching
+                } else {
+                    console.log("User doc not found");
+                }
+            }, (error) => {
+                console.error("Error listening to balance:", error);
+            });
+        }
 
 
         async function loadUserData() {
