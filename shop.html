@@ -339,18 +339,7 @@
             setDoc
         } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-        function startBalanceListener(userId) {
-            const userRef = doc(db, "users", userId);
-            const balanceElement = document.getElementById("balance");
-
-            onSnapshot(userRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const balance = docSnap.data().balance || 0;
-                    if (balanceElement) balanceElement.textContent = balance;
-                    localStorage.setItem("balance", balance); // optional caching
-                }
-            });
-        }
+        
 
         // Firebase config
         const firebaseConfig = {
@@ -365,6 +354,54 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig); // Initialize Firebase App
         const db = getFirestore(app);  // Initialize Firestore with the Firebase app
+
+
+        // ✅ Start listening to Firestore updates
+        function startBalanceListener(userId) {
+            const balanceElement = document.getElementById("balance");
+            const userRef = doc(db, "users", userId);
+
+            onSnapshot(userRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const balance = docSnap.data().balance || 0;
+                    if (balanceElement) {
+                        balanceElement.textContent = balance;
+                    }
+                    localStorage.setItem("balance", balance); // optional caching
+                } else {
+                    console.log("User doc not found");
+                }
+            }, (error) => {
+                console.error("Error listening to balance:", error);
+            });
+        }
+
+
+        async function fetchBalanceOnPageLoad() {
+            const userData = JSON.parse(localStorage.getItem("twitchUser"));
+            const balanceElement = document.getElementById("balance");
+
+            if (userData && userData.id && balanceElement) {
+                const userRef = doc(db, "users", userData.id);
+                try {
+                    const docSnap = await getDoc(userRef);
+                    if (docSnap.exists()) {
+                        const balance = docSnap.data().balance || 0;
+                        balanceElement.textContent = balance;
+                        localStorage.setItem("balance", balance); // optional caching
+                        console.log("Fetched balance from Firestore:", balance);
+                    } else {
+                        console.warn("User document not found.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching balance:", error);
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", fetchBalanceOnPageLoad);
+
+
 
         const addCardButton = document.getElementById('addCardButton');
         const getCreditsButton = document.getElementById('getCreditsButton');
