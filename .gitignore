@@ -1,0 +1,6 @@
+# Firebase service account keys
+*.json
+
+# Optional: Ignore environment config files
+.env
+.env.*rillatcg-ab6ba-firebase-adminsdk-fbsvc-2fd3014152.json

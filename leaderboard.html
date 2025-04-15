@@ -1,0 +1,584 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LEADERBOARD</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHOP</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lacquer&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            padding-bottom: 120px;
+        }
+
+        #welcomeMessage {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .card-gallery {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .card-container {
+            width: 120px;
+            height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+            .card-container img {
+                width: 100%;
+                height: 180px;
+                object-fit: contain;
+            }
+
+            .card-container.locked img.front {
+                content: url('imgs/cardlocked.png');
+            }
+
+        .card-label {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .image-wrapper {
+            width: 100%;
+            height: 180px;
+            position: relative;
+        }
+
+            .image-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                position: absolute;
+                top: 0;
+                left: 0;
+                transition: opacity 0.3s ease-in-out;
+            }
+
+        .front {
+            z-index: 1;
+        }
+
+        .back {
+            z-index: 2;
+            opacity: 0;
+        }
+
+        .card-container:hover .back {
+            opacity: 1;
+        }
+
+        .card-label {
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+            position: relative;
+            z-index: 3;
+        }
+
+        .login-container {
+            text-align: right;
+            padding: 10px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .navbar {
+            position: sticky;
+            z-index: 999;
+            background-color: #1c1c1c;
+            width: 100%;
+            padding: 4px 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+            border-bottom: 2px solid #ffffff;
+            display: flex;
+            margin-bottom: 10px;
+            justify-content: center;
+        }
+
+        .navbar-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1300px;
+            gap: 10px;
+        }
+
+        .navbar h1 {
+            font-family: "Lacquer", system-ui;
+            font-weight: 500;
+            font-size: 40px;
+            color: #ffffff;
+            margin-top: 4px;
+            margin-bottom: 4px;
+            margin-left: -20px;
+            text-align: center;
+            background-image: linear-gradient(180deg, #0a9c02, #3ec236 );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            gap: 10px;
+            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 0, 0, 0.5);
+        }
+
+
+
+        .nav-left {
+            flex: 1;
+        }
+
+            .nav-left a {
+                text-decoration: none;
+                color: inherit; /* Keeps the h1 gradient effect */
+            }
+
+        .nav-right {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            align-items: center;
+        }
+
+
+        .nav-button {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #ffffff;
+            padding: 8px 16px;
+            border-radius: 55px;
+            font-size: 20px;
+            font-family: "Staatliches", sans-serif;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+            .nav-button:hover {
+                background: #838383;
+                color: #ffffff;
+                transform: translateY(-2px);
+                border: 1px solid #838383;
+                box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+            }
+
+
+        .nav-button_twitch {
+            background: #6441a5;
+            color: #000000;
+            border: 1px solid #6441a5;
+            padding: 8px 16px;
+            border-radius: 55px;
+            font-size: 20px;
+            font-family: "Staatliches", sans-serif;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+            .nav-button_twitch:hover {
+                background: #3f266c;
+                color: #ffffff;
+                transform: translateY(-2px);
+                border: 1px solid #3f266c;
+                box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+            }
+
+
+        .balance-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            color: hotpink;
+            font-size: 16px;
+        }
+
+        .balance-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .card-container:hover .back {
+            opacity: 1;
+        }
+
+        .card-label {
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+            position: relative;
+            z-index: 3;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="navbar-inner">
+
+            <div class="nav-left">
+                <a href="index.html"><h1>DIE HÄSSLONS</h1></a>
+            </div>
+
+            <a href="inventory.html"><button class="nav-button">INVENTORY</button></a>
+            <a href="shop.html"><button class="nav-button">SHOP</button></a>
+            <a href="index.html"><button class="nav-button">GALLERY</button></a>
+            <a href="leaderboard.html"><button class="nav-button">LEADERBOARD</button></a>
+
+
+            <div class="nav-right">
+                <span class="balance-display">
+                    <img src="imgs/balance.png" alt="balance-icon" class="balance-icon">
+                    <span id="balance"> 0</span>
+                </span>
+                <button id="twitch-login" class="nav-button_twitch">Login with Twitch</button>
+                <button id="logout-button" class="nav-button_twitch">Logout</button>
+            </div>
+
+        </div>
+    </header>
+
+    <h1>Card Collection Leaderboard</h1>
+    <table id="leaderboard">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Username</th>
+                <th>Common</th>
+                <th>Uncommon</th>
+                <th>Rare</th>
+                <th>Epic</th>
+                <th>Legendary</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Function to check if user is logged in and update buttons
+        function updateLoginState() {
+            const loginBtn = document.getElementById("twitch-login");
+            const logoutBtn = document.getElementById("logout-button");
+            const twitchUser = JSON.parse(localStorage.getItem("twitchUser"));
+            const balance = parseInt(localStorage.getItem("balance")) || 0;
+            document.getElementById('balance').textContent = balance;
+            if (twitchUser) {
+                // If user is logged in, hide login button and show logout button
+                loginBtn.style.display = "none";
+                logoutBtn.style.display = "inline-block";
+            } else {
+                // If user is not logged in, show login button and hide logout button
+                loginBtn.style.display = "inline-block";
+                logoutBtn.style.display = "none";
+            }
+        }
+
+        // Call the function on page load to ensure correct button visibility
+        window.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('DOMContentLoaded', () => {
+                loadUserData();
+            });
+            updateLoginState();
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            setDoc,
+            updateDoc,
+            serverTimestamp,
+            collection,
+            getDocs
+        } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAW75d_4o7XdCsJ1_LmM_h4b2MxSJzrxfU",
+            authDomain: "rillatcg-ab6ba.firebaseapp.com",
+            projectId: "rillatcg-ab6ba",
+            storageBucket: "rillatcg-ab6ba.appspot.com",
+            messagingSenderId: "36231086933",
+            appId: "1:36231086933:web:28450b8b754eff95f7a5dc"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadLeaderboard() {
+            const leaderboardBody = document.querySelector("#leaderboard tbody");
+            leaderboardBody.innerHTML = "";
+            const usersSnapshot = await getDocs(collection(db, "users"));
+
+            let players = [];
+
+            usersSnapshot.forEach(doc => {
+                const data = doc.data();
+                const username = data.displayName || data.username || "Unknown";
+                const cards = data.inventory || [];
+                const rarityCounts = {
+                    common: 0,
+                    uncommon: 0,
+                    rare: 0,
+                    epic: 0,
+                    legendary: 0,
+                };
+
+                // Corrected line: replaced 'inventory' with 'cards'
+                cards.forEach((card) => {
+                    if (rarityCounts.hasOwnProperty(card.rarity)) {
+                        rarityCounts[card.rarity] += card.count;
+                    }
+                });
+
+                const totalCards = Object.values(rarityCounts).reduce((a, b) => a + b, 0);
+
+                players.push({
+                    username,
+                    totalCards,
+                    ...rarityCounts
+                });
+            });
+
+            // Sort players by most unique cards
+            players.sort((a, b) => b.totalCards - a.totalCards);
+
+            // Add rows to table
+            players.forEach((player, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${player.username}</td>
+                    <td>${player.common}</td>
+                    <td>${player.uncommon}</td>
+                    <td>${player.rare}</td>
+                    <td>${player.epic}</td>
+                    <td>${player.legendary}</td>
+                `;
+                leaderboardBody.appendChild(row);
+            });
+        }
+
+        loadLeaderboard();
+
+        async function logOut() {
+            // Clear user data from localStorage
+            localStorage.removeItem('twitchUser');
+            localStorage.removeItem('balance');
+            localStorage.removeItem('inventory');
+            document.getElementById('balance').textContent = "0"; // Reset balance on the UI
+
+            // Optionally, update Firebase (e.g., track logout status)
+            const userData = JSON.parse(localStorage.getItem('twitchUser'));
+            if (userData) {
+                const userRef = doc(db, "users", userData.id);
+                // Only update the loggedIn status to false, not balance or inventory
+                await updateDoc(userRef, {
+                    loggedIn: false
+                }).then(() => {
+                    console.log("User logged out in Firestore.");
+                }).catch((error) => {
+                    console.error("Error updating user logout state in Firestore: ", error);
+                });
+            }
+
+            // Hide the logout button and show login button
+            document.getElementById('logoutButton').style.display = 'none';
+            document.getElementById('loginButton').style.display = 'block';
+
+            // Redirect to login page or home page if needed
+            window.location.href = "index.html"; // Adjust as necessary
+        }
+
+        const userData = JSON.parse(localStorage.getItem("twitchUser"));
+        if (userData) {
+            const userRef = doc(db, "users", userData.id);
+            const docSnap = await getDoc(userRef);
+            if (!docSnap.exists()) {
+                // Create a new user if no data exists for the user
+                const newUser = {
+                    id: userData.id,
+                    displayName: userData.display_name,
+                    profileImage: userData.profile_image_url,
+                    inventory: [],
+                    balance: 0,
+                    createdAt: serverTimestamp()
+                };
+                await setDoc(userRef, newUser);
+                console.log("New user created and data saved to Firestore!");
+            } else {
+                console.log("User data already exists in Firestore.");
+                // No action needed since we don't want to reset existing user's data
+            }
+        }
+
+        const loginBtn = document.getElementById("twitch-login");
+        const logoutBtn = document.getElementById("logout-button");
+
+
+        // Login button click -> Redirect to Twitch OAuth
+        loginBtn.addEventListener("click", () => {
+            window.location.href = "https://elk-hardy-previously.ngrok-free.app/auth/twitch";
+        });
+
+        logoutBtn.addEventListener("click", async () => {
+            const userData = JSON.parse(localStorage.getItem("twitchUser"));
+            if (userData) {
+                // Clear localStorage
+                localStorage.removeItem("twitchUser");
+                localStorage.setItem("balance", 0);
+                localStorage.setItem("inventory", JSON.stringify([]));
+
+                console.log("Local storage cleared.");
+            }
+
+            // Hide the logout button and show the login button
+            document.getElementById('logoutButton').style.display = 'none';
+            document.getElementById('loginButton').style.display = 'block';
+
+            // Redirect to the home page or login page
+            window.location.href = "index.html"; // Adjust as necessary
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const userDataEncoded = urlParams.get("user");
+
+        if (userDataEncoded) {
+            try {
+                const userData = JSON.parse(decodeURIComponent(userDataEncoded));
+                localStorage.setItem("twitchUser", JSON.stringify(userData));
+                console.log("Logged in as:", userData.display_name);
+
+                const userRef = doc(db, "users", userData.id);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    const user = userSnap.data();
+                    localStorage.setItem("balance", user.balance);
+                    localStorage.setItem("inventory", JSON.stringify(user.inventory || []));
+                    console.log("Loaded user data from Firestore.");
+                } else {
+                    const newUser = {
+                        id: userData.id,
+                        displayName: userData.display_name,
+                        profileImage: userData.profile_image_url,
+                        inventory: [],
+                        balance: 0,
+                        createdAt: serverTimestamp()
+                    };
+                    await setDoc(userRef, newUser);
+                    localStorage.setItem("balance", 0);
+                    localStorage.setItem("inventory", JSON.stringify([]));
+                    console.log("New user created.");
+                }
+
+                // Hide login, show logout
+                document.getElementById("twitch-login").style.display = "none";
+                document.getElementById("logout-button").style.display = "inline-block";
+
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } catch (err) {
+                console.error("Failed to parse or store user:", err);
+            }
+        }
+
+
+        document.getElementById("logout-button").addEventListener("click", async () => {
+            const userData = JSON.parse(localStorage.getItem("twitchUser"));
+            if (userData) {
+                try {
+                    const userRef = doc(db, "users", userData.id);
+                    await updateDoc(userRef, {
+                        loggedIn: false
+                    });
+                    console.log("User data reset in Firestore.");
+                } catch (err) {
+                    console.error("Error updating Firestore on logout:", err);
+                }
+            }
+            // Clear local data
+            localStorage.clear();
+            window.location.href = "index.html";
+        });
+
+        function updateBalance(newBalance) {
+            balance = newBalance;
+            localStorage.setItem('balance', balance);
+            balanceDisplay.textContent = balance;
+            updateFirebaseBalance(balance); // <-- Add this line
+            checkBalance();
+        }
+
+        async function updateFirebaseBalance(newBalance) {
+            const userData = JSON.parse(localStorage.getItem('twitchUser'));
+            if (userData) {
+                const userRef = doc(db, "users", userData.id);
+                await updateDoc(userRef, {
+                    balance: newBalance
+                });
+            }
+        }
+        loadLeaderboard();
+    </script>
+   
+</body>
+</html>
