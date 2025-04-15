@@ -290,6 +290,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             document.addEventListener('DOMContentLoaded', () => {
                 loadUserData();
+                startBalanceListener(userData.id);
                 
             });
             updateLoginState();
@@ -372,6 +373,28 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
         import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+        function startBalanceListener(userId) {
+            const userRef = doc(db, "users", userId);
+
+            onSnapshot(userRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const user = docSnap.data();
+                    const updatedBalance = user.balance || 0;
+
+                    // Update UI from Firestore only
+                    const balanceElement = document.getElementById('balance');
+                    if (balanceElement) {
+                        balanceElement.textContent = updatedBalance;
+                    }
+
+                    // Optional: update localStorage for caching or other uses
+                    localStorage.setItem('balance', updatedBalance);
+                } else {
+                    console.warn("User doc not found.");
+                }
+            });
+        }
         const balanceDisplay = document.getElementById('balance');
 
         let balance = parseInt(localStorage.getItem('balance')) || 0;
