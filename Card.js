@@ -7,7 +7,8 @@ const cardNames = {
     "imgs/card3.png": "Claudia",
     "imgs/card4.png": "Bob",
     "imgs/card5.png": "Felix",
-    "imgs/card6.png": "Cloud"
+    "imgs/card6.png": "Cloud",
+    "imgs/card7.png" : "Hässli"
 };
 
 class Card {
