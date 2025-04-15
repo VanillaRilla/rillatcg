@@ -419,12 +419,12 @@
             { image: "imgs/card4.png", name: "Bob", rarity: "epic", probability: 0.06 },
             { image: "imgs/card5.png", name: "Felix", rarity: "legendary", probability: 0.019 },
             { image: "imgs/card6.png", name: "Cloud", rarity: "common", probability: 0.50 },
-            { image: "imgs/card7.png", name: "Hässli", rarity: "hässlich", probability: 0.001 }
+            { image: "imgs/card7.png", name: "Hässli", rarity: "ugly", probability: 0.001 }
         ];
 
         function getRandomCard() {
             const rarityProbabilities = [
-                { rarity: "hässlich", probability: 0.001 },
+                { rarity: "ugly", probability: 0.001 },
                 { rarity: "legendary", probability: 0.019 },
                 { rarity: "epic", probability: 0.06 },
                 { rarity: "rare", probability: 0.12 },
@@ -518,7 +518,7 @@
 
                 // Sort drawn cards based on rarity, with the rarest one last
                 drawnCards.sort((a, b) => {
-                    const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "": 4 };
+                    const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4, "ugly": 5 };
                     return rarityOrder[a.rarity] - rarityOrder[b.rarity]; // Sort in ascending order (common to rare)
                 });
                 localStorage.setItem("inventory", JSON.stringify(inventory));

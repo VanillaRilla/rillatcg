@@ -249,10 +249,10 @@
             { image: "imgs/card4.png", name: "Bob", rarity: "epic", probability: 0.06 },
             { image: "imgs/card5.png", name: "Felix", rarity: "legendary", probability: 0.019 },
             { image: "imgs/card6.png", name: "Cloud", rarity: "common", probability: 0.50 }
-            { image: "imgs/card7.png", name: "Hässli", rarity: "hässlich", probability: 0.001 }
+            { image: "imgs/card7.png", name: "Hässli", rarity: "ugly", probability: 0.001 }
         ];
 
-        const rarityOrder = ["hässlich","legendary", "epic", "rare", "uncommon", "common"];
+        const rarityOrder = ["ugly","legendary", "epic", "rare", "uncommon", "common"];
 
         function displayInventory() {
             inventoryList.innerHTML = '';
@@ -263,7 +263,7 @@
                 rare: "blue",
                 epic: "purple",
                 legendary: "gold",
-                hässlich: "red"
+                ugly: "red"
             };
 
             inventory.sort((a, b) => rarityOrder.indexOf(b.rarity) - rarityOrder.indexOf(a.rarity));

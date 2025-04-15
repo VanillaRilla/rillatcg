@@ -292,7 +292,7 @@
         <div id="RARE" class="rarity-section"><h2>RARE</h2></div>
         <div id="EPIC" class="rarity-section"><h2>EPIC</h2></div>
         <div id="LEGENDARY" class="rarity-section"><h2>LEGENDARY</h2></div>
-        <div id="HÄSSLICH" class="rarity-section"><h2>HÄSSLICH</h2></div>
+        <div id="UGLY" class="rarity-section"><h2>UGLY</h2></div>
     </section>
 
         <script src="Card.js"></script>
@@ -337,7 +337,7 @@
                 { name: "Bob", image: "imgs/card4.png", hoverImage: "imgs/card4back.png", rarity: "EPIC" },
                 { name: "Felix", image: "imgs/card5.png", hoverImage: "imgs/card5back.png", rarity: "LEGENDARY" },
                 { name: "Cloud", image: "imgs/card6.png", hoverImage: "imgs/card6back.png", rarity: "COMMON" },
-                { name: "Hässli", image: "imgs/card7.png", hoverImage: "imgs/card7back.png", rarity: "HÄSSLICH" }
+                { name: "Hässli", image: "imgs/card7.png", hoverImage: "imgs/card7back.png", rarity: "UGLY" }
             ];
 
             function displayCards() {
@@ -347,7 +347,7 @@
                 let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
                 let inventoryImages = inventory.map(card => card.image);
 
-                const rarities = ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY", "HÄSSLICH"];
+                const rarities = ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY", "UGLY"];
 
                 rarities.forEach(rarity => {
                     // Create a rarity section
