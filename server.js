@@ -73,7 +73,7 @@ app.get('/auth/twitch/callback',
             profile_image_url: user.profile_image_url
         }));
 
-        // Send a request to the ngrok URL with the skip warning header before redirecting
+        /* Send a request to the ngrok URL with the skip warning header before redirecting
         try {
             const response = await fetch('https://elk-hardy-previously.ngrok-free.app/auth/twitch/callback', {
                 method: 'GET',
@@ -91,7 +91,7 @@ app.get('/auth/twitch/callback',
         } catch (error) {
             console.error('Error while sending ngrok skip warning header:', error);
         }
-
+        */
         // Redirect back to the frontend index.html with the Twitch user info in the URL
         res.redirect(`https://vanillarilla.github.io/rillatcg/index.html?user=${encodedUser}`);
         
