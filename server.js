@@ -102,6 +102,7 @@ app.get('/auth/twitch/callback',
 app.get('/', (req, res) => {
     if (req.isAuthenticated()) {
         res.send(`<h1>Hello ${req.user.display_name}</h1><p>Your email: ${req.user.email}</p>`);
+        console.log(`${req.user.display_name} logged in!`);
     } else {
         res.send('<h1>Please <a href="/auth/twitch">log in with Twitch</a></h1>');
     }

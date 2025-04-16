@@ -424,7 +424,7 @@
 
             usersSnapshot.forEach(doc => {
                 const data = doc.data();
-                const username = data.displayName || data.username || "Unknown";
+                const username = data.displayName || data.username || "-";
                 const cards = data.inventory || [];
                 const rarityCounts = {
                     common: 0,
@@ -471,7 +471,6 @@
             });
         }
 
-        loadLeaderboard();
 
         async function logOut() {
             // Clear user data from localStorage
