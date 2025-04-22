@@ -337,26 +337,37 @@
                 inventoryContainer.appendChild(cardElement);
 
                 // 👇 Add click event to show preview
-                cardElement.onclick = () => {
-                    document.getElementById("preview-image").src = card.image;
-                    document.getElementById("preview-details").innerHTML = `
-                    <h2>${card.name}</h2>
-                    <p>Rarity: <span style="color:${rarityColors[card.rarity] || "black"}">${card.rarity}</span></p>
-                    <p>Float: ${card.intcon?.toFixed(4) ?? 'N/A'}</p>
-                    <p>Condition: ${card.condition ?? 'Unknown'}</p>
-                    <p>Pattern: ${card.pattern ?? 'N/A'}</p>
-                `;
-                    document.getElementById("card-preview").style.display = "flex";
-                    document.addEventListener("click", function handleOutsideClick(event) {
-                        const preview = document.getElementById("card-preview");
-                        const details = document.getElementById("preview-details");
-                        const img = document.getElementById("preview-image");
+                cardElement.onclick = (e) => {
+                    e.stopPropagation(); // 🛑 Prevent the outside click from triggering immediately
 
-                        if (preview.style.display === "flex" && !preview.contains(event.target)) {
-                            preview.style.display = "none";
-                            document.removeEventListener("click", handleOutsideClick);
-                        }
-                    }, { once: true });
+                    const preview = document.getElementById("card-preview");
+                    const previewImage = document.getElementById("preview-image");
+                    const previewDetails = document.getElementById("preview-details");
+
+                    // Populate the preview content
+                    previewImage.src = card.image;
+                    previewDetails.innerHTML = `
+        <h2>${card.name}</h2>
+        <p>Rarity: ${card.rarity}</p>
+        <p>Float: ${card.intcon.toFixed(4)}</p>
+        <p>Condition: ${card.condition}</p>
+    `;
+
+                    // Show the preview window
+                    preview.style.display = "flex";
+
+                    // Wait a tick to allow this click to finish before adding the outside listener
+                    setTimeout(() => {
+                        // Outside click handler
+                        const outsideClickHandler = (event) => {
+                            if (!preview.contains(event.target)) {
+                                preview.style.display = "none";
+                                document.removeEventListener("click", outsideClickHandler);
+                            }
+                        };
+
+                        document.addEventListener("click", outsideClickHandler);
+                    }, 0);
                 };
             });
         }
