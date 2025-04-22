@@ -504,7 +504,7 @@
                         existingCard.count += 1;
                     } else {
                         const { float, condition } = generateFloatAndCondition();
-                        inventory.push({ ...randomCard, count: 1, float, condition });
+                        inventory.push({ ...randomCard, count: 1, floatValue, condition });
                     }
                     localStorage.setItem('inventory', JSON.stringify(inventory));
                     updateBalance(balance - 100);
@@ -540,7 +540,7 @@
                         existingCard.count += 1;
                     } else {
                         const { float, condition } = generateFloatAndCondition();
-                        inventory.push({ ...randomCard, count: 1, float, condition });
+                        inventory.push({ ...randomCard, count: 1, floatValue, condition });
                     }
                     drawnCards.push(randomCard);
                 }
