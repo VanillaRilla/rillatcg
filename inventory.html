@@ -25,12 +25,12 @@
             list-style-type: none;
             padding: 0;
             margin: 0;
-            justify-content: center;
+            justify-content: flex-start; /* Align to the left instead of center */
         }
 
         .inventory li {
-            margin: 15px;
-            width: 120px;
+            margin: 10px; /* Reduced margin */
+            width: calc(20% - 10px); /* Makes 5 cards per row (with margin) */
             height: 180px;
             display: flex;
             justify-content: center;
