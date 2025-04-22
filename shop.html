@@ -503,10 +503,16 @@
                     const randomCard = getRandomCard();
                     let existingCard = inventory.find(card => card.image === randomCard.image);
 
+                    let float, condition;
+
                     if (existingCard) {
                         existingCard.count += 1;
+                        float = existingCard.float;
+                        condition = existingCard.condition;
                     } else {
-                        const { float, condition } = generateFloatAndCondition();
+                        const result = generateFloatAndCondition();
+                        float = result.float;
+                        condition = result.condition;
                         inventory.push({ ...randomCard, count: 1, float, condition });
                     }
                     localStorage.setItem('inventory', JSON.stringify(inventory));
