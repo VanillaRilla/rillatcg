@@ -343,23 +343,23 @@
                 const details = document.createElement("div");
                 details.style.display = "none"; // hidden by default
                 details.innerHTML = `
-                <strong>${card.name}</strong><br>
-                <span style="color:${rarityColors[card.rarity] || "black"}">${card.rarity}</span><br>
-                <small>Condition: ${card.condition}</small><br>
-                <small>Pattern: ${card.pattern}</small><br>
-                <small>Float: ${card.float}</small>
-            `;
+                    <strong>${card.name}</strong><br>
+                    <span style="color:${rarityColors[card.rarity] || "black"}">${card.rarity}</span><br>
+                    <small>Condition: ${card.condition}</small><br>
+                    <small>Pattern: ${card.pattern}</small><br>
+                    <small>Float: ${card.intcon}</small>
+                 `;
 
                 // Toggle details on click
                 cardElement.onclick = () => {
                     document.getElementById("preview-image").src = card.image;
 
                     document.getElementById("preview-details").innerHTML = `
-    <h2>${card.name}</h2>
-    <p>Rarity: ${card.rarity}</p>
-    <p>Float: ${card.float.toFixed(4)}</p>
-    <p>Condition: ${card.condition}</p>
-  `;
+                 <h2>${card.name}</h2>
+                 <p>Rarity: ${card.rarity}</p>
+                 <p>Float: ${card.intcon.toFixed(4)}</p>
+                 <p>Condition: ${card.condition}</p>
+                 `;
 
                     document.getElementById("card-preview").style.display = "flex";
                 };
