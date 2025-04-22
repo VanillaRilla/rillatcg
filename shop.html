@@ -369,6 +369,7 @@
         function generateintconAndCondition() {
             const intcon = Math.floor(Math.random() * 101); 
             let condition;
+            let pattern;
 
             if (intcon <= 10) condition= "FRESH";
             else if (intcon <= 25) condition = "PLAYED";
@@ -505,7 +506,7 @@
                     const randomCard = getRandomCard();
                     let existingCard = inventory.find(card => card.image === randomCard.image);
 
-                    let intcon, condition;
+                    let intcon, condition, pattern;
 
                     if (existingCard) {
                         existingCard.count += 1;
@@ -549,7 +550,7 @@
 
                 for (let i = 0; i < 10; i++) {
                     const randomCard = getRandomCard();
-                    let intcon, conditionm, pattern;
+                    let intcon, condition, pattern;
                     let existingCard = inventory.find(card => card.image === randomCard.image);
 
                     if (existingCard) {
