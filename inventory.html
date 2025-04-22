@@ -289,9 +289,11 @@
                 ugly: "red"
             };
 
+            inventoryContainer.innerHTML = ""; // Clear previous content
+
             inventory.forEach(card => {
                 const cardElement = document.createElement("div");
-                cardElement.className = "card"; // Add your custom style here
+                cardElement.className = "card";
                 cardElement.style.border = `2px solid ${rarityColors[card.rarity] || "black"}`;
                 cardElement.style.padding = "10px";
                 cardElement.style.margin = "10px";
@@ -300,9 +302,17 @@
                 cardElement.style.borderRadius = "8px";
                 cardElement.style.background = "#fff";
                 cardElement.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+                cardElement.style.cursor = "pointer";
 
-                cardElement.innerHTML = `
-            <img src="${card.image}" alt="${card.name}" style="width:100px; height:auto;"><br>
+                const img = document.createElement("img");
+                img.src = card.image;
+                img.alt = card.name;
+                img.style.width = "100px";
+                img.style.height = "auto";
+
+                const details = document.createElement("div");
+                details.style.display = "none"; // hidden by default
+                details.innerHTML = `
             <strong>${card.name}</strong><br>
             <span style="color:${rarityColors[card.rarity] || "black"}">${card.rarity}</span><br>
             <small>Condition: ${card.condition}</small><br>
@@ -310,6 +320,13 @@
             <small>Float: ${card.float}</small>
         `;
 
+                // Toggle details on click
+                cardElement.addEventListener("click", () => {
+                    details.style.display = details.style.display === "none" ? "block" : "none";
+                });
+
+                cardElement.appendChild(img);
+                cardElement.appendChild(details);
                 inventoryContainer.appendChild(cardElement);
             });
         }
