@@ -190,6 +190,31 @@
             height: auto;
         }
 
+        #card-preview {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            background: #111;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            z-index: 999;
+        }
+
+        #preview-image {
+            max-height: 300px;
+            margin-right: 20px;
+        }
+
+        #preview-details {
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -215,13 +240,18 @@
             </div>
 
         </div>
-        
+
     </header>
 
     <section class="inventory">
         <h2>Your Cards</h2>
         <div id="inventoryContainer"></div>
     </section>
+
+    <div id="card-preview" style="display: none;">
+        <img id="preview-image" />
+        <div id="preview-details"></div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
@@ -275,7 +305,7 @@
             { image: "imgs/card0011.png", name: "Jor", rarity: "common", probability: 0.50 }
         ];
 
-        const rarityOrder = ["ugly","legendary", "epic", "rare", "uncommon", "common"];
+        const rarityOrder = ["ugly", "legendary", "epic", "rare", "uncommon", "common"];
 
         function displayInventory() {
             const inventoryContainer = document.getElementById('inventoryContainer');
@@ -313,21 +343,26 @@
                 const details = document.createElement("div");
                 details.style.display = "none"; // hidden by default
                 details.innerHTML = `
-            <strong>${card.name}</strong><br>
-            <span style="color:${rarityColors[card.rarity] || "black"}">${card.rarity}</span><br>
-            <small>Condition: ${card.condition}</small><br>
-            <small>Pattern: ${card.pattern}</small><br>
-            <small>Float: ${card.float}</small>
-        `;
+                <strong>${card.name}</strong><br>
+                <span style="color:${rarityColors[card.rarity] || "black"}">${card.rarity}</span><br>
+                <small>Condition: ${card.condition}</small><br>
+                <small>Pattern: ${card.pattern}</small><br>
+                <small>Float: ${card.float}</small>
+            `;
 
                 // Toggle details on click
-                cardElement.addEventListener("click", () => {
-                    details.style.display = details.style.display === "none" ? "block" : "none";
-                });
+                cardElement.onclick = () => {
+                    document.getElementById("preview-image").src = card.image;
 
-                cardElement.appendChild(img);
-                cardElement.appendChild(details);
-                inventoryContainer.appendChild(cardElement);
+                    document.getElementById("preview-details").innerHTML = `
+    <h2>${card.name}</h2>
+    <p>Rarity: ${card.rarity}</p>
+    <p>Float: ${card.float.toFixed(4)}</p>
+    <p>Condition: ${card.condition}</p>
+  `;
+
+                    document.getElementById("card-preview").style.display = "flex";
+                };
             });
         }
         displayInventory();
@@ -431,7 +466,7 @@
         document.addEventListener("DOMContentLoaded", fetchBalanceOnPageLoad);
 
 
-        
+
         window.addEventListener("DOMContentLoaded", () => {
             updateLoginState();
         });
@@ -591,7 +626,23 @@
                     balance: newBalance
                 });
             }
-        }    
+        }
+
+        // Close when clicking outside preview
+        window.addEventListener("click", (e) => {
+            const preview = document.getElementById("card-preview");
+            if (e.target === preview) {
+                preview.style.display = "none";
+            }
+        });
+
+        // Close on Escape
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                document.getElementById("card-preview").style.display = "none";
+            }
+        });
+
     </script>
 
 </body>
