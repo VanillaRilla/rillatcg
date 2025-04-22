@@ -48,6 +48,14 @@
             background: transparent;
         }
 
+        #inventoryContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px; /* instead of using margin on each card */
+            padding: 20px;
+        }
+
         .button {
             padding: 10px 20px;
             font-size: 14px;
@@ -178,7 +186,6 @@
             border: none;
             box-shadow: none;
             padding: 0;
-            margin: 5px; /* small space between cards */
             display: inline-block;
         }
 
