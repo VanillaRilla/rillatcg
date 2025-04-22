@@ -370,10 +370,10 @@
             const floatValue = Math.floor(Math.random() * 5001); // 0 - 1000
             let condition;
 
-            if (floatValue <= 100) return "FRESH";
-            else if (floatValue <= 500) return "PLAYED";
-            else if (floatValue <= 2000) return "FOUND IN BAG";
-            else if (floatValue <= 5000) return "DOG EAT MY CARD";
+            if (floatValue <= 100) condition= "FRESH";
+            else if (floatValue <= 500) condition = "PLAYED";
+            else if (floatValue <= 2000) condition = "FOUND IN BAG";
+            else if (floatValue <= 5000) condition = "DOG EAT MY CARD";
             else condition = "WASHMACHINED";
 
             return { float, condition };
