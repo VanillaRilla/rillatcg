@@ -366,17 +366,19 @@
         const db = getFirestore(app);  // Initialize Firestore with the Firebase app
 
 
-        function generateFloatAndCondition() {
-            const float = Math.floor(Math.random() * 5001); // 0 - 1000
+        function generateintconAndCondition() {
+            const intcon = Math.floor(Math.random() * 101); 
             let condition;
 
-            if (float <= 100) condition= "FRESH";
-            else if (float <= 500) condition = "PLAYED";
-            else if (float <= 2000) condition = "FOUND IN BAG";
-            else if (float <= 5000) condition = "DOG EAT MY CARD";
+            if (intcon <= 10) condition= "FRESH";
+            else if (intcon <= 25) condition = "PLAYED";
+            else if (intcon <= 50) condition = "FOUND IN BAG";
+            else if (intcon <= 80) condition = "DOG EAT MY CARD";
             else condition = "WASHMACHINED";
 
-            return { float, condition };
+            const pattern = Math.floor(Math.random() * 10) + 1;
+
+            return { float, condition, pattern };
         }
 
 
@@ -503,22 +505,25 @@
                     const randomCard = getRandomCard();
                     let existingCard = inventory.find(card => card.image === randomCard.image);
 
-                    let float, condition;
+                    let intcon, condition;
 
                     if (existingCard) {
                         existingCard.count += 1;
-                        float = existingCard.float;
+                        intcon = existingCard.intcon;
                         condition = existingCard.condition;
+                        pattern = existingCard.pattern;
+                       
                     } else {
-                        const result = generateFloatAndCondition();
-                        float = result.float;
+                        const result = generateintconAndCondition();
+                        intcon = result.intcon;
                         condition = result.condition;
-                        inventory.push({ ...randomCard, count: 1, float, condition });
+                        pattern = result.pattern;
+                        inventory.push({ ...randomCard, count: 1, intcon, condition, pattern });
                     }
                     localStorage.setItem('inventory', JSON.stringify(inventory));
                     updateBalance(balance - 100);
                     await updateFirebaseInventory(balance, inventory);
-                    showCardPopup(randomCard.image, condition, float);
+                    showCardPopup(randomCard.image, condition, intcon, pattern);
                     setTimeout(() => {
                         addCardButton.disabled = balance < 100;
                         isBuying = false;
@@ -544,14 +549,23 @@
 
                 for (let i = 0; i < 10; i++) {
                     const randomCard = getRandomCard();
+                    let intcon, conditionm, pattern;
                     let existingCard = inventory.find(card => card.image === randomCard.image);
+
                     if (existingCard) {
                         existingCard.count += 1;
+                        intcon = existingCard.intcon;
+                        condition = existingCard.condition;
+                        pattern = existingCard.pattern;
                     } else {
-                        const { float, condition } = generateFloatAndCondition();
-                        inventory.push({ ...randomCard, count: 1, float, condition });
+                        const result = generateintconAndCondition();
+                        intcon = result.intcon;
+                        condition = result.condition;
+                        pattern = result.pattern;
+                        inventory.push({ ...randomCard, count: 1, intcon, condition, pattern });
                     }
-                    drawnCards.push(randomCard);
+
+                    drawnCards.push({ ...randomCard, intcon, condition, pattern });
                 }
 
                 // Sort drawn cards based on rarity, with the rarest one last
@@ -568,7 +582,8 @@
                             showCardPopup(
                                 drawnCards[index].image,
                                 drawnCards[index].condition,
-                                drawnCards[index].float
+                                drawnCards[index].intcon,
+                                drawnCards[index].pattern
                             ); 
                             revealNextCard(index + 1);
                         } else {
@@ -576,7 +591,8 @@
                                 showCardPopup(
                                     drawnCards[index].image,
                                     drawnCards[index].condition,
-                                    drawnCards[index].float
+                                    drawnCards[index].intcon,
+                                    drawnCards[index].pattern
                                 );
                                 revealNextCard(index + 1);
                             }, 2500);
