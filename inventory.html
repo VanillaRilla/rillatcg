@@ -49,11 +49,11 @@
         }
 
         #inventoryContainer {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px; /* instead of using margin on each card */
+            display: grid;
+            grid-template-columns: repeat(8, 1fr); /* 8 cards per row */
+            gap: 15px;
             padding: 20px;
+            justify-items: center; /* center cards within each column */
         }
 
         .button {
@@ -186,14 +186,14 @@
             border: none;
             box-shadow: none;
             padding: 0;
-            display: inline-block;
+            margin: 0;
         }
 
-        .card img {
-            width: 100px; /* or whatever size you want */
-            height: auto;
-
-        }
+            .card img {
+                width: 100px; /* adjust as needed */
+                height: auto;
+                display: block;
+            }
 
         #card-preview {
             position: fixed;
