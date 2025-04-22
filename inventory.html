@@ -340,12 +340,12 @@
                 cardElement.onclick = () => {
                     document.getElementById("preview-image").src = card.image;
                     document.getElementById("preview-details").innerHTML = `
-                <h2>${card.name}</h2>
-                <p>Rarity: <span style="color:${rarityColors[card.rarity] || "black"}">${card.rarity}</span></p>
-                <p>Float: ${card.intcon?.toFixed(4) ?? 'N/A'}</p>
-                <p>Condition: ${card.condition ?? 'Unknown'}</p>
-                <p>Pattern: ${card.pattern ?? 'N/A'}</p>
-            `;
+                    <h2>${card.name}</h2>
+                    <p>Rarity: <span style="color:${rarityColors[card.rarity] || "black"}">${card.rarity}</span></p>
+                    <p>Float: ${card.intcon?.toFixed(4) ?? 'N/A'}</p>
+                    <p>Condition: ${card.condition ?? 'Unknown'}</p>
+                    <p>Pattern: ${card.pattern ?? 'N/A'}</p>
+                `;
                     document.getElementById("card-preview").style.display = "flex";
                 };
             });
@@ -630,5 +630,13 @@
 
     </script>
 
+    <script>
+        window.addEventListener('click', (e) => {
+            const preview = document.getElementById('card-preview');
+            if (e.target === preview) {
+                preview.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
