@@ -507,19 +507,9 @@
 
                     let intcon, condition, pattern;
 
-                    if (existingCard) {
-                        existingCard.count += 1;
-                        intcon = existingCard.intcon;
-                        condition = existingCard.condition;
-                        pattern = existingCard.pattern;
-                       
-                    } else {
-                        const result = generateintconAndCondition();
-                        intcon = result.intcon;
-                        condition = result.condition;
-                        pattern = result.pattern;
-                        inventory.push({ ...randomCard, count: 1, intcon, condition, pattern });
-                    }
+                    const { intcon, condition, pattern } = generateFloatAndCondition();
+                    inventory.push({ ...randomCard, intcon, condition, pattern });
+
                     localStorage.setItem('inventory', JSON.stringify(inventory));
                     updateBalance(balance - 100);
                     await updateFirebaseInventory(balance, inventory);
@@ -552,19 +542,7 @@
                     let intcon, condition, pattern;
                     let existingCard = inventory.find(card => card.image === randomCard.image);
 
-                    if (existingCard) {
-                        existingCard.count += 1;
-                        intcon = existingCard.intcon;
-                        condition = existingCard.condition;
-                        pattern = existingCard.pattern;
-                    } else {
-                        const result = generateintconAndCondition();
-                        intcon = result.intcon;
-                        condition = result.condition;
-                        pattern = result.pattern;
-                        inventory.push({ ...randomCard, count: 1, intcon, condition, pattern });
-                    }
-
+                    const { intcon, condition, pattern } = generateFloatAndCondition();
                     drawnCards.push({ ...randomCard, intcon, condition, pattern });
                 }
 

@@ -273,24 +273,16 @@
             inventory.sort((a, b) => rarityOrder.indexOf(b.rarity) - rarityOrder.indexOf(a.rarity));
 
             inventory.forEach(card => {
-                const listItem = document.createElement('li');
-                listItem.style.display = "flex";
-                listItem.dataset.name = card.name.toLowerCase();
-                listItem.style.flexDirection = "column";
-                listItem.style.alignItems = "center";
-
-                // Get color based on rarity
-                const rarityColor = rarityColors[card.rarity] || "white"; // Default to white if not found
-
-                listItem.innerHTML = `
-                                <img src = "${card.image}" alt = "${card.name}" class="card-image">
-                                    <div style="text-align: center; margin-top: 5px;">
-                                        <p class="rarity" style="font-size: 14px; color: ${rarityColor}; margin: 0;">${card.rarity}</p>
-                                        <p class="card-name" style="font-weight: bold; margin: 0;">${card.name}</p>
-                                        <p style="font-size: 20px; margin: 0;">x${card.count}</p>
-                                    </div>
-`;
-                inventoryList.appendChild(listItem);
+                const cardElement = document.createElement("div");
+                cardElement.innerHTML = `
+                    <img src="${card.image}" alt="${card.name}">
+                    <p>${card.name}</p>
+                    <p>${card.rarity}</p>
+                    <p>${card.condition}</p>
+                    <p>Pattern: ${card.pattern}</p>
+                    <p>Float: ${card.float}</p>
+                 `;
+                document.getElementById("inventoryContainer").appendChild(cardElement);
             });
         }
         displayInventory();
