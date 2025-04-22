@@ -378,8 +378,8 @@
                         const y = e.clientY - bounds.top;
                         const centerX = bounds.width / 2;
                         const centerY = bounds.height / 2;
-                        const rotateX = ((y - centerY) / centerY) * 20; // Max 10deg
-                        const rotateY = ((x - centerX) / centerX) * -20;
+                        const rotateX = ((y - centerY) / centerY) * 40; // Max 10deg
+                        const rotateY = ((x - centerX) / centerX) * -40;
 
                         previewImage.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
                     };
