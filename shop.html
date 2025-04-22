@@ -505,7 +505,7 @@
                     const randomCard = getRandomCard();
                     let existingCard = inventory.find(card => card.image === randomCard.image);
 
-                    const { intcon, condition, pattern } = generateFloatAndCondition();
+                    const { intcon, condition, pattern } = generateintconAndCondition();
                     inventory.push({ ...randomCard, intcon, condition, pattern });
 
                     localStorage.setItem('inventory', JSON.stringify(inventory));
@@ -539,7 +539,7 @@
                     const randomCard = getRandomCard();
                     let existingCard = inventory.find(card => card.image === randomCard.image);
 
-                    const { intcon, condition, pattern } = generateFloatAndCondition();
+                    const { intcon, condition, pattern } = generateintconAndCondition();
                     drawnCards.push({ ...randomCard, intcon, condition, pattern });
                 }
 
