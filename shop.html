@@ -386,6 +386,19 @@
             });
         }
 
+        function generateFloatAndCondition() {
+            const float = Math.floor(Math.random() * 5001); // 0 - 1000
+            let condition;
+
+            if (floatValue <= 100) return "FRESH";
+            else if (floatValue <= 500) return "PLAYED";
+            else if (floatValue <= 2000) return "FOUND IN BAG";
+            else if (floatValue <= 5000) return "DOG EAT MY CARD";
+            else condition = "WASHMACHINED";
+
+            return { float, condition };
+        }
+
 
         async function fetchBalanceOnPageLoad() {
             const userData = JSON.parse(localStorage.getItem("twitchUser"));
@@ -490,12 +503,13 @@
                     if (existingCard) {
                         existingCard.count += 1;
                     } else {
-                        inventory.push({ ...randomCard, count: 1 });
+                        const { float, condition } = generateFloatAndCondition();
+                        inventory.push({ ...randomCard, count: 1, float, condition });
                     }
                     localStorage.setItem('inventory', JSON.stringify(inventory));
                     updateBalance(balance - 100);
                     await updateFirebaseInventory(balance, inventory);
-                    showCardPopup(randomCard.image);
+                    showCardPopup(randomCard.image, condition, float);
                     setTimeout(() => {
                         addCardButton.disabled = balance < 100;
                         isBuying = false;
@@ -525,7 +539,8 @@
                     if (existingCard) {
                         existingCard.count += 1;
                     } else {
-                        inventory.push({ ...randomCard, count: 1 });
+                        const { float, condition } = generateFloatAndCondition();
+                        inventory.push({ ...randomCard, count: 1, float, condition });
                     }
                     drawnCards.push(randomCard);
                 }
@@ -541,11 +556,19 @@
                 function revealNextCard(index) {
                     if (index < drawnCards.length) {
                         if (index === 0) {
-                            showCardPopup(drawnCards[index].image); // Show first immediately
+                            showCardPopup(
+                                drawnCards[index].image,
+                                drawnCards[index].condition,
+                                drawnCards[index].float
+                            ); 
                             revealNextCard(index + 1);
                         } else {
                             setTimeout(() => {
-                                showCardPopup(drawnCards[index].image);
+                                showCardPopup(
+                                    drawnCards[index].image,
+                                    drawnCards[index].condition,
+                                    drawnCards[index].float
+                                );
                                 revealNextCard(index + 1);
                             }, 2500);
                         }
