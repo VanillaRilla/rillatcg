@@ -347,11 +347,11 @@
                     // Populate the preview content
                     previewImage.src = card.image;
                     previewDetails.innerHTML = `
-        <h2>${card.name}</h2>
-        <p>Rarity: ${card.rarity}</p>
-        <p>Float: ${card.intcon.toFixed(4)}</p>
-        <p>Condition: ${card.condition}</p>
-    `;
+                        <h2>${card.name}</h2>
+                        <p>Rarity: ${card.rarity}</p>
+                        <p>Float: ${card.intcon.toFixed(4)}</p>
+                        <p>Condition: ${card.condition}</p>
+                    `;
 
                     // Show the preview window
                     preview.style.display = "flex";
@@ -368,6 +368,28 @@
 
                         document.addEventListener("click", outsideClickHandler);
                     }, 0);
+
+                    const previewImage = document.getElementById("preview-image");
+
+                    previewImage.style.transition = "transform 0.1s ease";
+
+                    // Mouse move tilt effect
+                    previewImage.onmousemove = (e) => {
+                        const bounds = previewImage.getBoundingClientRect();
+                        const x = e.clientX - bounds.left;
+                        const y = e.clientY - bounds.top;
+                        const centerX = bounds.width / 2;
+                        const centerY = bounds.height / 2;
+                        const rotateX = ((y - centerY) / centerY) * 10; // Max 10deg
+                        const rotateY = ((x - centerX) / centerX) * -10;
+
+                        previewImage.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    };
+
+                    // Reset tilt on mouse leave
+                    previewImage.onmouseleave = () => {
+                        previewImage.style.transform = "rotateX(0deg) rotateY(0deg)";
+                    };
                 };
             });
         }
