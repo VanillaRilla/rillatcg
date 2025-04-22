@@ -302,13 +302,13 @@
                 cardElement.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
 
                 cardElement.innerHTML = `
-                  <img src="${card.image}" alt="${card.name}" style="width:100px; height:auto;"><br>
-                  <strong>${card.name}</strong><br>
-                  <span style="color:${rarityColors[card.rarity] || "black"}">${card.rarity}</span><br>
-                  <small>Condition: ${card.condition}</small><br>
-                  <small>Pattern: ${card.pattern}</small><br>
-                  <small>Intcon: ${card.intcon}</small>
-                 `;
+            <img src="${card.image}" alt="${card.name}" style="width:100px; height:auto;"><br>
+            <strong>${card.name}</strong><br>
+            <span style="color:${rarityColors[card.rarity] || "black"}">${card.rarity}</span><br>
+            <small>Condition: ${card.condition}</small><br>
+            <small>Pattern: ${card.pattern}</small><br>
+            <small>Float: ${card.float}</small>
+        `;
 
                 inventoryContainer.appendChild(cardElement);
             });
