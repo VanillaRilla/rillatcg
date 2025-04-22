@@ -380,8 +380,8 @@
                         const centerY = bounds.height / 2;
                         const rotateX = ((y - centerY) / centerY) * 30; // Max 10deg
                         const rotateY = ((x - centerX) / centerX) * -30;
-
-                        previewImage.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                        
+                        previewImage.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
                     };
 
                     // Reset tilt on mouse leave
