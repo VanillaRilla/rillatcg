@@ -322,7 +322,6 @@
             inventory.forEach(card => {
                 const cardElement = document.createElement("div");
                 cardElement.className = "card";
-                cardElement.style.border = `2px solid ${rarityColors[card.rarity] || "black"}`;
                 cardElement.style.cursor = "pointer";
 
                 const img = document.createElement("img");
