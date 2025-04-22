@@ -414,36 +414,7 @@
         document.addEventListener("DOMContentLoaded", fetchBalanceOnPageLoad);
 
 
-        async function loadLeaderboard() {
-            const leaderboardBody = document.querySelector("#leaderboard tbody");
-            leaderboardBody.innerHTML = "";
-
-            const usersSnapshot = await getDocs(collection(db, "users"));
-
-            let players = [];
-
-            usersSnapshot.forEach(doc => {
-                const data = doc.data();
-                const username = data.displayName || data.username || "Unknown";
-                const cards = data.cards || [];
-                const uniqueCards = new Set(cards.map(c => c.id || c)).size;
-
-                players.push({ username, uniqueCards });
-            });
-
-            players.sort((a, b) => b.uniqueCards - a.uniqueCards);
-
-            players.forEach((player, index) => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-          <td>${index + 1}</td>
-          <td>${player.username}</td>
-          <td>${player.uniqueCards}</td>
-        `;
-                leaderboardBody.appendChild(row);
-            });
-        }
-
+        
         window.addEventListener("DOMContentLoaded", () => {
             loadLeaderboard(); // ✅ Add this
             updateLoginState();
