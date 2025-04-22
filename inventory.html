@@ -50,10 +50,11 @@
 
         #inventoryContainer {
             display: grid;
-            grid-template-columns: repeat(8, 1fr); /* 8 cards per row */
+            grid-template-columns: repeat(8, 1fr);
             gap: 15px;
             padding: 20px;
-            justify-items: center; /* center cards within each column */
+            overflow-x: auto;
+            width: 100%;
         }
 
         .button {
@@ -190,7 +191,7 @@
         }
 
             .card img {
-                width: 100px; /* adjust as needed */
+                width: 80px; /* adjust as needed */
                 height: auto;
                 display: block;
             }
