@@ -537,7 +537,6 @@
 
                 for (let i = 0; i < 10; i++) {
                     const randomCard = getRandomCard();
-                    let intcon, condition, pattern;
                     let existingCard = inventory.find(card => card.image === randomCard.image);
 
                     const { intcon, condition, pattern } = generateFloatAndCondition();
