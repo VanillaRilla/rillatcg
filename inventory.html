@@ -347,6 +347,16 @@
                     <p>Pattern: ${card.pattern ?? 'N/A'}</p>
                 `;
                     document.getElementById("card-preview").style.display = "flex";
+                    document.addEventListener("click", function handleOutsideClick(event) {
+                        const preview = document.getElementById("card-preview");
+                        const details = document.getElementById("preview-details");
+                        const img = document.getElementById("preview-image");
+
+                        if (preview.style.display === "flex" && !preview.contains(event.target)) {
+                            preview.style.display = "none";
+                            document.removeEventListener("click", handleOutsideClick);
+                        }
+                    }, { once: true });
                 };
             });
         }
