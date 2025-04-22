@@ -172,6 +172,24 @@
             width: 20px;
             height: 20px;
         }
+
+        .card {
+            border: 2px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            display: inline-block;
+            text-align: center;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            width: 150px;
+        }
+
+            .card img {
+                width: 100px;
+                height: auto;
+            }
+
     </style>
 </head>
 <body>
@@ -259,7 +277,8 @@
         const rarityOrder = ["ugly","legendary", "epic", "rare", "uncommon", "common"];
 
         function displayInventory() {
-            inventoryList.innerHTML = '';
+            const inventoryContainer = document.getElementById('inventoryContainer');
+            inventoryContainer.innerHTML = ''; // clear old inventory display
 
             const rarityColors = {
                 common: "gray",
@@ -270,19 +289,28 @@
                 ugly: "red"
             };
 
-            inventory.sort((a, b) => rarityOrder.indexOf(b.rarity) - rarityOrder.indexOf(a.rarity));
-
             inventory.forEach(card => {
                 const cardElement = document.createElement("div");
+                cardElement.className = "card"; // Add your custom style here
+                cardElement.style.border = `2px solid ${rarityColors[card.rarity] || "black"}`;
+                cardElement.style.padding = "10px";
+                cardElement.style.margin = "10px";
+                cardElement.style.display = "inline-block";
+                cardElement.style.textAlign = "center";
+                cardElement.style.borderRadius = "8px";
+                cardElement.style.background = "#fff";
+                cardElement.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+
                 cardElement.innerHTML = `
-                    <img src="${card.image}" alt="${card.name}">
-                    <p>${card.name}</p>
-                    <p>${card.rarity}</p>
-                    <p>${card.condition}</p>
-                    <p>Pattern: ${card.pattern}</p>
-                    <p>Float: ${card.float}</p>
+                  <img src="${card.image}" alt="${card.name}" style="width:100px; height:auto;"><br>
+                  <strong>${card.name}</strong><br>
+                  <span style="color:${rarityColors[card.rarity] || "black"}">${card.rarity}</span><br>
+                  <small>Condition: ${card.condition}</small><br>
+                  <small>Pattern: ${card.pattern}</small><br>
+                  <small>Intcon: ${card.intcon}</small>
                  `;
-                document.getElementById("inventoryContainer").appendChild(cardElement);
+
+                inventoryContainer.appendChild(cardElement);
             });
         }
         displayInventory();
