@@ -244,14 +244,14 @@
     </header>
 
     <section class="inventory">
+
         <h2>Your Cards</h2>
         <div id="inventoryContainer"></div>
+        <div id="card-preview" style="display: none;">
+            <img id="preview-image" />
+            <div id="preview-details"></div>
+        </div>
     </section>
-
-    <div id="card-preview" style="display: none;">
-        <img id="preview-image" />
-        <div id="preview-details"></div>
-    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
