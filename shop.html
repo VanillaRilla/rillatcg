@@ -505,8 +505,6 @@
                     const randomCard = getRandomCard();
                     let existingCard = inventory.find(card => card.image === randomCard.image);
 
-                    let intcon, condition, pattern;
-
                     const { intcon, condition, pattern } = generateFloatAndCondition();
                     inventory.push({ ...randomCard, intcon, condition, pattern });
 
