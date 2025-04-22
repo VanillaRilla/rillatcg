@@ -49,8 +49,11 @@
         }
 
         #inventoryContainer {
-            display: grid;
-            justify-items: center; /* Center cards in their grid cells */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            padding: 20px;
         }
 
         .button {
@@ -183,7 +186,7 @@
             border: none;
             box-shadow: none;
             padding: 0;
-            margin: 0;
+            margin: 10px;
         }
 
             .card img {
