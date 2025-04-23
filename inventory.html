@@ -19,6 +19,14 @@
             text-align: center;
         }
 
+        #inventoryContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+        }
+
         .inventory ul {
             display: flex;
             flex-wrap: wrap;
@@ -174,16 +182,20 @@
         }
 
         .card {
-            background: none;
-            border: none;
-            box-shadow: none;
-            padding: 0;
-            display: inline-block;
+            width: calc(12.5% - 8px); /* 8 cards per row max */
+            max-width: 150px;
+            aspect-ratio: 2 / 3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease;
         }
 
-            .card img {
-                width: 60% /* or whatever size you want */
-                height: auto;
+        .card img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
             }
 
         #card-preview {
@@ -211,6 +223,31 @@
             flex-direction: column;
             justify-content: center;
         }
+
+        @media (max-width: 1200px) {
+            .card {
+                width: calc(16.6667% - 8px); /* 6 cards per row */
+            }
+        }
+
+        @media (max-width: 900px) {
+            .card {
+                width: calc(25% - 8px); /* 4 cards per row */
+            }
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                width: calc(50% - 8px); /* 2 cards per row */
+            }
+        }
+
+        @media (max-width: 400px) {
+            .card {
+                width: 100%; /* 1 card per row */
+            }
+        }
+
     </style>
 </head>
 <body>
