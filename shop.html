@@ -539,41 +539,31 @@
 
                 for (let i = 0; i < 10; i++) {
                     const randomCard = getRandomCard();
-                    let existingCard = inventory.find(card => card.image === randomCard.image);
-
                     const { intcon, condition, pattern } = generateintconAndCondition();
                     drawnCards.push({ ...randomCard, intcon, condition, pattern });
                 }
 
-                // Sort drawn cards based on rarity, with the rarest one last
+                // Sort drawn cards based on rarity
                 drawnCards.sort((a, b) => {
                     const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4, "ugly": 5 };
-                    return rarityOrder[a.rarity] - rarityOrder[b.rarity]; // Sort in ascending order (common to rare)
+                    return rarityOrder[a.rarity] - rarityOrder[b.rarity];
                 });
+
+                // Add drawn cards to inventory
+                inventory = [...inventory, ...drawnCards];
+
+                // Save updated inventory
                 localStorage.setItem("inventory", JSON.stringify(inventory));
                 await updateFirebaseInventory(balance, inventory);
 
+                // Reveal cards in sequence
                 function revealNextCard(index) {
                     if (index < drawnCards.length) {
-                        if (index === 0) {
-                            showCardPopup(
-                                drawnCards[index].image,
-                                drawnCards[index].condition,
-                                drawnCards[index].intcon,
-                                drawnCards[index].pattern
-                            ); 
+                        const card = drawnCards[index];
+                        setTimeout(() => {
+                            showCardPopup(card.image, card.condition, card.intcon, card.pattern);
                             revealNextCard(index + 1);
-                        } else {
-                            setTimeout(() => {
-                                showCardPopup(
-                                    drawnCards[index].image,
-                                    drawnCards[index].condition,
-                                    drawnCards[index].intcon,
-                                    drawnCards[index].pattern
-                                );
-                                revealNextCard(index + 1);
-                            }, 2500);
-                        }
+                        }, index === 0 ? 0 : 2500);
                     } else {
                         setTimeout(() => {
                             buyTenCardsButton.disabled = balance < 1000;
@@ -588,7 +578,6 @@
                 alert("Not enough balance or a purchase is already in progress!");
             }
         }
-
 
         function updateBalance(newBalance) {
             balance = newBalance;
