@@ -187,8 +187,8 @@
         }
 
         .card {
-            width: calc(10% - 8px); /* 10 cards per row */
-            max-width: 140px; /* Optional: limits how large they grow on very wide screens */
+            width: calc(6.25% - 8px); /* 100 / 16 = 6.25% */
+            max-width: 100px; /* optional: caps card width on huge screens */
             aspect-ratio: 2 / 3;
             display: flex;
             justify-content: center;
@@ -229,53 +229,60 @@
             justify-content: center;
         }
 
+        @media (max-width: 1600px) {
+            .card {
+                width: calc(8.33% - 8px);
+            }
+            /* 12 per row */
+        }
+
         @media (max-width: 1400px) {
+            .card {
+                width: calc(10% - 8px);
+            }
+            /* 10 per row */
+        }
+
+        @media (max-width: 1200px) {
             .card {
                 width: calc(12.5% - 8px);
             }
             /* 8 per row */
         }
 
-        @media (max-width: 1200px) {
+        @media (max-width: 992px) {
             .card {
-                width: calc(14.2857% - 8px);
+                width: calc(16.6667% - 8px);
             }
-            /* 7 per row */
+            /* 6 per row */
         }
 
-        @media (max-width: 1000px) {
+        @media (max-width: 768px) {
             .card {
                 width: calc(20% - 8px);
             }
             /* 5 per row */
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             .card {
                 width: calc(25% - 8px);
             }
             /* 4 per row */
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 480px) {
             .card {
-                width: calc(33.3333% - 8px);
+                width: calc(33.333% - 8px);
             }
             /* 3 per row */
         }
 
-        @media (max-width: 400px) {
+        @media (max-width: 360px) {
             .card {
                 width: calc(50% - 8px);
             }
             /* 2 per row */
-        }
-
-        @media (max-width: 300px) {
-            .card {
-                width: 100%;
-            }
-            /* 1 per row */
         }
 
     </style>
