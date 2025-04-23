@@ -23,7 +23,7 @@ header {
 }
 
 .card {
-    width: calc(20% - 10px); /* Each card takes 20% of the row (5 cards per row) */
+    width: calc(12.5% - 10px); /* Each card takes 12.5% of the row (8 cards per row) */
     border: 1px solid #ccc;
     padding: 10px;
     background-color: white;
