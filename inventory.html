@@ -22,9 +22,15 @@
         #inventoryContainer {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
-            gap: 4px;
-            padding: 4px;
+            justify-content: center; /* center the cards inside the wrapper */
+            gap: 8px;
+            padding: 10px 0;
+        }
+
+        .inventory-wrapper {
+            max-width: 1300px; /* or 1000px depending on your taste */
+            margin: 0 auto; /* centers the container */
+            padding: 0 20px; /* optional padding for smaller screen breathing room */
         }
 
         .inventory ul {
@@ -191,9 +197,9 @@
             transition: transform 0.2s ease;
         }
 
-        .card img {
-                width: 80%;
-                height: 80%;
+            .card img {
+                width: 100%;
+                height: 100%;
                 object-fit: contain;
             }
 
@@ -225,31 +231,31 @@
 
         @media (max-width: 1200px) {
             .card {
-                width: calc(20% - 8px); /* 5 per row */
+                width: calc(20% - 8px);
             }
         }
 
         @media (max-width: 1000px) {
             .card {
-                width: calc(25% - 8px); /* 4 per row */
+                width: calc(25% - 8px);
             }
         }
 
         @media (max-width: 768px) {
             .card {
-                width: calc(33.3333% - 8px); /* 3 per row */
+                width: calc(33.3333% - 8px);
             }
         }
 
         @media (max-width: 500px) {
             .card {
-                width: calc(50% - 8px); /* 2 per row */
+                width: calc(50% - 8px);
             }
         }
 
         @media (max-width: 350px) {
             .card {
-                width: 100%; /* 1 card per row */
+                width: 100%;
             }
         }
 
@@ -284,11 +290,13 @@
     <section class="inventory">
 
         <h2>Your Cards</h2>
+        <div class="inventory-wrapper">
         <div id="inventoryContainer"></div>
         <div id="card-preview" style="display: none;">
             <img id="preview-image" />
             <div id="preview-details"></div>
         </div>
+            </div>
     </section>
 
     <script type="module">
