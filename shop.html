@@ -671,9 +671,9 @@
         document.getElementById('buySingleRevealPack').addEventListener('click', async () => {
             
 
-            const userRef = doc(db, 'users', twitchUser.id);
-            const userSnap = await getDoc(userRef);
-            const userData = userSnap.data();
+           // const userRef = doc(db, 'users', twitchUser.id);
+           // const userSnap = await getDoc(userRef);
+           // const userData = userSnap.data();
 
             const cost = 100;
             if (userData.balance < cost) {
