@@ -294,7 +294,25 @@
 
 
 
+        #singleRevealArea,
+        body,
+        html {
+            overflow: visible !important;
+        }
 
+
+
+        #singleRevealArea {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+            background: none;
+            overflow: visible;
+            padding: 2rem;
+        }
 
 
         .reveal-pack-area {
@@ -312,16 +330,15 @@
         }
 
         .card-flip {
-            width: 320px;
+            width: 320px; /* or more */
             height: 448px;
+            perspective: 1000px;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.6s;
+            transition: transform 0.6s ease;
             cursor: pointer;
-            background: none;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
             border-radius: 24px;
-            overflow: visible; /* ensure child sides aren't clipped */
+            overflow: visible;
         }
 
             .card-flip.flipped {
@@ -329,14 +346,14 @@
             }
 
         .card-side {
-            position: absolute;
             width: 100%;
             height: 100%;
-            backface-visibility: hidden;
-            background-size: cover;
+            position: absolute;
+            background-size: contain;
+            background-repeat: no-repeat;
             background-position: center;
+            backface-visibility: hidden;
             border-radius: 24px;
-            overflow: visible;
         }
 
         .card-back {
