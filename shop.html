@@ -767,6 +767,8 @@
 
         document.getElementById('addCardButton').addEventListener('click', addRandomCardToInventory);
         document.getElementById('buyTenCardsButton').addEventListener('click', buyTenCards);
+        const buySingleRevealPackButton = document.getElementById('buySingleRevealPack');
+        buySingleRevealPackButton.addEventListener('click', buySingleRevealPack);
         getCreditsButton.addEventListener('click', () => {
             const newBalance = balance + 100;
             updateBalance(newBalance);
