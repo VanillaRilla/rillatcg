@@ -668,67 +668,64 @@
 
 
 
-        document.getElementById('buySingleRevealPack').addEventListener('click', async () => {
-            
+        async function buySingleRevealPack() {
+            if (balance >= 100 && !isBuying) {
+                document.getElementById("shop-overlay").classList.add("active");
+                isBuying = true;
+                buySingleRevealPackButton.disabled = true;
 
-           // const userRef = doc(db, 'users', twitchUser.id);
-           // const userSnap = await getDoc(userRef);
-           // const userData = userSnap.data();
+                setTimeout(async () => {
+                    let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
 
-            const cost = 100;
-            if (userData.balance < cost) {
-                alert("Not enough credits!");
-                return;
-            }
+                    const randomCard = getRandomCard();
+                    const { intcon, condition, pattern } = generateintconAndCondition();
+                    const card = { ...randomCard, intcon, condition, pattern };
 
-            const [card] = generateCards(1);
+                    inventory.push(card);
 
-            // Add card to inventory
-            const updatedInventory = [...(userData.inventory || [])];
-            const existing = updatedInventory.find(c => c.name === card.name && c.condition === card.condition && c.pattern === card.pattern);
-            if (existing) {
-                existing.count += 1;
+                    localStorage.setItem("inventory", JSON.stringify(inventory));
+                    updateBalance(balance - 100);
+                    await updateFirebaseInventory(balance, inventory);
+
+                    const area = document.getElementById('singleRevealArea');
+                    area.innerHTML = '';
+
+                    const cardWrapper = document.createElement('div');
+                    cardWrapper.className = 'card-flip';
+
+                    const back = document.createElement('div');
+                    back.className = 'card-side card-back';
+
+                    const front = document.createElement('div');
+                    front.className = 'card-side card-front';
+                    front.style.backgroundImage = `url(${card.image})`;
+
+                    cardWrapper.appendChild(back);
+                    cardWrapper.appendChild(front);
+                    area.appendChild(cardWrapper);
+
+                    let clickedOnce = false;
+
+                    cardWrapper.addEventListener('click', () => {
+                        if (!clickedOnce) {
+                            cardWrapper.classList.add('flipped');
+                            clickedOnce = true;
+                        } else {
+                            cardWrapper.style.opacity = '0';
+                            setTimeout(() => {
+                                cardWrapper.remove();
+                                buySingleRevealPackButton.disabled = balance < 100;
+                                isBuying = false;
+                                document.getElementById("shop-overlay").classList.remove("active");
+                            }, 500);
+                        }
+                    });
+
+                }, 500);
             } else {
-                updatedInventory.push({ ...card, count: 1 });
+                alert("Not enough balance or a purchase is already in progress!");
             }
-
-            await updateDoc(userRef, {
-                balance: userData.balance - cost,
-                inventory: updatedInventory
-            });
-
-            // Display card back
-            const area = document.getElementById('singleRevealArea');
-            area.innerHTML = '';
-
-            const cardWrapper = document.createElement('div');
-            cardWrapper.className = 'card-flip';
-
-            const back = document.createElement('div');
-            back.className = 'card-side card-back';
-
-            const front = document.createElement('div');
-            front.className = 'card-side card-front';
-            front.style.backgroundImage = `url(${card.image})`;
-
-            cardWrapper.appendChild(back);
-            cardWrapper.appendChild(front);
-            area.appendChild(cardWrapper);
-
-            let clickedOnce = false;
-
-            cardWrapper.addEventListener('click', () => {
-                if (!clickedOnce) {
-                    cardWrapper.classList.add('flipped');
-                    clickedOnce = true;
-                } else {
-                    cardWrapper.style.opacity = '0';
-                    setTimeout(() => {
-                        cardWrapper.remove();
-                    }, 500);
-                }
-            });
-        });
+        }
 
 
 
