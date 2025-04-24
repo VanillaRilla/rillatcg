@@ -294,25 +294,7 @@
 
 
 
-        #singleRevealArea,
-        body,
-        html {
-            overflow: visible !important;
-        }
 
-
-
-        #singleRevealArea {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10001;
-            background: none;
-            overflow: visible;
-            padding: 2rem;
-        }
 
 
         .reveal-pack-area {
@@ -324,21 +306,19 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: none;
-            overflow: visible; /* Make sure nothing is clipped */
-            padding: 20px; /* Give it breathing room */
+            background: none; /* remove background */
         }
 
         .card-flip {
-            width: 320px; /* or more */
-            height: 448px;
-            perspective: 1000px;
+            width: 300px; /* increased from 200px */
+            height: 420px; /* increased from 280px */
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.6s ease;
+            transition: transform 0.6s;
             cursor: pointer;
-            border-radius: 24px;
-            overflow: visible;
+            background: none; /* remove card background if any */
+            box-shadow: 0 0 20px rgba(0,0,0,0.4); /* optional: a soft glow */
+            border-radius: 16px;
         }
 
             .card-flip.flipped {
@@ -346,19 +326,18 @@
             }
 
         .card-side {
+            position: absolute;
             width: 100%;
             height: 100%;
-            position: absolute;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
             backface-visibility: hidden;
-            border-radius: 24px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 16px;
         }
 
         .card-back {
             background-image: url('imgs/card-back.png');
-            background-color: transparent;
+            background-color: transparent; /* just in case */
         }
 
         .card-front {
