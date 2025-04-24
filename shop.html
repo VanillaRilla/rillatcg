@@ -327,14 +327,14 @@
             <img src="imgs/binfree.png" alt="bingrey">
             <h3>FREE</h3>
             <p id="dailyCreditsMessage"></p>
-            <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">FREE</span>
+                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">FREE</span>
             </p>
-            <div class="button-container">
-                <button id="dailyCreditsButton" class="button">CLAIM</button>
-            </div>
+             <div class="button-container">
+                   <button id="dailyCreditsButton" class="button">CLAIM</button>
+             </div>
         </div>
 
-
+  
 
         <div class="shop-item">
             <img src="imgs/bingrey.png" alt="bingrey">
@@ -600,12 +600,6 @@
                 alert("Not enough balance or a purchase is already in progress!");
             }
         }
-
-
-
-        
-
-
 
         function updateBalance(newBalance) {
             balance = newBalance;
@@ -949,42 +943,6 @@
             document.getElementById("balance").textContent = newBalance;
             dailyCreditsMessage.textContent = "You've claimed your 100 free credits! Come back in 24 hours.";
         });
-
-
-        document.getElementById('buyStackedPack').addEventListener('click', async () => {
-            if (!twitchUser) return alert("You must be logged in!");
-
-            const userRef = doc(db, 'users', twitchUser.id);
-            const userSnap = await getDoc(userRef);
-            const userData = userSnap.data();
-
-            if (userData.balance < 500) {
-                alert("Not enough credits!");
-                return;
-            }
-
-            // Generate 5 cards
-            const newCards = generateCards(5); // Assumes you already have this function
-            newCards.sort((a, b) => rarityWeights[b.rarity] - rarityWeights[a.rarity]);
-
-            // Update Firebase
-            const updatedInventory = [...(userData.inventory || [])];
-            newCards.forEach(card => {
-                const existing = updatedInventory.find(c => c.name === card.name && c.condition === card.condition && c.pattern === card.pattern);
-                if (existing) {
-                    existing.count += 1;
-                } else {
-                    updatedInventory.push({ ...card, count: 1 });
-                }
-            });
-
-            await updateDoc(userRef, {
-                balance: userData.balance - 500,
-                inventory: updatedInventory
-            });
-
-            
-
 
 
     </script>
