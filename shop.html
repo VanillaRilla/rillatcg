@@ -297,16 +297,20 @@
 
 
 
-        .single-reveal-container {
-            margin: 20px auto;
-            width: 200px;
-            height: 280px;
-            perspective: 1000px;
+        .reveal-pack-area {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10001;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .card-flip {
-            width: 100%;
-            height: 100%;
+            width: 200px;
+            height: 280px;
             position: relative;
             transform-style: preserve-3d;
             transition: transform 0.6s;
@@ -322,21 +326,17 @@
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
+            background-size: cover;
             border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 0 10px rgba(0,0,0,0.4);
         }
 
         .card-back {
-            background-image: url('/images/card-back.png'); /* Update with your card back */
-            background-size: cover;
-            background-position: center;
+            background-image: url('path/to/card-back.png');
+            background-color: #222;
         }
 
         .card-front {
             transform: rotateY(180deg);
-            background-size: cover;
-            background-position: center;
         }
 
 
@@ -411,9 +411,9 @@
         </div>
 
 
-
+        
         <button id="buySingleRevealPack">Buy Single Reveal Pack (100 credits)</button>
-        <div id="singleRevealArea" class="single-reveal-container"></div>
+        <div id="singleRevealArea" class="reveal-pack-area"></div>
 
 
 
@@ -714,9 +714,7 @@
                             cardWrapper.style.opacity = '0';
                             setTimeout(() => {
                                 cardWrapper.remove();
-                                buySingleRevealPackButton.disabled = balance < 100;
-                                isBuying = false;
-                                document.getElementById("shop-overlay").classList.remove("active");
+                                document.getElementById("shop-overlay").classList.remove("active"); // <- Hide the tint
                             }, 500);
                         }
                     });
