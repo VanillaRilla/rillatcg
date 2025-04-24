@@ -291,6 +291,62 @@
                     z-index: 1;
                 }
 
+
+
+
+
+
+
+        .single-reveal-container {
+            margin: 20px auto;
+            width: 200px;
+            height: 280px;
+            perspective: 1000px;
+        }
+
+        .card-flip {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+
+            .card-flip.flipped {
+                transform: rotateY(180deg);
+            }
+
+        .card-side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.4);
+        }
+
+        .card-back {
+            background-image: url('/images/card-back.png'); /* Update with your card back */
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-front {
+            transform: rotateY(180deg);
+            background-size: cover;
+            background-position: center;
+        }
+
+
+
+
+
+
+
+
+
     </style>
 </head>
 <body>
@@ -327,14 +383,14 @@
             <img src="imgs/binfree.png" alt="bingrey">
             <h3>FREE</h3>
             <p id="dailyCreditsMessage"></p>
-                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">FREE</span>
+            <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">FREE</span>
             </p>
-             <div class="button-container">
-                   <button id="dailyCreditsButton" class="button">CLAIM</button>
-             </div>
+            <div class="button-container">
+                <button id="dailyCreditsButton" class="button">CLAIM</button>
+            </div>
         </div>
 
-  
+
 
         <div class="shop-item">
             <img src="imgs/bingrey.png" alt="bingrey">
@@ -353,6 +409,14 @@
             </p>
             <button id="buyTenCardsButton" class="button">BUY</button>
         </div>
+
+
+
+        <button id="buySingleRevealPack">Buy Single Reveal Pack (100 credits)</button>
+        <div id="singleRevealArea" class="single-reveal-container"></div>
+
+
+
 
     </section>
     <div class="coupon-redeem">
@@ -600,6 +664,75 @@
                 alert("Not enough balance or a purchase is already in progress!");
             }
         }
+
+
+
+
+        document.getElementById('buySingleRevealPack').addEventListener('click', async () => {
+            if (!twitchUser) return alert("You must be logged in!");
+
+            const userRef = doc(db, 'users', twitchUser.id);
+            const userSnap = await getDoc(userRef);
+            const userData = userSnap.data();
+
+            const cost = 100;
+            if (userData.balance < cost) {
+                alert("Not enough credits!");
+                return;
+            }
+
+            const [card] = generateCards(1);
+
+            // Add card to inventory
+            const updatedInventory = [...(userData.inventory || [])];
+            const existing = updatedInventory.find(c => c.name === card.name && c.condition === card.condition && c.pattern === card.pattern);
+            if (existing) {
+                existing.count += 1;
+            } else {
+                updatedInventory.push({ ...card, count: 1 });
+            }
+
+            await updateDoc(userRef, {
+                balance: userData.balance - cost,
+                inventory: updatedInventory
+            });
+
+            // Display card back
+            const area = document.getElementById('singleRevealArea');
+            area.innerHTML = '';
+
+            const cardWrapper = document.createElement('div');
+            cardWrapper.className = 'card-flip';
+
+            const back = document.createElement('div');
+            back.className = 'card-side card-back';
+
+            const front = document.createElement('div');
+            front.className = 'card-side card-front';
+            front.style.backgroundImage = `url(${card.image})`;
+
+            cardWrapper.appendChild(back);
+            cardWrapper.appendChild(front);
+            area.appendChild(cardWrapper);
+
+            let clickedOnce = false;
+
+            cardWrapper.addEventListener('click', () => {
+                if (!clickedOnce) {
+                    cardWrapper.classList.add('flipped');
+                    clickedOnce = true;
+                } else {
+                    cardWrapper.style.opacity = '0';
+                    setTimeout(() => {
+                        cardWrapper.remove();
+                    }, 500);
+                }
+            });
+        });
+
+
+
+
 
         function updateBalance(newBalance) {
             balance = newBalance;
