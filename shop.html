@@ -306,15 +306,19 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            background: none; /* remove background */
         }
 
         .card-flip {
-            width: 200px;
-            height: 280px;
+            width: 300px; /* increased from 200px */
+            height: 420px; /* increased from 280px */
             position: relative;
             transform-style: preserve-3d;
             transition: transform 0.6s;
             cursor: pointer;
+            background: none; /* remove card background if any */
+            box-shadow: 0 0 20px rgba(0,0,0,0.4); /* optional: a soft glow */
+            border-radius: 16px;
         }
 
             .card-flip.flipped {
@@ -327,12 +331,13 @@
             height: 100%;
             backface-visibility: hidden;
             background-size: cover;
-            border-radius: 10px;
+            background-position: center;
+            border-radius: 16px;
         }
 
         .card-back {
-            background-image: url('imgs/card-back.png');
-            background-color: #222;
+            background-image: url('path/to/card-back.png');
+            background-color: transparent; /* just in case */
         }
 
         .card-front {
