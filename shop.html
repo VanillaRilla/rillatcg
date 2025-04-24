@@ -354,26 +354,6 @@
             <button id="buyTenCardsButton" class="button">BUY</button>
         </div>
 
-        <div class="shop-item">
-            <img src="imgs/bingrey.png" alt="bingrey">
-            <h3>1x CARD</h3>
-            <p class="item-price">
-                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">100</span>
-            </p>
-            <button id="buyStackedPack">Buy Stacked Pack (500 credits)</button>
-            <div id="stackedPackArea" class="card-stack-container"></div>
-        </div>
-
-
-
-
-
-        <button id="buyStackedPack">Buy Stacked Pack (500 credits)</button>
-        <div id="stackedPackArea" class="card-stack-container"></div>
-
-
-
-
     </section>
     <div class="coupon-redeem">
         <input type="text" id="couponCodeInput" placeholder="Enter coupon code">
@@ -1003,30 +983,7 @@
                 inventory: updatedInventory
             });
 
-            // Show stack
-            const stackArea = document.getElementById('stackedPackArea');
-            stackArea.innerHTML = '';
-            newCards.forEach((card, index) => {
-                const cardEl = document.createElement('img');
-                cardEl.src = card.image;
-                cardEl.alt = card.name;
-                cardEl.classList.add('card');
-                cardEl.style.zIndex = 10 - index;
-                stackArea.appendChild(cardEl);
-            });
-
-            // Reveal on click
-            let current = 0;
-            const cards = stackArea.querySelectorAll('.card');
-            cards.forEach(card => {
-                card.addEventListener('click', () => {
-                    if (card === cards[current]) {
-                        card.classList.add('revealed');
-                        current++;
-                    }
-                });
-            });
-        });
+            
 
 
 
