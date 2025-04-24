@@ -623,62 +623,7 @@
 
 
 
-        document.getElementById('buyStackedPack').addEventListener('click', async () => {
-            if (!twitchUser) return alert("You must be logged in!");
-
-            const userRef = doc(db, 'users', twitchUser.id);
-            const userSnap = await getDoc(userRef);
-            const userData = userSnap.data();
-
-            if (userData.balance < 500) {
-                alert("Not enough credits!");
-                return;
-            }
-
-            // Generate 5 cards
-            const newCards = generateCards(5); // Assumes you already have this function
-            newCards.sort((a, b) => rarityWeights[b.rarity] - rarityWeights[a.rarity]);
-
-            // Update Firebase
-            const updatedInventory = [...(userData.inventory || [])];
-            newCards.forEach(card => {
-                const existing = updatedInventory.find(c => c.name === card.name && c.condition === card.condition && c.pattern === card.pattern);
-                if (existing) {
-                    existing.count += 1;
-                } else {
-                    updatedInventory.push({ ...card, count: 1 });
-                }
-            });
-
-            await updateDoc(userRef, {
-                balance: userData.balance - 500,
-                inventory: updatedInventory
-            });
-
-            // Show stack
-            const stackArea = document.getElementById('stackedPackArea');
-            stackArea.innerHTML = '';
-            newCards.forEach((card, index) => {
-                const cardEl = document.createElement('img');
-                cardEl.src = card.image;
-                cardEl.alt = card.name;
-                cardEl.classList.add('card');
-                cardEl.style.zIndex = 10 - index;
-                stackArea.appendChild(cardEl);
-            });
-
-            // Reveal on click
-            let current = 0;
-            const cards = stackArea.querySelectorAll('.card');
-            cards.forEach(card => {
-                card.addEventListener('click', () => {
-                    if (card === cards[current]) {
-                        card.classList.add('revealed');
-                        current++;
-                    }
-                });
-            });
-        });
+        
 
 
 
@@ -1024,6 +969,65 @@
             document.getElementById("balance").textContent = newBalance;
             dailyCreditsMessage.textContent = "You've claimed your 100 free credits! Come back in 24 hours.";
         });
+
+
+        document.getElementById('buyStackedPack').addEventListener('click', async () => {
+            if (!twitchUser) return alert("You must be logged in!");
+
+            const userRef = doc(db, 'users', twitchUser.id);
+            const userSnap = await getDoc(userRef);
+            const userData = userSnap.data();
+
+            if (userData.balance < 500) {
+                alert("Not enough credits!");
+                return;
+            }
+
+            // Generate 5 cards
+            const newCards = generateCards(5); // Assumes you already have this function
+            newCards.sort((a, b) => rarityWeights[b.rarity] - rarityWeights[a.rarity]);
+
+            // Update Firebase
+            const updatedInventory = [...(userData.inventory || [])];
+            newCards.forEach(card => {
+                const existing = updatedInventory.find(c => c.name === card.name && c.condition === card.condition && c.pattern === card.pattern);
+                if (existing) {
+                    existing.count += 1;
+                } else {
+                    updatedInventory.push({ ...card, count: 1 });
+                }
+            });
+
+            await updateDoc(userRef, {
+                balance: userData.balance - 500,
+                inventory: updatedInventory
+            });
+
+            // Show stack
+            const stackArea = document.getElementById('stackedPackArea');
+            stackArea.innerHTML = '';
+            newCards.forEach((card, index) => {
+                const cardEl = document.createElement('img');
+                cardEl.src = card.image;
+                cardEl.alt = card.name;
+                cardEl.classList.add('card');
+                cardEl.style.zIndex = 10 - index;
+                stackArea.appendChild(cardEl);
+            });
+
+            // Reveal on click
+            let current = 0;
+            const cards = stackArea.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    if (card === cards[current]) {
+                        card.classList.add('revealed');
+                        current++;
+                    }
+                });
+            });
+        });
+
 
 
     </script>
