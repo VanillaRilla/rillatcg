@@ -669,7 +669,7 @@
 
 
         document.getElementById('buySingleRevealPack').addEventListener('click', async () => {
-            if (!twitchUser) return alert("You must be logged in!");
+            
 
             const userRef = doc(db, 'users', twitchUser.id);
             const userSnap = await getDoc(userRef);
