@@ -269,6 +269,28 @@
                 border: none;
             }
 
+        .card-stack-container {
+            position: relative;
+            width: 200px;
+            height: 280px;
+            margin: 20px auto;
+        }
+
+            .card-stack-container .card {
+                position: absolute;
+                top: 0;
+                left: 0;
+                transition: transform 0.4s ease, opacity 0.4s ease;
+                cursor: pointer;
+                z-index: 10;
+            }
+
+                .card-stack-container .card.revealed {
+                    transform: translateX(220px);
+                    opacity: 0.7;
+                    z-index: 1;
+                }
+
     </style>
 </head>
 <body>
@@ -305,14 +327,14 @@
             <img src="imgs/binfree.png" alt="bingrey">
             <h3>FREE</h3>
             <p id="dailyCreditsMessage"></p>
-                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">FREE</span>
+            <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">FREE</span>
             </p>
-             <div class="button-container">
-                   <button id="dailyCreditsButton" class="button">CLAIM</button>
-             </div>
+            <div class="button-container">
+                <button id="dailyCreditsButton" class="button">CLAIM</button>
+            </div>
         </div>
 
-  
+
 
         <div class="shop-item">
             <img src="imgs/bingrey.png" alt="bingrey">
@@ -331,6 +353,26 @@
             </p>
             <button id="buyTenCardsButton" class="button">BUY</button>
         </div>
+
+        <div class="shop-item">
+            <img src="imgs/bingrey.png" alt="bingrey">
+            <h3>1x CARD</h3>
+            <p class="item-price">
+                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">100</span>
+            </p>
+            <button id="buyStackedPack">Buy Stacked Pack (500 credits)</button>
+            <div id="stackedPackArea" class="card-stack-container"></div>
+        </div>
+
+
+
+
+
+        <button id="buyStackedPack">Buy Stacked Pack (500 credits)</button>
+        <div id="stackedPackArea" class="card-stack-container"></div>
+
+
+
 
     </section>
     <div class="coupon-redeem">
@@ -578,6 +620,67 @@
                 alert("Not enough balance or a purchase is already in progress!");
             }
         }
+
+
+
+        document.getElementById('buyStackedPack').addEventListener('click', async () => {
+            if (!twitchUser) return alert("You must be logged in!");
+
+            const userRef = doc(db, 'users', twitchUser.id);
+            const userSnap = await getDoc(userRef);
+            const userData = userSnap.data();
+
+            if (userData.balance < 500) {
+                alert("Not enough credits!");
+                return;
+            }
+
+            // Generate 5 cards
+            const newCards = generateCards(5); // Assumes you already have this function
+            newCards.sort((a, b) => rarityWeights[b.rarity] - rarityWeights[a.rarity]);
+
+            // Update Firebase
+            const updatedInventory = [...(userData.inventory || [])];
+            newCards.forEach(card => {
+                const existing = updatedInventory.find(c => c.name === card.name && c.condition === card.condition && c.pattern === card.pattern);
+                if (existing) {
+                    existing.count += 1;
+                } else {
+                    updatedInventory.push({ ...card, count: 1 });
+                }
+            });
+
+            await updateDoc(userRef, {
+                balance: userData.balance - 500,
+                inventory: updatedInventory
+            });
+
+            // Show stack
+            const stackArea = document.getElementById('stackedPackArea');
+            stackArea.innerHTML = '';
+            newCards.forEach((card, index) => {
+                const cardEl = document.createElement('img');
+                cardEl.src = card.image;
+                cardEl.alt = card.name;
+                cardEl.classList.add('card');
+                cardEl.style.zIndex = 10 - index;
+                stackArea.appendChild(cardEl);
+            });
+
+            // Reveal on click
+            let current = 0;
+            const cards = stackArea.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    if (card === cards[current]) {
+                        card.classList.add('revealed');
+                        current++;
+                    }
+                });
+            });
+        });
+
+
 
         function updateBalance(newBalance) {
             balance = newBalance;
