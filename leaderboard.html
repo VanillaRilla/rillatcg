@@ -437,8 +437,9 @@
 
                 // Corrected line: replaced 'inventory' with 'cards'
                 cards.forEach((card) => {
-                    if (rarityCounts.hasOwnProperty(card.rarity)) {
-                        rarityCounts[card.rarity] += card.count;
+                    const rarity = card.rarity?.toLowerCase();
+                    if (rarity && rarityCounts.hasOwnProperty(rarity)) {
+                        rarityCounts[rarity] += 1;
                     }
                 });
 
