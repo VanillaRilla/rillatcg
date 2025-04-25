@@ -308,11 +308,13 @@
             align-items: center;
             background: none; /* remove background */
             padding: 40px;
+            min-width: 800px; /* <-- this is the fix */
+            height: 420px; /* same as card height */
         }
 
         .card-flip {
-            width: 200px; /* increased from 200px */
-            height: 280px; /* increased from 280px */
+            width: 300px; /* increased from 200px */
+            height: 420px; /* increased from 280px */
             position: relative;
             transform-style: preserve-3d;
             transition: transform 0.6s;
