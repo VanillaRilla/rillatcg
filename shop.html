@@ -717,13 +717,16 @@
                             cardWrapper.style.opacity = '0';
                             setTimeout(() => {
                                 cardWrapper.remove();
+                                document.getElementById("shop-overlay").classList.remove("active");
+
+                                // ✅ Allow buying again after animation finishes
                                 isBuying = false;
-                                document.getElementById("shop-overlay").classList.remove("active"); // <- Hide the tint
-                                
+                                buySingleRevealPackButton.disabled = false;
+
                             }, 500);
                         }
                     });
-                    isBuying = false;
+
                 }, 500);
             } else {
                 alert("Not enough balance or a purchase is already in progress!");
