@@ -703,6 +703,10 @@
                     cardWrapper.className = 'card-flip';
                     addTiltEffect(cardWrapper);
 
+                    const tiltContainer = document.createElement('div');
+                    tiltContainer.className = 'tilt-wrapper'; // New wrapper for the tilt effect
+                    addTiltEffect(tiltContainer); // Apply tilt to this, not the flip
+
                     const back = document.createElement('div');
                     back.className = 'card-side card-back';
 
@@ -710,6 +714,9 @@
                     front.className = 'card-side card-front';
                     front.style.backgroundImage = `url(${card.image})`;
 
+
+                    tiltContainer.appendChild(back);
+                    tiltContainer.appendChild(front);
                     cardWrapper.appendChild(back);
                     cardWrapper.appendChild(front);
                     area.appendChild(cardWrapper);
