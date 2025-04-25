@@ -231,12 +231,6 @@
             transform: translateY(-1px);
         }
 
-        .card-tilt {
-            transition: transform 0.1s ease;
-            transform-style: preserve-3d;
-        }
-
-
         #shop-overlay {
             position: fixed;
             top: 0;
@@ -349,12 +343,7 @@
         }
 
 
-        .tilt-wrapper {
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease;
-        }
+
 
 
 
@@ -706,11 +695,6 @@
 
                     const cardWrapper = document.createElement('div');
                     cardWrapper.className = 'card-flip';
-                    addTiltEffect(cardWrapper);
-
-                    const tiltContainer = document.createElement('div');
-                    tiltContainer.className = 'tilt-wrapper'; // New wrapper for the tilt effect
-                    addTiltEffect(tiltContainer); // Apply tilt to this, not the flip
 
                     const back = document.createElement('div');
                     back.className = 'card-side card-back';
@@ -719,9 +703,6 @@
                     front.className = 'card-side card-front';
                     front.style.backgroundImage = `url(${card.image})`;
 
-
-                    tiltContainer.appendChild(back);
-                    tiltContainer.appendChild(front);
                     cardWrapper.appendChild(back);
                     cardWrapper.appendChild(front);
                     area.appendChild(cardWrapper);
@@ -753,24 +734,7 @@
         }
 
 
-        function addTiltEffect(cardElement) {
-            cardElement.classList.add("card-tilt");
 
-            cardElement.addEventListener("mousemove", (e) => {
-                const rect = cardElement.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                const rotateX = ((y / rect.height) - 0.5) * -10; // adjust intensity
-                const rotateY = ((x / rect.width) - 0.5) * 10;
-
-                cardElement.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            });
-
-            cardElement.addEventListener("mouseleave", () => {
-                cardElement.style.transform = "rotateX(0deg) rotateY(0deg)";
-            });
-        }
 
 
         function updateBalance(newBalance) {
