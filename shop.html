@@ -342,7 +342,12 @@
             transform: rotateY(180deg);
         }
 
-
+        .stacked-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: all 0.5s;
+        }
 
 
 
@@ -611,53 +616,83 @@
 
         }
 
-        async function buyTenCards() {
+        async function buyTenCardsRevealPack() {
             if (balance >= 1000 && !isBuying) {
                 document.getElementById("shop-overlay").classList.add("active");
                 isBuying = true;
                 buyTenCardsButton.disabled = true;
 
-                updateBalance(balance - 1000);
-                let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
-                let drawnCards = [];
+                setTimeout(async () => {
+                    let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+                    const drawnCards = [];
 
-                for (let i = 0; i < 10; i++) {
-                    const randomCard = getRandomCard();
-                    const { intcon, condition, pattern } = generateintconAndCondition();
-                    drawnCards.push({ ...randomCard, intcon, condition, pattern });
-                }
-
-                // Sort drawn cards based on rarity
-                drawnCards.sort((a, b) => {
-                    const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4, "ugly": 5 };
-                    return rarityOrder[a.rarity] - rarityOrder[b.rarity];
-                });
-
-                // Add drawn cards to inventory
-                inventory = [...inventory, ...drawnCards];
-
-                // Save updated inventory
-                localStorage.setItem("inventory", JSON.stringify(inventory));
-                await updateFirebaseInventory(balance, inventory);
-
-                // Reveal cards in sequence
-                function revealNextCard(index) {
-                    if (index < drawnCards.length) {
-                        const card = drawnCards[index];
-                        setTimeout(() => {
-                            showCardPopup(card.image, card.condition, card.intcon, card.pattern);
-                            revealNextCard(index + 1);
-                        }, index === 0 ? 0 : 2500);
-                    } else {
-                        setTimeout(() => {
-                            buyTenCardsButton.disabled = balance < 1000;
-                            isBuying = false;
-                            document.getElementById("shop-overlay").classList.remove("active");
-                        }, 3000);
+                    for (let i = 0; i < 10; i++) {
+                        const randomCard = getRandomCard();
+                        const { intcon, condition, pattern } = generateintconAndCondition();
+                        drawnCards.push({ ...randomCard, intcon, condition, pattern });
                     }
-                }
 
-                revealNextCard(0);
+                    // Sort drawn cards by rarity
+                    drawnCards.sort((a, b) => {
+                        const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4, "ugly": 5 };
+                        return rarityOrder[a.rarity] - rarityOrder[b.rarity];
+                    });
+
+                    // Add drawn cards to inventory
+                    inventory = [...inventory, ...drawnCards];
+                    localStorage.setItem("inventory", JSON.stringify(inventory));
+                    updateBalance(balance - 1000);
+                    await updateFirebaseInventory(balance, inventory);
+
+                    const area = document.getElementById('singleRevealArea');
+                    area.innerHTML = '';
+
+                    // Stack cards on top of each other
+                    drawnCards.forEach((card, index) => {
+                        const cardWrapper = document.createElement('div');
+                        cardWrapper.className = 'card-flip stacked-card';
+                        cardWrapper.style.zIndex = 10 - index; // Top card first
+
+                        const back = document.createElement('div');
+                        back.className = 'card-side card-back';
+
+                        const front = document.createElement('div');
+                        front.className = 'card-side card-front';
+                        front.style.backgroundImage = `url(${card.image})`;
+
+                        cardWrapper.appendChild(back);
+                        cardWrapper.appendChild(front);
+                        area.appendChild(cardWrapper);
+                    });
+
+                    let currentIndex = 0;
+                    const allCards = Array.from(area.querySelectorAll('.card-flip'));
+
+                    function handleCardClick() {
+                        const card = allCards[currentIndex];
+                        if (!card) return;
+
+                        if (!card.classList.contains('flipped')) {
+                            card.classList.add('flipped');
+                        } else {
+                            card.style.opacity = '0';
+                            setTimeout(() => {
+                                card.remove();
+                                currentIndex++;
+                                if (currentIndex >= allCards.length) {
+                                    document.getElementById("shop-overlay").classList.remove("active");
+                                    isBuying = false;
+                                    buyTenCardsButton.disabled = balance < 1000;
+                                }
+                            }, 500);
+                        }
+                    }
+
+                    // Click anywhere in the reveal area to reveal next card
+                    area.addEventListener('click', handleCardClick);
+
+                }, 500);
+
             } else {
                 alert("Not enough balance or a purchase is already in progress!");
             }
