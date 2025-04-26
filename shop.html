@@ -406,16 +406,6 @@
             </div>
         </div>
 
-
-        <div class="shop-item">
-            <img src="imgs/bingrey.png" alt="bingrey">
-            <h3>1x CARD</h3>
-            <p class="item-price">
-                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">100</span>
-            </p>
-            <button id="addCardButton" class="button">BUY</button>
-        </div>
-
         <div class="shop-item">
             <img src="imgs/bingold.png" alt="bingold">
             <h3>10x CARDS</h3>
@@ -425,15 +415,8 @@
             <button id="buyTenCardsButton" class="button">BUY</button>
         </div>
 
-
-
-        <button id="buySingleRevealPack">Buy Single Reveal Pack (100 credits)</button>
-        <div id="singleRevealArea" class="reveal-pack-area"></div>
-
-
-
-
     </section>
+    <div id="singleRevealArea" class="reveal-pack-area"></div>
     <div class="coupon-redeem">
         <input type="text" id="couponCodeInput" placeholder="Enter coupon code">
         <button id="redeemCouponButton">Redeem</button>
@@ -452,7 +435,7 @@
             setDoc
         } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-        
+
 
         // Firebase config
         const firebaseConfig = {
@@ -470,10 +453,10 @@
 
 
         function generateintconAndCondition() {
-            const intcon = Math.floor(Math.random() * 101); 
+            const intcon = Math.floor(Math.random() * 101);
             let condition;
 
-            if (intcon <= 10) condition= "FRESH";
+            if (intcon <= 10) condition = "FRESH";
             else if (intcon <= 25) condition = "PLAYED";
             else if (intcon <= 50) condition = "FOUND IN BAG";
             else if (intcon <= 80) condition = "DOG EAT MY CARD";
@@ -505,7 +488,7 @@
             });
         }
 
-        
+
 
 
         async function fetchBalanceOnPageLoad() {
