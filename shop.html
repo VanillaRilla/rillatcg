@@ -697,7 +697,6 @@
 
                 setTimeout(async () => {
                     let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
-
                     const randomCard = getRandomCard();
                     const { intcon, condition, pattern } = generateintconAndCondition();
                     const card = { ...randomCard, intcon, condition, pattern };
@@ -751,6 +750,8 @@
                             }, 500);
                         }
                     });
+
+                }, 500);
             } else {
                 alert("Not enough balance or a purchase is already in progress!");
             }
