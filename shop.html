@@ -418,7 +418,7 @@
                 <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">1000</span>
             </p>
             <div class="button-container">
-                <button id="buyTenCardsRevealPack" class="button">BUY</button>
+                <button id="buyTenCardsPack" class="button">BUY</button>
             </div>
         </div>
 
@@ -586,39 +586,7 @@
             }
         }
 
-        async function addRandomCardToInventory() {
-            if (balance >= 100 && !isBuying) {
-                document.getElementById("shop-overlay").classList.add("active");
-                isBuying = true;
-                addCardButton.disabled = true;
-
-                setTimeout(async () => {
-
-                    let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
-                    const randomCard = getRandomCard();
-                    let existingCard = inventory.find(card => card.image === randomCard.image);
-
-                    const { intcon, condition, pattern } = generateintconAndCondition();
-                    inventory.push({ ...randomCard, intcon, condition, pattern });
-
-                    localStorage.setItem('inventory', JSON.stringify(inventory));
-                    updateBalance(balance - 100);
-                    await updateFirebaseInventory(balance, inventory);
-                    showCardPopup(randomCard.image, condition, intcon, pattern);
-                    setTimeout(() => {
-                        addCardButton.disabled = balance < 100;
-                        isBuying = false;
-                        document.getElementById("shop-overlay").classList.remove("active");
-                    }, 2200);
-                }, 500);
-
-            } else {
-                alert("You are already buying a card! Wait till the animation is done!");
-            }
-
-        }
-
-        async function buyTenCardsRevealPack() {
+        async function buyTenCardsPack() {
             if (balance >= 1000 && !isBuying) {
                 document.getElementById("shop-overlay").classList.add("active");
                 isBuying = true;
