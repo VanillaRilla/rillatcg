@@ -343,7 +343,25 @@
         }
 
 
+        .card-flip.common:hover {
+            box-shadow: 0 0 15px 5px #a0a0a0;
+        }
 
+        .card-flip.uncommon:hover {
+            box-shadow: 0 0 15px 5px #4caf50;
+        }
+
+        .card-flip.rare:hover {
+            box-shadow: 0 0 15px 5px #2196f3;
+        }
+
+        .card-flip.epic:hover {
+            box-shadow: 0 0 15px 5px #9c27b0;
+        }
+
+        .card-flip.legendary:hover {
+            box-shadow: 0 0 20px 8px #ff9800;
+        }
 
 
 
@@ -682,7 +700,13 @@
 
                     const randomCard = getRandomCard();
                     const { intcon, condition, pattern } = generateintconAndCondition();
-                    const card = { ...randomCard, intcon, condition, pattern };
+                    const card = { ...randomCard, intcon, condition, pattern, card.rarity };
+                    card.classList.add('card', rarity); // where rarity is like 'common', 'rare', etc.
+
+                    card.style.backgroundImage = `url(${imageUrl})`;
+                    card.classList.add('card-flip'); // if you're using your existing flip animation
+                    singleRevealArea.appendChild(card);
+
 
                     inventory.push(card);
 
@@ -702,6 +726,10 @@
                     const front = document.createElement('div');
                     front.className = 'card-side card-front';
                     front.style.backgroundImage = `url(${card.image})`;
+                    if (card.rarity) {
+                        front.classList.add(card.rarity.toLowerCase());
+                    }
+
 
                     cardWrapper.appendChild(back);
                     cardWrapper.appendChild(front);
