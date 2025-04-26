@@ -700,7 +700,7 @@
 
                     const randomCard = getRandomCard();
                     const { intcon, condition, pattern } = generateintconAndCondition();
-                    const card = { ...randomCard, intcon, condition, pattern, card.rarity };
+                    const card = { ...randomCard, intcon, condition, pattern };
                     card.classList.add('card', rarity); // where rarity is like 'common', 'rare', etc.
 
                     card.style.backgroundImage = `url(${imageUrl})`;
