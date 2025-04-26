@@ -529,9 +529,13 @@
 
 
         const addCardButton = document.getElementById('addCardButton');
-        const buyTenCardsButton = document.getElementById('buyTenCardsPack');
         const getCreditsButton = document.getElementById('getCreditsButton');
         const balanceDisplay = document.getElementById('balance');
+        const buyTenCardsButton = document.getElementById('buyTenCardsButton');
+        buyTenCardsButton.addEventListener('click', buyTenCardsPack);
+        const buySingleRevealPackButton = document.getElementById('buySingleRevealPack');
+        buySingleRevealPackButton.addEventListener('click', buySingleRevealPack);
+
 
         let balance = parseInt(localStorage.getItem('balance')) || 0;
         let isBuying = false;
@@ -778,10 +782,7 @@
 
         
        
-        const buyTenCardsButton = document.getElementById('buyTenCardsButton');
-        buyTenCardsButton.addEventListener('click', buyTenCardsPack);
-        const buySingleRevealPackButton = document.getElementById('buySingleRevealPack');
-        buySingleRevealPackButton.addEventListener('click', buySingleRevealPack);
+        
 
         getCreditsButton.addEventListener('click', () => {
             const newBalance = balance + 100;
