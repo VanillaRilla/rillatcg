@@ -342,12 +342,7 @@
             transform: rotateY(180deg);
         }
 
-        .stacked-card {
-            position: absolute;
-            top: 0;
-            left: 0;
-            transition: all 0.5s;
-        }
+
 
 
 
@@ -386,52 +381,51 @@
 
     <section class="shop-container">
 
+        <!-- Items will be inserted here dynamically or manually -->
         <div class="shop-item">
             <img src="imgs/binfree.png" alt="bingrey">
             <h3>FREE</h3>
             <p id="dailyCreditsMessage"></p>
-            <p class="item-price">
-                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon">
-                <span class="price-amount">FREE</span>
+            <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">FREE</span>
             </p>
             <div class="button-container">
                 <button id="dailyCreditsButton" class="button">CLAIM</button>
             </div>
         </div>
 
+
+
         <div class="shop-item">
             <img src="imgs/bingrey.png" alt="bingrey">
             <h3>1x CARD</h3>
             <p class="item-price">
-                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon">
-                <span class="price-amount">100</span>
+                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">100</span>
             </p>
-            <div class="button-container">
-                <button id="buySingleRevealPackButton" class="button">BUY</button>
-            </div>
+            <button id="addCardButton" class="button">BUY</button>
         </div>
 
         <div class="shop-item">
             <img src="imgs/bingold.png" alt="bingold">
             <h3>10x CARDS</h3>
             <p class="item-price">
-                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon">
-                <span class="price-amount">1000</span>
+                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">1000</span>
             </p>
-            <div class="button-container">
-                <button id="buyTenCardsButton" class="button">BUY</button>
-            </div>
+            <button id="buyTenCardsButton" class="button">BUY</button>
         </div>
 
+
+        
+        <button id="buySingleRevealPack">Buy Single Reveal Pack (100 credits)</button>
+        <div id="singleRevealArea" class="reveal-pack-area"></div>
+
+
+
+
     </section>
-
-    <div id="singleRevealArea" class="reveal-pack-area"></div>
-
     <div class="coupon-redeem">
         <input type="text" id="couponCodeInput" placeholder="Enter coupon code">
         <button id="redeemCouponButton">Redeem</button>
     </div>
-
     <div id="cardPopup" class="card-popup">
         <img id="popupImage" src="" alt="New Card">
     </div>
@@ -446,7 +440,7 @@
             setDoc
         } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-
+        
 
         // Firebase config
         const firebaseConfig = {
@@ -464,10 +458,10 @@
 
 
         function generateintconAndCondition() {
-            const intcon = Math.floor(Math.random() * 101);
+            const intcon = Math.floor(Math.random() * 101); 
             let condition;
 
-            if (intcon <= 10) condition = "FRESH";
+            if (intcon <= 10) condition= "FRESH";
             else if (intcon <= 25) condition = "PLAYED";
             else if (intcon <= 50) condition = "FOUND IN BAG";
             else if (intcon <= 80) condition = "DOG EAT MY CARD";
@@ -499,7 +493,7 @@
             });
         }
 
-
+        
 
 
         async function fetchBalanceOnPageLoad() {
@@ -527,12 +521,9 @@
         document.addEventListener("DOMContentLoaded", fetchBalanceOnPageLoad);
 
 
+
         const addCardButton = document.getElementById('addCardButton');
-        const getCreditsButton = document.getElementById('getCreditsButton');       
-        const buyTenCardsButton = document.getElementById('buyTenCardsButton');
-        buyTenCardsButton.addEventListener('click', buyTenCardsPack);
-        const buySingleRevealPackButton = document.getElementById('buySingleRevealPackButton');
-        buySingleRevealPackButton.addEventListener('click', buySingleRevealPack);
+        const getCreditsButton = document.getElementById('getCreditsButton');
         const balanceDisplay = document.getElementById('balance');
 
         let balance = parseInt(localStorage.getItem('balance')) || 0;
@@ -593,7 +584,89 @@
             }
         }
 
-        
+        async function addRandomCardToInventory() {
+            if (balance >= 100 && !isBuying) {
+                document.getElementById("shop-overlay").classList.add("active");
+                isBuying = true;
+                addCardButton.disabled = true;
+
+                setTimeout(async () => {
+
+                    let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+                    const randomCard = getRandomCard();
+                    let existingCard = inventory.find(card => card.image === randomCard.image);
+
+                    const { intcon, condition, pattern } = generateintconAndCondition();
+                    inventory.push({ ...randomCard, intcon, condition, pattern });
+
+                    localStorage.setItem('inventory', JSON.stringify(inventory));
+                    updateBalance(balance - 100);
+                    await updateFirebaseInventory(balance, inventory);
+                    showCardPopup(randomCard.image, condition, intcon, pattern);
+                    setTimeout(() => {
+                        addCardButton.disabled = balance < 100;
+                        isBuying = false;
+                        document.getElementById("shop-overlay").classList.remove("active");
+                    }, 2200);
+                }, 500);
+
+            } else {
+                alert("You are already buying a card! Wait till the animation is done!");
+            }
+
+        }
+
+        async function buyTenCards() {
+            if (balance >= 1000 && !isBuying) {
+                document.getElementById("shop-overlay").classList.add("active");
+                isBuying = true;
+                buyTenCardsButton.disabled = true;
+
+                updateBalance(balance - 1000);
+                let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+                let drawnCards = [];
+
+                for (let i = 0; i < 10; i++) {
+                    const randomCard = getRandomCard();
+                    const { intcon, condition, pattern } = generateintconAndCondition();
+                    drawnCards.push({ ...randomCard, intcon, condition, pattern });
+                }
+
+                // Sort drawn cards based on rarity
+                drawnCards.sort((a, b) => {
+                    const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4, "ugly": 5 };
+                    return rarityOrder[a.rarity] - rarityOrder[b.rarity];
+                });
+
+                // Add drawn cards to inventory
+                inventory = [...inventory, ...drawnCards];
+
+                // Save updated inventory
+                localStorage.setItem("inventory", JSON.stringify(inventory));
+                await updateFirebaseInventory(balance, inventory);
+
+                // Reveal cards in sequence
+                function revealNextCard(index) {
+                    if (index < drawnCards.length) {
+                        const card = drawnCards[index];
+                        setTimeout(() => {
+                            showCardPopup(card.image, card.condition, card.intcon, card.pattern);
+                            revealNextCard(index + 1);
+                        }, index === 0 ? 0 : 2500);
+                    } else {
+                        setTimeout(() => {
+                            buyTenCardsButton.disabled = balance < 1000;
+                            isBuying = false;
+                            document.getElementById("shop-overlay").classList.remove("active");
+                        }, 3000);
+                    }
+                }
+
+                revealNextCard(0);
+            } else {
+                alert("Not enough balance or a purchase is already in progress!");
+            }
+        }
 
 
 
@@ -661,87 +734,7 @@
         }
 
 
-        async function buyTenCardsPack() {
-            if (balance >= 1000 && !isBuying) {
-                document.getElementById("shop-overlay").classList.add("active");
-                isBuying = true;
-                buyTenCardsButton.disabled = true;
 
-                setTimeout(async () => {
-                    let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
-                    const drawnCards = [];
-
-                    for (let i = 0; i < 10; i++) {
-                        const randomCard = getRandomCard();
-                        const { intcon, condition, pattern } = generateintconAndCondition();
-                        drawnCards.push({ ...randomCard, intcon, condition, pattern });
-                    }
-
-                    // Sort drawn cards by rarity
-                    drawnCards.sort((a, b) => {
-                        const rarityOrder = { "common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4, "ugly": 5 };
-                        return rarityOrder[a.rarity] - rarityOrder[b.rarity];
-                    });
-
-                    // Add drawn cards to inventory
-                    inventory = [...inventory, ...drawnCards];
-                    localStorage.setItem("inventory", JSON.stringify(inventory));
-                    updateBalance(balance - 1000);
-                    await updateFirebaseInventory(balance, inventory);
-
-                    const area = document.getElementById('singleRevealArea');
-                    area.innerHTML = '';
-
-                    // Stack cards on top of each other
-                    drawnCards.forEach((card, index) => {
-                        const cardWrapper = document.createElement('div');
-                        cardWrapper.className = 'card-flip stacked-card';
-                        cardWrapper.style.zIndex = 10 - index; // Top card first
-
-                        const back = document.createElement('div');
-                        back.className = 'card-side card-back';
-
-                        const front = document.createElement('div');
-                        front.className = 'card-side card-front';
-                        front.style.backgroundImage = `url(${card.image})`;
-
-                        cardWrapper.appendChild(back);
-                        cardWrapper.appendChild(front);
-                        area.appendChild(cardWrapper);
-                    });
-
-                    let currentIndex = 0;
-                    const allCards = Array.from(area.querySelectorAll('.card-flip'));
-
-                    function handleCardClick() {
-                        const card = allCards[currentIndex];
-                        if (!card) return;
-
-                        if (!card.classList.contains('flipped')) {
-                            card.classList.add('flipped');
-                        } else {
-                            card.style.opacity = '0';
-                            setTimeout(() => {
-                                card.remove();
-                                currentIndex++;
-                                if (currentIndex >= allCards.length) {
-                                    document.getElementById("shop-overlay").classList.remove("active");
-                                    isBuying = false;
-                                    buyTenCardsButton.disabled = balance < 1000;
-                                }
-                            }, 500);
-                        }
-                    }
-
-                    // Click anywhere in the reveal area to reveal next card
-                    area.addEventListener('click', handleCardClick);
-
-                }, 500);
-
-            } else {
-                alert("Not enough balance or a purchase is already in progress!");
-            }
-        }
 
 
         function updateBalance(newBalance) {
@@ -778,10 +771,10 @@
             }, 2000);
         }
 
-        
-       
-        
-
+        document.getElementById('addCardButton').addEventListener('click', addRandomCardToInventory);
+        document.getElementById('buyTenCardsButton').addEventListener('click', buyTenCards);
+        const buySingleRevealPackButton = document.getElementById('buySingleRevealPack');
+        buySingleRevealPackButton.addEventListener('click', buySingleRevealPack);
         getCreditsButton.addEventListener('click', () => {
             const newBalance = balance + 100;
             updateBalance(newBalance);
