@@ -344,16 +344,7 @@
 
 
 
-        #singleRevealArea {
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
 
-            #singleRevealArea.active {
-                opacity: 1;
-                pointer-events: auto;
-            }
 
 
 
@@ -450,7 +441,7 @@
             setDoc
         } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-
+        
 
         // Firebase config
         const firebaseConfig = {
@@ -468,10 +459,10 @@
 
 
         function generateintconAndCondition() {
-            const intcon = Math.floor(Math.random() * 101);
+            const intcon = Math.floor(Math.random() * 101); 
             let condition;
 
-            if (intcon <= 10) condition = "FRESH";
+            if (intcon <= 10) condition= "FRESH";
             else if (intcon <= 25) condition = "PLAYED";
             else if (intcon <= 50) condition = "FOUND IN BAG";
             else if (intcon <= 80) condition = "DOG EAT MY CARD";
@@ -503,7 +494,7 @@
             });
         }
 
-
+        
 
 
         async function fetchBalanceOnPageLoad() {
@@ -616,7 +607,6 @@
                     setTimeout(() => {
                         addCardButton.disabled = balance < 100;
                         isBuying = false;
-                        document.getElementById('singleRevealArea').classList.remove('active'); // hide
                         document.getElementById("shop-overlay").classList.remove("active");
                     }, 2200);
                 }, 500);
