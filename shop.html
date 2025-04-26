@@ -528,14 +528,13 @@
 
 
 
-        const addCardButton = document.getElementById('addCardButton');
         const getCreditsButton = document.getElementById('getCreditsButton');
-        const balanceDisplay = document.getElementById('balance');
+        
         const buyTenCardsButton = document.getElementById('buyTenCardsButton');
         buyTenCardsButton.addEventListener('click', buyTenCardsPack);
-        const buySingleRevealPackButton = document.getElementById('buySingleRevealPack');
+        const buySingleRevealPackButton = document.getElementById('buySingleRevealPackButton');
         buySingleRevealPackButton.addEventListener('click', buySingleRevealPack);
-
+        const balanceDisplay = document.getElementById('balance');
 
         let balance = parseInt(localStorage.getItem('balance')) || 0;
         let isBuying = false;
