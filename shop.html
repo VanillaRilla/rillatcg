@@ -595,6 +595,74 @@
             }
         }
 
+        
+
+
+
+
+        async function buySingleRevealPack() {
+            if (balance >= 100 && !isBuying) {
+                document.getElementById("shop-overlay").classList.add("active");
+                isBuying = true;
+                buySingleRevealPackButton.disabled = true;
+
+                setTimeout(async () => {
+                    let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+
+                    const randomCard = getRandomCard();
+                    const { intcon, condition, pattern } = generateintconAndCondition();
+                    const card = { ...randomCard, intcon, condition, pattern };
+
+                    inventory.push(card);
+
+                    localStorage.setItem("inventory", JSON.stringify(inventory));
+                    updateBalance(balance - 100);
+                    await updateFirebaseInventory(balance, inventory);
+
+                    const area = document.getElementById('singleRevealArea');
+                    area.innerHTML = '';
+
+                    const cardWrapper = document.createElement('div');
+                    cardWrapper.className = 'card-flip';
+
+                    const back = document.createElement('div');
+                    back.className = 'card-side card-back';
+
+                    const front = document.createElement('div');
+                    front.className = 'card-side card-front';
+                    front.style.backgroundImage = `url(${card.image})`;
+
+                    cardWrapper.appendChild(back);
+                    cardWrapper.appendChild(front);
+                    area.appendChild(cardWrapper);
+
+                    let clickedOnce = false;
+
+                    cardWrapper.addEventListener('click', () => {
+                        if (!clickedOnce) {
+                            cardWrapper.classList.add('flipped');
+                            clickedOnce = true;
+                        } else {
+                            cardWrapper.style.opacity = '0';
+                            setTimeout(() => {
+                                cardWrapper.remove();
+                                document.getElementById("shop-overlay").classList.remove("active");
+
+                                // ✅ Allow buying again after animation finishes
+                                isBuying = false;
+                                buySingleRevealPackButton.disabled = false;
+
+                            }, 500);
+                        }
+                    });
+
+                }, 500);
+            } else {
+                alert("Not enough balance or a purchase is already in progress!");
+            }
+        }
+
+
         async function buyTenCardsPack() {
             if (balance >= 1000 && !isBuying) {
                 document.getElementById("shop-overlay").classList.add("active");
@@ -676,74 +744,6 @@
                 alert("Not enough balance or a purchase is already in progress!");
             }
         }
-
-
-
-
-        async function buySingleRevealPack() {
-            if (balance >= 100 && !isBuying) {
-                document.getElementById("shop-overlay").classList.add("active");
-                isBuying = true;
-                buySingleRevealPackButton.disabled = true;
-
-                setTimeout(async () => {
-                    let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
-
-                    const randomCard = getRandomCard();
-                    const { intcon, condition, pattern } = generateintconAndCondition();
-                    const card = { ...randomCard, intcon, condition, pattern };
-
-                    inventory.push(card);
-
-                    localStorage.setItem("inventory", JSON.stringify(inventory));
-                    updateBalance(balance - 100);
-                    await updateFirebaseInventory(balance, inventory);
-
-                    const area = document.getElementById('singleRevealArea');
-                    area.innerHTML = '';
-
-                    const cardWrapper = document.createElement('div');
-                    cardWrapper.className = 'card-flip';
-
-                    const back = document.createElement('div');
-                    back.className = 'card-side card-back';
-
-                    const front = document.createElement('div');
-                    front.className = 'card-side card-front';
-                    front.style.backgroundImage = `url(${card.image})`;
-
-                    cardWrapper.appendChild(back);
-                    cardWrapper.appendChild(front);
-                    area.appendChild(cardWrapper);
-
-                    let clickedOnce = false;
-
-                    cardWrapper.addEventListener('click', () => {
-                        if (!clickedOnce) {
-                            cardWrapper.classList.add('flipped');
-                            clickedOnce = true;
-                        } else {
-                            cardWrapper.style.opacity = '0';
-                            setTimeout(() => {
-                                cardWrapper.remove();
-                                document.getElementById("shop-overlay").classList.remove("active");
-
-                                // ✅ Allow buying again after animation finishes
-                                isBuying = false;
-                                buySingleRevealPackButton.disabled = false;
-
-                            }, 500);
-                        }
-                    });
-
-                }, 500);
-            } else {
-                alert("Not enough balance or a purchase is already in progress!");
-            }
-        }
-
-
-
 
 
         function updateBalance(newBalance) {
