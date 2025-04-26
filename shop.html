@@ -339,40 +339,11 @@
         }
 
         .card-front {
-            border-radius: 12px;
-            border: 2px solid #fff;
-            transition: box-shadow 0.3s ease;
+            transform: rotateY(180deg);
         }
 
 
-        /* Common cards */
-        .common {
-            box-shadow: 0 0 10px #aaa; /* soft gray */
-        }
 
-        .uncommon {
-            box-shadow: 0 0 10px #6fc276; /* soft gray */
-        }
-
-        /* Rare cards */
-        .rare {
-            box-shadow: 0 0 15px #00f, 0 0 30px #00f; /* blue glow */
-        }
-
-        /* Epic cards */
-        .epic {
-            box-shadow: 0 0 20px #8000ff, 0 0 40px #8000ff; /* purple glow */
-        }
-
-        /* Legendary cards */
-        .legendary {
-            box-shadow: 0 0 25px #ffa500, 0 0 50px #ffa500; /* orange-gold glow */
-        }
-
-        /* Mythic cards (if you have them) */
-        .ugly {
-            box-shadow: 0 0 30px #ff0000, 0 0 60px #ff0000; /* red glow */
-        }
 
 
 
@@ -708,19 +679,17 @@
 
                 setTimeout(async () => {
                     let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+
                     const randomCard = getRandomCard();
                     const { intcon, condition, pattern } = generateintconAndCondition();
                     const card = { ...randomCard, intcon, condition, pattern };
 
-                    // Push the *data* to inventory
                     inventory.push(card);
 
-                    // Save to localStorage
                     localStorage.setItem("inventory", JSON.stringify(inventory));
                     updateBalance(balance - 100);
                     await updateFirebaseInventory(balance, inventory);
 
-                    // Now handle the DOM (visual card)
                     const area = document.getElementById('singleRevealArea');
                     area.innerHTML = '';
 
@@ -734,17 +703,12 @@
                     front.className = 'card-side card-front';
                     front.style.backgroundImage = `url(${card.image})`;
 
-                    // 🎯 Add rarity class here
-                    if (card.rarity) {
-                        front.classList.add(card.rarity.toLowerCase());
-                    }
-
                     cardWrapper.appendChild(back);
                     cardWrapper.appendChild(front);
                     area.appendChild(cardWrapper);
 
-                    // Click to flip
                     let clickedOnce = false;
+
                     cardWrapper.addEventListener('click', () => {
                         if (!clickedOnce) {
                             cardWrapper.classList.add('flipped');
@@ -755,6 +719,7 @@
                                 cardWrapper.remove();
                                 document.getElementById("shop-overlay").classList.remove("active");
 
+                                // ✅ Allow buying again after animation finishes
                                 isBuying = false;
                                 buySingleRevealPackButton.disabled = false;
 
