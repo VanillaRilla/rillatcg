@@ -344,7 +344,16 @@
 
 
 
+        #singleRevealArea {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
 
+            #singleRevealArea.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
 
 
 
@@ -607,6 +616,7 @@
                     setTimeout(() => {
                         addCardButton.disabled = balance < 100;
                         isBuying = false;
+                        document.getElementById('singleRevealArea').classList.remove('active'); // hide
                         document.getElementById("shop-overlay").classList.remove("active");
                     }, 2200);
                 }, 500);
