@@ -386,18 +386,18 @@
 
     <section class="shop-container">
 
-        <!-- Items will be inserted here dynamically or manually -->
         <div class="shop-item">
             <img src="imgs/binfree.png" alt="bingrey">
             <h3>FREE</h3>
             <p id="dailyCreditsMessage"></p>
-            <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">FREE</span>
+            <p class="item-price">
+                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon">
+                <span class="price-amount">FREE</span>
             </p>
             <div class="button-container">
                 <button id="dailyCreditsButton" class="button">CLAIM</button>
             </div>
         </div>
-
 
         <div class="shop-item">
             <img src="imgs/bingrey.png" alt="bingrey">
@@ -407,7 +407,7 @@
                 <span class="price-amount">100</span>
             </p>
             <div class="button-container">
-                <button id="buySingleRevealPack" class="button">BUY</button>
+                <button id="buySingleRevealPackButton" class="button">BUY</button>
             </div>
         </div>
 
@@ -415,19 +415,23 @@
             <img src="imgs/bingold.png" alt="bingold">
             <h3>10x CARDS</h3>
             <p class="item-price">
-                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">1000</span>
+                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon">
+                <span class="price-amount">1000</span>
             </p>
             <div class="button-container">
-                <button id="buyTenCardsPack" class="button">BUY</button>
+                <button id="buyTenCardsButton" class="button">BUY</button>
             </div>
         </div>
 
-</section>
+    </section>
+
     <div id="singleRevealArea" class="reveal-pack-area"></div>
+
     <div class="coupon-redeem">
         <input type="text" id="couponCodeInput" placeholder="Enter coupon code">
         <button id="redeemCouponButton">Redeem</button>
     </div>
+
     <div id="cardPopup" class="card-popup">
         <img id="popupImage" src="" alt="New Card">
     </div>
@@ -771,10 +775,13 @@
             }, 2000);
         }
 
-        document.getElementById('addCardButton').addEventListener('click', addRandomCardToInventory);
-        document.getElementById('buyTenCardsButton').addEventListener('click', buyTenCards);
+        
+       
+        const buyTenCardsButton = document.getElementById('buyTenCardsButton');
+        buyTenCardsButton.addEventListener('click', buyTenCardsPack);
         const buySingleRevealPackButton = document.getElementById('buySingleRevealPack');
         buySingleRevealPackButton.addEventListener('click', buySingleRevealPack);
+
         getCreditsButton.addEventListener('click', () => {
             const newBalance = balance + 100;
             updateBalance(newBalance);
