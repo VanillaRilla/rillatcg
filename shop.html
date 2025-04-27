@@ -300,7 +300,7 @@
         .reveal-pack-area {
             overflow: visible;
             position: fixed;
-            top: 50%;
+            top: 65%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 10001;
@@ -414,13 +414,19 @@
         </div>
 
 
-        
-        <button id="buySingleRevealPack">Buy Single Reveal Pack (100 credits)</button>
+        <div class="shop-item">
+            <img src="imgs/binblue.png" alt="binblue">
+            <h3>1x SINGLE REVEAL PACK</h3>
+            <p class="item-price">
+                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon">
+                <span class="price-amount">100</span>
+            </p>
+            <div class="button-container">
+                <button id="buySingleRevealPack" class="button">BUY</button>
+            </div>
+        </div>
+
         <div id="singleRevealArea" class="reveal-pack-area"></div>
-
-
-
-
     </section>
     <div class="coupon-redeem">
         <input type="text" id="couponCodeInput" placeholder="Enter coupon code">
