@@ -298,15 +298,16 @@
 
 
         .reveal-pack-area {
+            display: none; /* HIDDEN by default */
             overflow: visible;
             position: fixed;
-            top: 65%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 10001;
             justify-content: center;
             align-items: center;
-            background: none; 
+            background: none;
             padding: 100px;
         }
 
@@ -698,6 +699,7 @@
 
                     const area = document.getElementById('singleRevealArea');
                     area.innerHTML = '';
+                    area.style.display = 'flex'; // ✅ SHOW the reveal area
 
                     const cardWrapper = document.createElement('div');
                     cardWrapper.className = 'card-flip';
@@ -723,12 +725,10 @@
                             cardWrapper.style.opacity = '0';
                             setTimeout(() => {
                                 cardWrapper.remove();
+                                area.style.display = 'none'; // ✅ HIDE the reveal area again
                                 document.getElementById("shop-overlay").classList.remove("active");
-
-                                // ✅ Allow buying again after animation finishes
                                 isBuying = false;
                                 buySingleRevealPackButton.disabled = false;
-
                             }, 500);
                         }
                     });
