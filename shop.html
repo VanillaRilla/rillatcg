@@ -394,19 +394,15 @@
         </div>
 
 
+
         <div class="shop-item">
             <img src="imgs/bingrey.png" alt="bingrey">
             <h3>1x CARD</h3>
             <p class="item-price">
-                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon">
-                <span class="price-amount">100</span>
+                <img src="imgs/balance.png" alt="Balance Icon" class="price-icon"><span class="price-amount">100</span>
             </p>
-            <div class="button-container">
-                <button id="buySingleRevealPackButton" class="button">BUY</button>
-            </div>
+            <button id="addCardButton" class="button">BUY</button>
         </div>
-
-
 
         <div class="shop-item">
             <img src="imgs/bingold.png" alt="bingold">
@@ -418,6 +414,9 @@
         </div>
 
 
+        
+        <button id="buySingleRevealPack">Buy Single Reveal Pack (100 credits)</button>
+        <div id="singleRevealArea" class="reveal-pack-area"></div>
 
 
 
@@ -430,7 +429,7 @@
     <div id="cardPopup" class="card-popup">
         <img id="popupImage" src="" alt="New Card">
     </div>
-    <div id="singleRevealArea" class="reveal-pack-area"></div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import {
